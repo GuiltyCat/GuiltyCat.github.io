@@ -19,6 +19,9 @@ INDEX_MD=$(
 GuiltyCat's Home Page
 =======================
 
+はじめに
+----------------------
+
 少し精神を病んでいる人間が思ったことをつらつらと書いたものです．
 この記事は何か正解を示すものではありません．
 ただある人間がこういう考えをした，というただそれだけのお話です．
@@ -67,13 +70,13 @@ You can reach history of updates by Git.
 
 
 コメントを書く場所(Comment)
-=============
+---------------------
 
 - [コメントを書く場所](https://github.com/GuiltyCat/GuiltyCat.github.io/issues)
 - [Write Comment Here](https://github.com/GuiltyCat/GuiltyCat.github.io/issues)
 
 記事一覧
-================
+--------------------
 
 $(for FILE in "${HTML_DIR}"/*; do
 		BASE=$(basename $(echo ${FILE%.*}))
@@ -82,7 +85,7 @@ $(for FILE in "${HTML_DIR}"/*; do
 
 
 自己紹介(Self Introduction)
-=================================
+---------------------
 
 某大手電気メーカーに勤める情報系エンジニア/リサーチャー
 C言語が好き．
