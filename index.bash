@@ -1,21 +1,5 @@
 #!/bin/bash
-
-HTML_DIR="./html"
-MD_DIR="./md"
-
-function echo_and_do() {
-	echo $@
-	$@
-}
-
-for MD in "${MD_DIR}"/*; do
-	FILE=$(basename ${MD%.*})
-	HTML="${HTML_DIR}/${FILE}.html"
-	echo_and_do pandoc "${MD}" -o "${HTML}"
-done
-
-INDEX_MD=$(
-	cat <<EOF
+cat <<EOF
 GuiltyCat's Home Page
 =======================
 
@@ -54,7 +38,7 @@ However, I will hurt others someone undesirably.
 Please write comments to make menotice or an article for rebuttal.
 Link of my articles are free.
 
-無意識に奢りがあり，それが露呈するかもしれません．
+無意識に奢りがあり，それが露呈してしまっているのかもしれません．
 あるいは，言葉の選び方が悪く，とんでもない誤解を生んでしまうかもしれません．
 それでも書かずにはいられなかったのです．
 承認欲求が芽生えてきたのでしょうか．
@@ -72,30 +56,30 @@ You can reach history of updates by Git.
 コメントを書く場所(Comment)
 ---------------------
 
+まだ運用法については迷い中ですが，とりあえず全体のコメントはここに設置します．
+
+そして，個別の記事それぞれについてIssueを立て，記事内にリンクを貼り誰でも書きこめるようにする予定です．
+
 - [コメントを書く場所](https://github.com/GuiltyCat/GuiltyCat.github.io/issues)
 - [Write Comment Here](https://github.com/GuiltyCat/GuiltyCat.github.io/issues)
 
 記事一覧
 --------------------
 
-$(for FILE in "${HTML_DIR}"/*; do
-		BASE=$(basename $(echo ${FILE%.*}))
-		echo "[${BASE}:$(head -n1 ./${MD_DIR}/${BASE}.md)](${FILE})"
-	done)
-
+$(for FILE in "./html"/*; do
+	BASE=$(basename ${FILE%.*})
+	echo "[${BASE}:$(head -n1 ./md/${BASE}.md)](${FILE})"
+done)
 
 自己紹介(Self Introduction)
 ---------------------
 
-某大手電気メーカーに勤める情報系エンジニア/リサーチャー
-C言語が好き．
-思ったことを全て表すために長大な文章を良く書く．
+- 某大手電気メーカーに勤める情報系エンジニア/リサーチャー
+- C言語が好き．
+- 思ったことを全て表すために長大な文章を良く書く．
 
 Information System Engineer/Researcher.
 I like C lang.
 I often write very long article in order to express all of my thought.
 
 EOF
-)
-
-echo_and_do pandoc -f markdown -o index.html <(echo "${INDEX_MD}")
