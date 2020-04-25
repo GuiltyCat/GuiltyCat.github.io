@@ -1,7 +1,9 @@
 #!/bin/bash
 cat <<EOF
+
+<title>
 GuiltyCat's Home Page
-=======================
+</title>
 
 はじめに
 ----------------------
