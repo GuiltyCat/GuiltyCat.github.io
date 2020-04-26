@@ -31,6 +31,40 @@ Or my word choice causes unbeliavable misleadings.
 
 You can reach history of updates by Git.
 
+自己紹介(Self Introduction)
+---------------------
+
+- 某大手電気メーカーに勤める情報系エンジニア/リサーチャー
+- C言語が好き
+- 思ったことを全て表すために長大な文章を良く書く
+
+- Information System Engineer/Researcher.
+- I like C lang.
+- I often write very long sentences in order to express all of my thought.
+
+内容について
+-----------
+
+- 思ったこと
+- 技術・理論の話
+- 物語
+- 絵や漫画，動画
+
+細かな放心とか作り方についてはどこかの記事で．
+
+以下は暫定的にここに書いてあるだけです．
+
+GitHub Pageに絵とか動画はあまり置けないから，
+何かいい方法を探してみます．
+
+管理するのが面倒なので，
+日記風に日付けをつけ，一覧のみで管理します．
+日付けは最初にファイルを作った日で，
+ほとんど意味はありません．
+
+
+
+
 コメントを書く場所(Comment)
 ---------------------
 
@@ -51,14 +85,4 @@ $(for FILE in "./html"/*; do
 	echo "- [${BASE}:$(head -n1 ./md/${BASE}.md)](${FILE})"
 done)
 
-自己紹介(Self Introduction)
----------------------
-
-- 某大手電気メーカーに勤める情報系エンジニア/リサーチャー
-- C言語が好き
-- 思ったことを全て表すために長大な文章を良く書く
-
-- Information System Engineer/Researcher.
-- I like C lang.
-- I often write very long sentences in order to express all of my thought.
 EOF
