@@ -1,12 +1,10 @@
 #!/bin/bash
 cat <<EOF
-
-<title>
-GuiltyCat's Home Page
-</title>
+思いのたけを，心のままに
+===============
 
 はじめに
-----------------------
+-----------------------
 
 少し精神を病んでいる人間が思ったことをつらつらと書いたものです．
 この記事は何か正解を示すものではありません．
@@ -16,16 +14,15 @@ A human who has mental sickness writes.
 These article has no truth of world.
 Only one stupid human's thought.
 
-私は自己責任という言葉は嫌いですが，
-あなたがこれを読み，影響を受け何かをしでかしたとしても，責任は負いません．
+私は自己責任という言葉は嫌いですが，あなたがこれを読み，
+影響を受け何かをしでかしたとしても，責任は負いません．
 
 I do not like the word "self-responsibility".
 However, if you read these, are affected and do something wrong, I will never be responsible.
 
 
 センシティブな内容についても遠慮なく書くこともあると思います．
-それらは決して誰かを貶めたりする意図で書いたのではありません．
-誰かを傷つけるつもりで書くことは絶対にありません．
+それらは決して誰かを貶めたりする意図で書いたのではありません．誰かを傷つけるつもりで書くことは絶対にありません．
 
 I will write very sensitve contents.
 This not mean that I want to hurt others.
@@ -50,7 +47,8 @@ Or my word choice causes unbeliavable misleadings.
 However, I want to write.
 Has Some desire for approval emerged?
 
-内容は適宜更新されますが，履歴はGitに残しておくので，辿れなくなることはないと思います．
+内容は適宜更新されますが，履歴はGitに残しておくので，
+辿れなくなることはないと思います．
 
 You can reach history of updates by Git.
 
@@ -62,15 +60,15 @@ You can reach history of updates by Git.
 
 そして，個別の記事それぞれについてIssueを立て，記事内にリンクを貼り誰でも書きこめるようにする予定です．
 
-- [コメントを書く場所](https://github.com/GuiltyCat/GuiltyCat.github.io/issues)
-- [Write Comment Here](https://github.com/GuiltyCat/GuiltyCat.github.io/issues)
+- [コメントを書く場所](https://github.com/GuiltyCat/GuiltyCat.github.io/issues/1)
+- [Write Comment Here](https://github.com/GuiltyCat/GuiltyCat.github.io/issues/1)
 
 記事一覧
 --------------------
 
 $(for FILE in "./html"/*; do
 	BASE=$(basename ${FILE%.*})
-	echo "[${BASE}:$(head -n1 ./md/${BASE}.md)](${FILE})"
+	echo "- [${BASE}:$(head -n1 ./md/${BASE}.md)](${FILE})"
 done)
 
 自己紹介(Self Introduction)
@@ -80,8 +78,7 @@ done)
 - C言語が好き．
 - 思ったことを全て表すために長大な文章を良く書く．
 
-Information System Engineer/Researcher.
-I like C lang.
-I often write very long article in order to express all of my thought.
-
+- Information System Engineer/Researcher.
+- I like C lang.
+- I often write very long sentences in order to express all of my thought.
 EOF
