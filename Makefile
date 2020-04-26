@@ -13,12 +13,12 @@ md/%.md:Makefile $(CSS)
 
 
 html/%.html : md/%.md
-	pandoc -s -B $(BANNER) -A $(BANNER) --metadata title=$(shell head -n1 $<) -c ./$(CSS) -f markdown -t html -o $@ <(tail -n+3 $< | sed  -z $(SED_EXP))
+	pandoc -s --mathjax -B $(BANNER) -A $(BANNER) --metadata title=$(shell head -n1 $<) -c ./$(CSS) -f markdown -t html -o $@ <(tail -n+3 $< | sed  -z $(SED_EXP))
 
 index.html : $(CSS)
 
 index.html: index.bash
-	pandoc -s --metadata title=$(shell grep -B1 "^====" $< | head -n1) -c ./$(CSS) -f markdown -t html -o $@ <(bash $< | tail -n+3 | sed -z $(SED_EXP))
+	pandoc -s --mathjax --metadata title=$(shell grep -B1 "^====" $< | head -n1) -c ./$(CSS) -f markdown -t html -o $@ <(bash $< | tail -n+3 | sed -z $(SED_EXP))
 
 clean:
 	rm html/*

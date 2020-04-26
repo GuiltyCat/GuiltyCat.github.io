@@ -2,5 +2,5 @@
 
 TODAY=$(date +%Y%m%d)
 
-vim "./md/${TODAY}.md"
+nvim "./md/${TODAY}.md"
 
