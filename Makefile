@@ -5,20 +5,39 @@ BANNER=banner.html
 
 CSS=style.css
 
+INDEX_OPTION=-s --mathjax -f markdown -t html -c $(CSS)
+
+ARTICLE_OPTION=$(INDEX_OPTION) -B $(BANNER) -A $(BANNER)
+
 SED_EXP='s/\([^\n-=\.,]\)\n\([^\n-=\.,]\)/\1\2/g'
 
-all:$(HTML_FILE) index.html $(CSS) Makefile
+all:$(HTML_FILE) index.html html/history.html $(CSS) Makefile
 
 md/%.md:Makefile $(CSS)
 
 
 html/%.html : md/%.md
-	pandoc -s --mathjax -B $(BANNER) -A $(BANNER) --metadata title=$(shell head -n1 $<) -c ./$(CSS) -f markdown -t html -o $@ <(tail -n+3 $< | sed  -z $(SED_EXP))
+	pandoc $(ARTICLE_OPTION) --metadata title=$(shell head -n1 $<) -o $@ <(tail -n+3 $< | sed  -z $(SED_EXP))
+
 
 index.html : $(CSS)
 
+
 index.html: index.bash
-	pandoc -s --mathjax --metadata title=$(shell grep -B1 "^====" $< | head -n1) -c ./$(CSS) -f markdown -t html -o $@ <(bash $< | tail -n+3 | sed -z $(SED_EXP))
+	pandoc $(INDEX_OPTION) --metadata title=$(shell grep -B1 "^====" $< | head -n1) -o $@ <(bash $< | tail -n+3 | sed -z $(SED_EXP))
+
+html/history.html : $(CSS)
+
+html/history.html : history.md
+	pandoc $(ARTICLE_OPTION) --metadata title="更新履歴" -o $@ <(tac $<)
+
+hist:
+	rm html/history.html
+	make
+
+index:
+	rm index.html
+	make
 
 clean:
 	rm html/*
