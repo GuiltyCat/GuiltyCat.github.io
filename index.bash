@@ -4,12 +4,11 @@ cat <<EOF
 私の表現
 ===============
 
-### [全ての履歴(All History)](html/history.html)
-
-最近の更新(Updates)
+更新(Updates)
 ----------
 
 $(tac "${HIST_FILE_NAME}" | grep "^-" | head -n 10)
+- [全ての履歴(All History)](html/history.html)
 
 
 はじめに
@@ -74,7 +73,7 @@ GitHub Pageに絵とか動画はあまり置けないから，
 記事一覧
 --------------------
 
-$(for FILE in $(find ./md -type f |tac); do
+$(for FILE in $(find ./md -type f |sort -n | tac); do
 	BASE=$(basename ${FILE%.*})
 	MD="./md/${BASE}.md"
 	if [[ ! -e "${MD}" ]]; then
