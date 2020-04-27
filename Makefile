@@ -28,9 +28,6 @@ index.html: index.bash
 
 html/history.html : $(CSS)
 
-html/history.html : history.md
-	pandoc $(ARTICLE_OPTION) --metadata title="更新履歴" -o $@ <(tac $<)
-
 hist:
 	rm html/history.html
 	make

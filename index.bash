@@ -1,4 +1,5 @@
 #!/bin/bash
+HIST_FILE_NAME="md/0000-00-00.md"
 cat <<EOF
 私の表現
 ===============
@@ -8,7 +9,7 @@ cat <<EOF
 最近の更新(Updates)
 ----------
 
-$(tac history.md | head -n 10)
+$(tac "${HIST_FILE_NAME}" | grep "^-" | head -n 10)
 
 
 はじめに

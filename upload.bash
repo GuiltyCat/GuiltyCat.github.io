@@ -2,7 +2,7 @@
 
 set -e
 
-HIST_FILE_NAME="history.md"
+HIST_FILE_NAME="md/0000-00-00.md"
 
 git add --all
 DATE=$(date +%Y-%m-%dT%H:%M:%S)
