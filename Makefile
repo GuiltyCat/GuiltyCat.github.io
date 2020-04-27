@@ -29,7 +29,7 @@ index.html: index.bash
 html/history.html : $(CSS)
 
 hist:
-	rm html/history.html
+	rm html/0000-00-00.html
 	make
 
 index:

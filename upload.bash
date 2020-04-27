@@ -7,7 +7,8 @@ HIST_FILE_NAME="md/0000-00-00.md"
 git add --all
 DATE=$(date +%Y-%m-%dT%H:%M:%S)
 for NAME in $(git diff --name-only master | grep "md/"); do
-	echo "- ${DATE} [$(basename ${NAME%.*}) $(head -n 1 ${NAME})](html/${NAME%.*}.html)" | tee -a "${HIST_FILE_NAME}"
+	BASE=$(basename ${NAME%.*})
+	echo "- ${DATE} [${BASE}) $(head -n 1 ${NAME})](../html/${BASE}.html)" | tee -a "${HIST_FILE_NAME}"
 done
 make 
 git add --all
