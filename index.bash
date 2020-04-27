@@ -73,7 +73,7 @@ GitHub Pageに絵とか動画はあまり置けないから，
 記事一覧
 --------------------
 
-$(for FILE in "./html"/*; do
+$(for FILE in $(find ./md -type f |tac); do
 	BASE=$(basename ${FILE%.*})
 	MD="./md/${BASE}.md"
 	if [[ ! -e "${MD}" ]]; then
