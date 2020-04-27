@@ -3,31 +3,35 @@ cat <<EOF
 私の表現
 ===============
 
+### [全ての履歴(All History)](html/history.html)
+
+最近の更新(Updates)
+----------
+
+$(tac history.md | head -n 10)
+
+
 はじめに
 -----------------------
 
 このサイトは私がかきたいと思ったことをただ書いていくものです．
 
-This site gathers what I want to express.
-
 センシティブな内容についても遠慮なく書きます．
 ですが，それらは決して誰かを貶めたりする意図で書いたのではありません．
-
-I will write very sensitve contents.
-This not mean that I want to hurt others.
-
 しかし，結果的に誰かを傷付けてしまうかもしれません．
 いや，誰かを間違いなく傷付けてしまうでしょう．
-
-However, I will hurt others someone undesirably.
-
 無意識に奢りがあり，それが露呈してしまっているのかもしれません．
 あるいは，言葉の選び方が悪いのかもしれません．
 
+内容は適宜更新されますが，履歴はGitに残しておきます．
+
+This site gathers what I want to express.
+
+I will write very sensitve contents.
+This not mean that I want to hurt others.
+However, I will hurt others someone undesirably.
 Some kinds of abundant exist in my unconscious and it appears in my sentense.
 Or my word choice causes unbeliavable misleadings.
-
-内容は適宜更新されますが，履歴はGitに残しておきます．
 
 You can reach history of updates by Git.
 
@@ -50,19 +54,8 @@ You can reach history of updates by Git.
 - 物語
 - 絵や漫画，動画
 
-細かな放心とか作り方についてはどこかの記事で．
-
-以下は暫定的にここに書いてあるだけです．
-
 GitHub Pageに絵とか動画はあまり置けないから，
 何かいい方法を探してみます．
-
-管理するのが面倒なので，
-日記風に日付けをつけ，一覧のみで管理します．
-日付けは最初にファイルを作った日で，
-ほとんど意味はありません．
-
-
 
 
 コメントを書く場所(Comment)
@@ -82,7 +75,12 @@ GitHub Pageに絵とか動画はあまり置けないから，
 
 $(for FILE in "./html"/*; do
 	BASE=$(basename ${FILE%.*})
-	echo "- [${BASE}:$(head -n1 ./md/${BASE}.md)](${FILE})"
+	MD="./md/${BASE}.md"
+	if [[ ! -e "${MD}" ]]; then
+		echo -e "${MD}\nsuch file is not exit" >&2
+		continue
+	fi
+	echo "- [${BASE} $(head -n1 ${MD})](${FILE})"
 done)
 
 EOF
