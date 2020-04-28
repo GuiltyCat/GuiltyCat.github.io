@@ -80,7 +80,7 @@ $(for FILE in $(find ./md -type f |sort -n | tac); do
 		echo -e "${MD}\nsuch file is not exit" >&2
 		continue
 	fi
-	echo "- [${BASE} $(head -n1 ${MD})](${FILE})"
+	echo "- [${BASE} $(head -n1 ${MD})](html/${BASE}.html)"
 done)
 
 EOF
