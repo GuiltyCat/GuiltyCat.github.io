@@ -19,6 +19,7 @@ H_BODY=$(echo "${H_BODY}" | tac)
 echo -e "${H_TITLE}\n${H_BODY}" >"${HIST_FILE_NAME}"
 
 make 
+make index
 git add --all
 
 git commit -m "update"
