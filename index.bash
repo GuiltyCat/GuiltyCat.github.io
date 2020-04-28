@@ -1,7 +1,7 @@
 #!/bin/bash
 HIST_FILE_NAME="md/0000-00-00.md"
 cat <<EOF
-私の表現
+私の表現(My Expression)
 ===============
 
 更新(Updates)

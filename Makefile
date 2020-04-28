@@ -17,14 +17,10 @@ md/%.md:Makefile $(CSS)
 
 
 html/%.html : md/%.md
-	pandoc $(ARTICLE_OPTION) --metadata title=$(shell head -n1 $<) -o $@ <(tail -n+3 $< | sed  -z $(SED_EXP))
-
-
-index.html : $(CSS)
-
+	pandoc $(ARTICLE_OPTION) --metadata title="$(shell head -n1 $<)" -o $@ <(tail -n+3 $< | sed  -z $(SED_EXP))
 
 index.html: index.bash
-	pandoc $(INDEX_OPTION) --metadata title=$(shell grep -B1 "^====" $< | head -n1) -o $@ <(bash $< | tail -n+3 | sed -z $(SED_EXP))
+	pandoc $(INDEX_OPTION) --metadata title="$(shell grep -B1 "^====" $< | head -n1)" -o $@ <(bash $< | tail -n+3 | sed -z $(SED_EXP))
 
 html/history.html : $(CSS)
 
