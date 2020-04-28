@@ -4,12 +4,20 @@ set -e
 
 HIST_FILE_NAME="md/0000-00-00.md"
 
+H_TITLE=$(head -n 3 "${HIST_FILE_NAME}")
+H_BODY=$(tail -n +4 "${HIST_FILE_NAME}" | tac)
+
 git add --all
 DATE=$(date +%Y-%m-%dT%H:%M:%S)
-for NAME in $(git diff --name-only master | grep "md/"); do
+for NAME in $(git diff --name-only master | grep "md/" | tac); do
 	BASE=$(basename ${NAME%.*})
-	echo "- ${DATE} [${BASE}) $(head -n 1 ${NAME})](../html/${BASE}.html)" | tee -a "${HIST_FILE_NAME}"
+	H_BODY=$(echo -e "${H_BODY}\n- ${DATE} [${BASE}) $(head -n 1 ${NAME})](../html/${BASE}.html)")
 done
+
+H_BODY=$(echo "${H_BODY}" | tac)
+
+echo -e "${H_TITLE}\n${H_BODY}" >"${HIST_FILE_NAME}"
+
 make 
 git add --all
 

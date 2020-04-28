@@ -7,7 +7,7 @@ cat <<EOF
 更新(Updates)
 ----------
 
-$(tac "${HIST_FILE_NAME}" | grep "^-" | sed -e 's/\.\././' | head -n 10)
+$(tac "${HIST_FILE_NAME}" | grep "^-" | sed -e "s/\.\././" | head -n 10)
 - [全ての履歴(All History)](${HIST_FILE_NAME//md/html})
 
 
