@@ -11,7 +11,7 @@ git add --all
 DATE=$(date +%Y-%m-%dT%H:%M:%S)
 for NAME in $(git diff --name-only master | grep "md/" | tac); do
 	BASE=$(basename ${NAME%.*})
-	H_BODY=$(echo -e "${H_BODY}\n- ${DATE} [${BASE}) $(head -n 1 ${NAME})](../html/${BASE}.html)")
+	H_BODY=$(echo -e "${H_BODY}\n- ${DATE} [${BASE} $(head -n 1 ${NAME})](../html/${BASE}.html)")
 done
 
 H_BODY=$(echo "${H_BODY}" | tac)
