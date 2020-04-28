@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <link rel="stylesheet" href="style.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<a href="../index.html">トップ(TOP)</a>
+<header id="title-block-header">
+<h1 class="title">Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console</h1>
+</header>
+<p>中々このサイトがGoogle検索にかからないので，色々としてみた記録を残しておく．</p>
+<p>まず<code>sitemap.xml</code>が必要だということで，<code>_config.yml</code>を一番上のディレクトリに置く．</p>
+<p>内容は以下である．</p>
+<p><code>plugins:   - jekyll-sitemap</code></p>
+<p>サイトを検索結果に表示させたいのであって，中身に興味はないので追いておく．</p>
+<p>これで<code>https://{user_name}.github.io/sitemap.xml</code>にアクセスして，URL一覧が見れるようになった．</p>
+<p>でお次はどうしろと書いてあったかというと，Google Search Consoleに登録してインデクシングをしろとのことだった．</p>
+<p>やり方がよく分からなかったが，とりあえず以下のURLで飛んでみると，オーナーですか？と聞かれるURLが出るのでクリックした．</p>
+<p><code>site:https://{user_name}.github.io</code></p>
+<p>するとプロパティタイプの選択というのが表示された．</p>
+<p>そこでドメイン名である<code>{user_name.github.io}</code>をで確認を押すと，ログインしてDNS設定をしろと出た．そんな設定GitHub Pagesになかったぞ．</p>
+<p>というわけで，URLプレフィックスで登録してみることにした．</p>
+<p>すると何やらgoogle</p>
+<p>ここでもうちょっと色々したのだが，とりあえず今は眠いので寝る．また明日追加しよう．これぐらいの緩さが丁度いい．</p>
+<p>ここでサイトマップを登録すればよいということだったので，左からサイトマップをクリックし，新しいサイトマップの追加．</p>
+<p>そして，先程<code>_config.yml</code>を追加することで生成された<code>sitemap.xml</code>を登録する．</p>
+<p>ここまでは簡単にできたのだが，インデクシングにはもっと時間がかかるそうだ．</p>
+<p>で，インデックスのカバレッジを見ると，</p>
+<p><code>データを処理しています．1日後にもう一度ご確認下さい</code></p>
+<p>いやいや，もう2日目ですけど．</p>
+<p>なにやら1週間ぐらいかかるとか．</p>
+<p>でもネットのニュースとか数分で検索結果に出ているのに．</p>
+<p>こんな他の記事へのリンクを貼らない，へんちくりんなサイトは後回しということか．</p>
+<p>もうちょっと待ってみることにする．</p>
+<a href="../index.html">トップ(TOP)</a>
+</body>
+</html>
