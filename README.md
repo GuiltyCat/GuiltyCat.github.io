@@ -1,6 +1,12 @@
 ホームページ
 ==============
 
+注意:jekyllを無効にしています．
+普通のサイトを作りたい場合は，jekyllを有効にした方がよいです．
+
+Caution: I disabled jekyll.
+You should enable jekyll to create a normal web site.
+
 リンク(Link)
 ------------
 
@@ -181,17 +187,16 @@ style.css
 
 I do not use css now.
 
-\_config.yml
--------------------
-
-GitHub Pagesで`sitemap.xml`を生成させるためのもの．
-よく知らないが，これでできるらしい．
-
-In order to generate `sitemap.xml` in GitHub Pages.
-I do not now detail.
 
 重要なファイル達(Important files)
 ===================
+
+.nojekyll
+--------------
+
+これでjekyllを無効にできるらしい．
+
+Disable jekyll. maybe.
 
 diary.bash, upload.bash
 ---------------
@@ -223,9 +228,21 @@ index.html contains a update history and a list of all articles.
 Thus I generate automatically.
 
 
+sitemap.bash, sitemap.xml
+-------------------
+
+サイトマップを作って登録し，Googleの検索に表示されるようにする．
+`sitemap.bash`は`sitemap.xml`を自動で生成するためのスクリプト．
+jekyllが出力したものを参考にして作成．
+
+Generate `sitemap.xml` by `sitemap.bash` to register this web site with Google.
+This script made with reference to jekyll's `sitemap.xml`.
+
 Makefile
 --------------
 
 htmlの生成に使う．htmlの項目で詳しく説明した．
+`index.html`．各記事のhtmlファイル．`sitemap.xml`が生成される．
 
 Used to generate html. I explain before in html directory section.
+Genearate `index.html`, html files of each articles and `sitemap.xml`.
