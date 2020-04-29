@@ -9,9 +9,6 @@ INDEX_OPTION=-s --mathjax -f markdown -t html -c $(CSS)
 
 ARTICLE_OPTION=$(INDEX_OPTION) -B $(BANNER) -A $(BANNER)
 
-# SED_EXP='s/\([^\n-=\.,`]\)\n\([^\n-=\.,`]\)/\1\2/g'
-#SED_EXP=$(shell bash remove_newline.bash -e)
-
 all:$(HTML_FILE) index.html $(CSS) Makefile sitemap.xml
 
 html/%.html : md/%.md $(CSS) Makefile
