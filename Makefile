@@ -18,8 +18,12 @@ all:$(HTML_FILE) index.html $(CSS) Makefile
 html/%.html : md/%.md $(CSS) Makefile
 	pandoc $(ARTICLE_OPTION) --metadata title="$(shell head -n1 $<)" -o $@ <(tail -n+3 $< | sed  -z $(SED_EXP))
 
-index.html: index.bash $(CSS) $(wildcard md/*.md) Makefile
-	pandoc $(INDEX_OPTION) --metadata title="$(shell grep -B1 "^====" $< | head -n1)" -o $@ <(bash $< | tail -n+3 | sed -z $(SED_EXP))
+
+index.md : index.bash 
+	bash $< >$@
+
+index.html: index.md $(CSS) $(wildcard md/*.md) Makefile
+	pandoc $(INDEX_OPTION) --metadata title="$(shell grep -B1 "^====" $< | head -n1)" -o $@ <(cat $< | tail -n+3 | sed -z $(SED_EXP))
 
 hist:
 	rm html/0000-00-00.html
