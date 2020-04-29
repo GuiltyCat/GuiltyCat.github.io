@@ -7,7 +7,7 @@ function one_line(){
 	if [[ "$FILE" == "" ]]; then
 		FILE="index.html"
 	fi
-	DATE=$(date -u +%Y-%m-%dT%H:%M:%S:%2N+09:00 -r "${FILE}")
+	DATE=$(date -u +%Y-%m-%dT%H:%M:%S.%2N+09:00 -r "${FILE}")
 	echo "<lastmod>${DATE}</lastmod>"
 	echo "</url>"
 }
