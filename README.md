@@ -21,6 +21,7 @@ You should enable jekyll to create a normal web site.
 
 `article.bash`を使うと，自動で今日の日付から記事の名前を生成し，
 `nvim`で開けてくれる．
+`-lw`オプションを一番良く使っている．
 
 そして，`upload.bash`でMarkdownから自動でhtmlが生成され，自動でアップロードされる．
 
@@ -34,6 +35,7 @@ I use these two commands to write and upload articles.
 
 `article.bash` has several useful options.
 I explain these in `bash article.bash -h` and below of this article.
+I often use `-lw` option.
 
 ディレクトリの構成
 =============
@@ -124,8 +126,8 @@ mdディレクトリの中身を`pandoc`を使ってhtmlに自動変換させて
 また，もう一つは改行やスペース周りの調整だ．
 英語であれば自然な動作なのだが，段落分けではない単なる一つの改行を入れると，`pandoc`は改行を半角スペースに変換する．
 うっとうしいので，段落分けではな改行だけ`sed`で除去している．
-そのルールが結構細かいのであんな面倒な表現になっているのだ．
-まだ表には対応できていないと思う．
+そしてこの辺りは目視確認にも使うので`remove_newline.bash`という別スクリプトにしている．
+この改行削除は文末が全角のコンマかピリオドで終わらないと上手く動作しない．
 
 
 In this directory, there are html files generated from md files by `pandoc`.
@@ -152,7 +154,7 @@ It is natural behavior that convert newline to single space in English.
 However in Japanese, it is unnecessary.
 Thus I remove newline in Markdown by using `sed` and little bit complex option.
 Because some markdown syntax needs newline.
-This `Makefile` may not work well on Tabular.
+`remove_newline.bash` does this.
 
 ファイルの構成 (Files)
 =============
@@ -211,6 +213,7 @@ article.bash, upload.bash
 
 - `--list`か`-l`で，記事の一覧が，番号とファイル名，タイトルの順番で列挙される．
 - `--write <NUM>`か`-w <NUM>`で，`--list`オプションで表示されている番号を指定すると，その記事が開く．
+- `-lw`で，上の二つを合わせたようなものになる．一覧が表示され，番号を聞かれる．それで開く．
 
 `article.bash` create file name by `date` command and open in `nvim`.
 
@@ -222,6 +225,9 @@ article.bash, upload.bash
 	You can see all article list with number, filename and title.
 - `--write <NUM>` or `-w <NUM>` option. 
 	You can edit a specified article by the number appears in `--list` option.
+- `-lw` option.
+	You can see list and asked a number to write.
+	Then open.
 
 `upload.bash` detect file changes and append to update history,
 generate html from Markdown, update index.bash, commit all changes and upload to GitHub.
