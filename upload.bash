@@ -9,7 +9,7 @@ H_BODY=$(tail -n +4 "${HIST_FILE_NAME}" | tac)
 
 git add --all
 DATE=$(date +%Y-%m-%dT%H:%M:%S)
-for NAME in $(git diff --name-only master | grep "md/" | tac); do
+for NAME in $(git diff --name-only master | grep "md/" | grep -v "0000-00-00" |  tac); do
 	BASE=$(basename ${NAME%.*})
 	H_BODY=$(echo -e "${H_BODY}\n- ${DATE} [${BASE} $(head -n 1 ${NAME})](../html/${BASE}.html)")
 done
