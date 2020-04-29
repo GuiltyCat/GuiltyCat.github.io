@@ -25,16 +25,19 @@
 </header>
 <p>Makefileはこの記事の自動生成でも使用してるが，中々便利なものだ．</p>
 <p>記述の基本はターゲットと依存を書き，その下にタブで始まる処理内容を書くというものだ．</p>
-<p><code>Target:Dependency    Process</code></p>
+<pre><code>Target:Dependency
+    Process</code></pre>
 <p>そして，一々全てのファイル名を記述するのは面倒な時がある．だから，そういう時のために特殊変数が用意されている．</p>
 <p>例えば，あるMarkdownからhtmlを作成したいとする．この時以下のように書くことで，勝手に名前を当て嵌めてくれる．</p>
-<p><code>html/%.html:md/%.md  pandoc -f markdown -t html -o $@ $&lt;</code></p>
+<pre><code>html/%.html:md/%.md
+    pandoc -f markdown -t html -o $@ $&lt; </code></pre>
 <p>この時，<code>%</code>記号は同じ一つの名前を表わす．そして，<code>$&lt;</code>は依存ファイルの最初のファイル名を，<code>$@</code>はターゲット名を表す．</p>
 <p>今まで勘違いしていなのは，この<code>%</code>が全てのファイルの羅列と同義であると思い，<code>$&lt;</code>というのは依存関係にある全てを処理すると思っていたことだ．</p>
 <p>だから，依存関係にはあるが内部で処理をしないファイルの扱い方が分からなかったのだ．例えばC言語のヘッダーなんかは，依存関係にはあるがヘッダだけでコンパイルはしないので，この表現では使えないと思っていたのだ．</p>
 <p>しかし，実際にはそんな動作はしておらず，<code>%</code>は一つのファイルを示している．そして<code>$&lt;</code>は依存関係の一番先頭にあるファイルだけを示す．</p>
 <p>だから，以下のように書いても<code>style.css</code>は<code>$&lt;</code>にはならず，処理されない．</p>
-<p><code>html/%.html:md/%.md style.css    pandoc -f markdown -t html -o $@ $&lt;</code></p>
+<pre><code>html/%.html:md/%.md style.css
+    pandoc -f markdown -t html -o $@ $&lt; </code></pre>
 <h2 id="最後に">最後に</h2>
 <p>いやー，ずっと長いこと使っていたのにこんなことも知らなかったとは．サクッと調べると，確かに<code>$&lt;</code>の説明は先頭のファイルと書いていたが，華麗に読み飛ばしてしまっていた．</p>
 <p>でも，Makefileとgccにはまだ-MD，-MMDや.dファイルという，まだ理解しきれていなオプションや書き方があるので，いずれまとめたい．</p>
