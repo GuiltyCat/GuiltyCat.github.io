@@ -2,17 +2,17 @@
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://guiltycat.github.io/</loc>
-<lastmod>2020-04-30T06:14:49.28+09:00</lastmod>
+<lastmod>2020-04-30T13:38:13.34+09:00</lastmod>
 <changefreq>daily</changefreq>
 </url>
 <url>
 <loc>https://guiltycat.github.io/index.html</loc>
-<lastmod>2020-04-30T06:14:49.28+09:00</lastmod>
+<lastmod>2020-04-30T13:38:13.34+09:00</lastmod>
 <changefreq>daily</changefreq>
 </url>
 <url>
 <loc>https://guiltycat.github.io/html/0000-00-00.html</loc>
-<lastmod>2020-04-30T06:14:48.64+09:00</lastmod>
+<lastmod>2020-04-30T13:38:12.46+09:00</lastmod>
 <changefreq>daily</changefreq>
 </url>
 <url>
@@ -43,6 +43,11 @@
 <url>
 <loc>https://guiltycat.github.io/html/2020-04-29.html</loc>
 <lastmod>2020-04-30T06:12:47.18+09:00</lastmod>
+<changefreq>daily</changefreq>
+</url>
+<url>
+<loc>https://guiltycat.github.io/html/2020-04-30.html</loc>
+<lastmod>2020-04-30T13:38:12.68+09:00</lastmod>
 <changefreq>daily</changefreq>
 </url>
 </urlset>
