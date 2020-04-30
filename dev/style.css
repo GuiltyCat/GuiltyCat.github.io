@@ -1,0 +1,37 @@
+#left{
+	flex;
+	/*position: absolute;*/
+	/*top: 0;*/
+	/*
+	left: 200px;
+	 */
+	/*
+	width: 20px;
+	 */
+	/*height: 100%;*/
+	/*
+	text-align: left;
+	 */''
+	border-left: 1px solid;
+	/*solid #ccc;*/
+}
+#right{
+	flex;
+	width:100%;
+	/*
+	position: absolute;
+	top: 0;
+	right: 0;
+	left: 220px;
+	height: 100%;
+	border-left: 2px solid #ccc;
+	 */
+}
+iframe {
+	display: flex;
+	border: none;
+	/*
+	height: 100%;
+	width: 100%;
+	 */
+}
