@@ -9,7 +9,7 @@ function one_line(){
 	fi
 	DATE=$(date -u +%Y-%m-%dT%H:%M:%S.%2N+09:00 -r "${FILE}")
 	echo "<lastmod>${DATE}</lastmod>"
-	echo "<changefreq>daily</changefreq"
+	echo "<changefreq>daily</changefreq>"
 	echo "</url>"
 }
 cat << EOF
