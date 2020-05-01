@@ -9,12 +9,12 @@ INDEX_OPTION=-s --mathjax -f markdown -t html -c $(CSS)
 
 ARTICLE_OPTION=$(INDEX_OPTION) -B $(BANNER) -A $(BANNER)
 
-all:$(HTML_FILE) index.html $(CSS) Makefile sitemap.xml
+all:$(HTML_FILE) index.html Makefile sitemap.xml
 
-html/%.html : md/%.md $(CSS) Makefile
+html/%.html : md/%.md Makefile
 	pandoc $(ARTICLE_OPTION) --metadata title="$(shell head -n1 $<)" -o $@ <(./remove_newline.bash -f $< | tail -n+3)
 
-index.html: index.bash $(CSS) $(wildcard md/*.md) Makefile
+index.html: index.bash $(wildcard md/*.md) Makefile
 	pandoc $(INDEX_OPTION) --metadata title="$(shell grep -B1 "^====" $< | head -n1)" -o $@ <(bash $< |  tail -n+3 | ./remove_newline.bash)
 
 sitemap.xml: sitemap.bash index.html $(wildcard html/*.html)
