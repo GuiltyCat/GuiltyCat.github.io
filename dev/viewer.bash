@@ -1,17 +1,18 @@
 #!/bin/bash
-LEFT=$1
-RIGHT=$2
+RIGHT=$1
 cat <<EOF
-<div id="left">
-<iframe src="${LEFT}" name="left">
-あいうえお
+<dev id="flex">
+<div class="list">
+<div class="inner_list">
+$(for i in $(seq 100);do
+echo "<a href=id=\"${i}\">List of pages.</a>"
+done
+)
+</div>
+</div>
+<div>
+<iframe src="${RIGHT}" name="page">
 </iframe>
 </div>
-<div id="right">
-<iframe src="${RIGHT}" name="right">
-asdfasdfasdf
-</iframe>
 </div>
 EOF
-# <div id="right">
-# </div>
