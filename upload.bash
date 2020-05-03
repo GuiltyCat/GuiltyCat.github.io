@@ -8,6 +8,9 @@ H_TITLE=$(head -n 3 "${HIST_FILE_NAME}")
 H_BODY=$(tail -n +4 "${HIST_FILE_NAME}" | tac)
 
 git add --all
+# マークダウンの日付けを見てアップデートを見てもよいが
+# 実際にインターネットで公開するのはuploadしてからなので，
+# インターネットへのアップロードに合わせることとする．
 DATE=$(date +%Y-%m-%dT%H:%M:%S)
 for NAME in $(git diff --name-only master | grep "md/" | grep -v "0000-00-00" |  tac); do
 	BASE=$(basename ${NAME%.*})
