@@ -5,7 +5,8 @@ BANNER=banner.html
 
 CSS=style.css
 
-INDEX_OPTION=-s --mathjax -f markdown -t html -c $(CSS)
+INDEX_OPTION=-s --mathjax -f markdown -t html 
+# -c $(CSS)
 
 ARTICLE_OPTION=$(INDEX_OPTION) -B $(BANNER) -A $(BANNER)
 
