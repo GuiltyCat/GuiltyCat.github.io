@@ -1,5 +1,9 @@
 #!/bin/bash
 set -e
+FILE=""
+
+FILE_NAME="False"
+
 while [[ "$#" -ne 0 ]]; do
 	case $1 in
 	--max)
@@ -14,28 +18,40 @@ while [[ "$#" -ne 0 ]]; do
 		shift
 		IMG_URL=$1
 		;;
-	*) ;;
+	--file_name)
+		FILE_NAME="True"
+		;;
+	*)
+		echo "Such option is not permitted."
+		exit
+		;;
 	esac
 	shift
 done
 
-URL="."
-IMG_HEIGHT=$(identify -format '%h' "${IMG_URL}")
-IMG_WIDTH=$(identify -format '%w' "${IMG_URL}")
-
-function ZERO_PAD(){
+function ZERO_PAD() {
 	printf "%0${#MAX}d" $1
 }
 
-function IMG_URL() {
+if [[ "$FILE_NAME" == "True" ]]; then
+	echo "$(ZERO_PAD ${NUM}).html"
+	exit
+fi
+
+IMG=$(identify -format "%h,%w" <(wget -q -O - "${IMG_URL}"))
+
+IMG_HEIGHT=$(echo "${IMG}" | cut -d',' -f1)
+IMG_WIDTH=$(echo "${IMG}" | cut -d',' -f2)
+
+function PAGE_PATH() {
 	NUM=$1
-	echo -n "${URL}/${NUM}.html"
+	echo -n "./${NUM}.html"
 }
 
 function JUMP_TAG() {
 	NAME=$1
 	TO=$2
-	echo -n "<a href=\"$(IMG_URL ${TO})\">${NAME}</a>"
+	echo -n "<a href=\"$(PAGE_PATH ${TO})\">${NAME}</a>"
 }
 
 function NEXT() {
@@ -54,19 +70,22 @@ function PREV() {
 	fi
 }
 
-function NAVI(){
+function NAVI() {
 	cat <<EOF
-<div style="text-align:left">$(PREV)</div>
-<div style="text-align:center">$(PREV)  $(ZERO_PAD ${NUM})  $(NEXT)</div>
-<div style="text-align:right">$(NEXT)</div>
+<span style="text-align:left">$(PREV)</span>
+<span style="text-align:center">$(PREV)  $(ZERO_PAD ${NUM})  $(NEXT)</span>
+<span style="text-align:right">$(NEXT)</span>
 EOF
 }
 
 cat <<EOF
 $(NAVI)
+
 <img src="${IMG_URL}" usemap="#image" width="100%" >
+
 $(NAVI)
-$(for i in $(seq ${MAX}); do
+$(
+	for i in $(seq ${MAX}); do
 		if [[ ${i} -eq ${NUM} ]]; then
 			echo -n "***$(ZERO_PAD ${i})*** "
 			continue
