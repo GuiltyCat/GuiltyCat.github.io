@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 SED_EXP='s/\([．，]\)\n\([^\n]\)/\1\2/g'
 if [[ "$#" -eq 0 ]]; then
