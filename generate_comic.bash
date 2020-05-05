@@ -72,17 +72,17 @@ function PREV() {
 
 function NAVI() {
 	cat <<EOF
-<span style="text-align:left">$(PREV)</span>
-<span style="text-align:center">$(PREV)  $(ZERO_PAD ${NUM})  $(NEXT)</span>
-<span style="text-align:right">$(NEXT)</span>
+<div style="text-align:center">
+<span style="float:left">$(PREV)</span>
+<span style="float:center">$(PREV)  $(ZERO_PAD ${NUM})  $(NEXT)</span>
+<span style="float:right">$(NEXT)</span>
+</div>
 EOF
 }
 
 cat <<EOF
 $(NAVI)
-
 <img src="${IMG_URL}" usemap="#image" width="100%" >
-
 $(NAVI)
 $(
 	for i in $(seq ${MAX}); do

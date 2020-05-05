@@ -38,7 +38,6 @@ done
 
 
 TITLE=$(echo "$FILE" | head -n 1)
-echo "${TITLE}" >&2
 if [[ "${TITLE}" == *:*Manga* ]]; then
 	COUNTER=0
 	DIR_NAME="html/$(basename ${NAME%.*})"
@@ -66,7 +65,7 @@ cat <<EOF
 <title>${TITLE}</title>
 </head>
 <body>
-<p><a href="${TOP_LINK}">${TOP_NAME}</a></p>
+<a href="${TOP_LINK}">${TOP_NAME}</a>
 $(pandoc --mathjax -f markdown -t html <(RemoveNewline <<<${FILE}))
 <p><a href="${TOP_LINK}">${TOP_NAME}</a></p>
 </body>
