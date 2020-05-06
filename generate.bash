@@ -67,7 +67,7 @@ cat <<EOF
 <body>
 <a href="${TOP_LINK}">${TOP_NAME}</a>
 $(pandoc --mathjax -f markdown -t html <(RemoveNewline <<<${FILE}))
-<p><a href="${TOP_LINK}">${TOP_NAME}</a></p>
+<a href="${TOP_LINK}">${TOP_NAME}</a>
 </body>
 </html>
 EOF
