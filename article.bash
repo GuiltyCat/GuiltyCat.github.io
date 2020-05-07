@@ -64,7 +64,7 @@ while [[ $# -ne 0 ]]; do
 			Write ${NUM}
 			exit
 			;;
-		-lw )
+		-lw|-r)
 			ArticleList
 			echo -n "Number to write:"
 			read NUM
