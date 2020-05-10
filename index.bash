@@ -74,8 +74,7 @@ GitHub Pageに絵とか動画はあまり置けないから，
 そして，コメントが多ければ，
 個別の記事内にIssueを立て個別管理する予定です．
 
-- [コメントを書く場所](https://github.com/GuiltyCat/GuiltyCat.github.io/issues/1)
-- [Write Comment Here](https://github.com/GuiltyCat/GuiltyCat.github.io/issues/1)
+[コメントを書く場所(Write Comment Here)](https://github.com/GuiltyCat/GuiltyCat.github.io/issues/1)
 
 記事一覧
 --------------------
