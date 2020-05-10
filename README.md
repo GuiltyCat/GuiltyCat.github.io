@@ -5,7 +5,7 @@
 普通のサイトを作りたい場合は，jekyllを有効にした方がよいです．
 
 Caution: I disabled jekyll.
-You should enable jekyll to create a normal web site.
+You should enable this to create a normal web site.
 
 リンク(Link)
 ------------
@@ -13,8 +13,19 @@ You should enable jekyll to create a normal web site.
 トップページ(Top Page)
 - [https://guiltycat.github.io/](https://guiltycat.github.io/)
 
-サイトマップ(Site Map)
-- [https://guiltycat.github.io/sitemap.xml](https://guiltycat.github.io/sitemap.xml)
+基本構成要素
+=============
+
+- index.html
+	- 全ての記事一覧と，直近の更新．
+	- Link to all ariticle and recent updates.
+- `html/<date>`.html
+	- 記事
+	- articlle
+- `html/<date>/`
+	- 漫画表示用の1画像1ページのサイト
+	- Comic pages, one page one site.
+
 
 使い方
 ================
