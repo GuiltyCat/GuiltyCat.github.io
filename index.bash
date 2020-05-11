@@ -25,6 +25,10 @@ $(tail -n +4 "${HIST_FILE_NAME}" | head -n 10 | sed -e "s/\.\././")
 
 内容は適宜更新されますが，履歴はGitに残しておきます．
 
+後，私はソースやリンクを貼りませんが，同様に直接引用もしません．
+したがって，書いた内容が真実かどうかはまた別の話です．
+各自お確かめ下さい．
+
 This site gathers what I want to express.
 
 I will write very sensitve contents.
@@ -34,6 +38,9 @@ Some kinds of abundant exist in my unconscious and it appears in my sentense.
 Or my word choice causes unbeliavable misleadings.
 
 You can reach history of updates by Git.
+
+I will not link to source of information and will not quote any sentense directoly from other sites.
+Thus, you should check by yourself.
 
 自己紹介(Self Introduction)
 ---------------------
@@ -67,13 +74,12 @@ GitHub Pageに絵とか動画はあまり置けないから，
 そして，コメントが多ければ，
 個別の記事内にIssueを立て個別管理する予定です．
 
-- [コメントを書く場所](https://github.com/GuiltyCat/GuiltyCat.github.io/issues/1)
-- [Write Comment Here](https://github.com/GuiltyCat/GuiltyCat.github.io/issues/1)
+[コメントを書く場所(Write Comment Here)](https://github.com/GuiltyCat/GuiltyCat.github.io/issues/1)
 
 記事一覧
 --------------------
 
-$(for FILE in $(find ./md -type f |sort -n | tac); do
+$(for FILE in $(find ./md -type f | sort -n | tac); do
 	BASE=$(basename ${FILE%.*})
 	MD="./md/${BASE}.md"
 	if [[ ! -e "${MD}" ]]; then

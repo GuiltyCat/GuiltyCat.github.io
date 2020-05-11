@@ -1,23 +1,17 @@
 MD_FILE=$(shell ls md/*)
 HTML_FILE=$(subst md,html,$(MD_FILE))
 SHELL=/bin/bash
-BANNER=banner.html
-
 CSS=style.css
 
-INDEX_OPTION=-s --mathjax -f markdown -t html -c $(CSS)
+all:$(HTML_FILE) index.html Makefile sitemap.xml
 
-ARTICLE_OPTION=$(INDEX_OPTION) -B $(BANNER) -A $(BANNER)
+html/%.html : md/%.md Makefile
+	bash generate.bash --md $< --css $(CSS) >$@
 
-all:$(HTML_FILE) index.html $(CSS) Makefile sitemap.xml
+index.html: index.bash $(MD_FILE) Makefile
+	bash generate.bash --md <(bash $<) --css $(CSS) >$@
 
-html/%.html : md/%.md $(CSS) Makefile
-	pandoc $(ARTICLE_OPTION) --metadata title="$(shell head -n1 $<)" -o $@ <(./remove_newline.bash -f $< | tail -n+3)
-
-index.html: index.bash $(CSS) $(wildcard md/*.md) Makefile
-	pandoc $(INDEX_OPTION) --metadata title="$(shell grep -B1 "^====" $< | head -n1)" -o $@ <(bash $< |  tail -n+3 | ./remove_newline.bash)
-
-sitemap.xml: sitemap.bash index.html $(wildcard html/*.html)
+sitemap.xml: sitemap.bash $(HTML_FILE)
 	bash $< >$@
 
 hist:
@@ -29,5 +23,5 @@ index:
 	make
 
 clean:
-	rm html/*
-	rm index.html
+	rm -rf html/*
+	rm -rf index.html

@@ -1,8 +1,10 @@
 #!/bin/bash
 
+MD_DIR="./md"
+
 function ArticleList() {
 	COUNTER=0
-	for FILE in $(find ./md -type f | sort -n); do
+	for FILE in $(find ${MD_DIR} -type f | sort -n); do
 		echo "${COUNTER}:${FILE}:$(head -n1 ${FILE})"
 		COUNTER=$((COUNTER + 1))
 	done
@@ -34,42 +36,42 @@ I only use -lw option.
 --lw
 	mixture of list and write.
 	After listing, enter a number you want to write.
-	
+
 
 EOF
 }
 
 function Write(){
 	NUM=$1
-		FILE="$(find ./md -type f | sort -n | tail -n+$((NUM + 1)) | head -n 1)"
-		nvim "${FILE}"
+	FILE="$(find ./md -type f | sort -n | tail -n+$((NUM + 1)) | head -n 1)"
+	nvim "${FILE}"
 }
-
+COMIC="False"
 while [[ $# -ne 0 ]]; do
 
 	case $1 in
-	--help | -h)
-		Help
-		exit
-		;;
-	--list | -l)
-		ArticleList
-		exit
-		;;
-	--write | -w)
-		shift
-		NUM=$1
-		Write ${NUM}
-		exit
-		;;
-	-lw )
-		ArticleList
-		echo -n "Number to write:"
-		read NUM
-		Write ${NUM}
-		exit
-		;;
-	*) ;;
+		--help | -h)
+			Help
+			exit
+			;;
+		--list | -l)
+			ArticleList
+			exit
+			;;
+		--write | -w)
+			shift
+			NUM=$1
+			Write ${NUM}
+			exit
+			;;
+		-lw|-r)
+			ArticleList
+			echo -n "Number to write:"
+			read NUM
+			Write ${NUM}
+			exit
+			;;
+		*) ;;
 	esac
 	shift
 done
