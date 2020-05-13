@@ -3,55 +3,174 @@
 <head>
 <meta charset="UTF-8">
 <title>Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console:Google, Search, GitHub Pages</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
 </head>
 <body>
-<p><a href="../index.html">トップ(TOP)</a></p>
-<h1 id="googleの検索結果にgithub-pagesを載せる-github-pages-on-google-searchgoogle-search-consolegoogle-search-github-pages">Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console:Google, Search, GitHub Pages</h1>
-<p>中々このサイトがGoogle検索にかからないので，色々としてみた記録を残しておく．</p>
-<p>まず<code>sitemap.xml</code>が必要だということで，<code>_config.yml</code>を一番上のディレクトリに置く．</p>
-<p>内容は以下である．</p>
-<pre><code>plugins:
-  - jekyll-sitemap</code></pre>
-<p>(追記:</p>
-<p>但し，上の設定をしてしまうと，自動的にjekyllがMarkdownをhtmlに変換して表示してしまう．</p>
-<p>普通に使うのであれば問題ないが，私は徹底的にカスタマイズしたい．だから，上の方式ではなく自前で<code>sitemap.xml</code>を生成するスクリプトを書いた．)</p>
-<p>サイトを検索結果に表示させたいのであって，中身に興味はないので追いておく．</p>
-<p>これで<code>https://{user_name}.github.io/sitemap.xml</code>にアクセスして，URL一覧が見れるようになった．</p>
-<p>でお次はどうしろと書いてあったかというと，Google Search Consoleに登録してインデクシングをしろとのことだった．</p>
-<p>やり方がよく分からなかったが，とりあえず以下のURLで飛んでみると，オーナーですか？と聞かれるURLが出るのでクリックした．</p>
-<pre><code>site:https://{user_name}.github.io</code></pre>
-<p>するとプロパティタイプの選択というのが表示された．</p>
-<p>そこでドメイン名である<code>{user_name.github.io}</code>をで確認を押すと，ログインしてDNS設定をしろと出た．そんな設定GitHub Pagesになかったぞ．</p>
-<p>というわけで，URLプレフィックスで登録しておくことにした．</p>
-<p>すると何やらgooglexxxxx.htmlを直下に置けとかいう指示があった．言われた通りに置いて認証すると成功した．</p>
-<p>さらにサイトマップを登録すればよいということだったので，左からサイトマップをクリックし，新しいサイトマップの追加を選択．そして，先程<code>_config.yml</code>を追加することで生成された<code>sitemap.xml</code>を登録する．</p>
-<p>ここまでは簡単にできたのだが，インデクシングにはもっと時間がかかるそうだ．で，インデックスのカバレッジを見ると，</p>
-<pre><code>データを処理しています．1日後にもう一度ご確認下さい</code></pre>
-<p>いやいや，もう2日目ですけど．なにやら1週間ぐらいかかるとか．でもネットのニュースとか数分で検索結果に出ているのに．こんな他の記事へのリンクを貼らない，へんちくりんなサイトは後回しということか．もうちょっと待ってみることにする．</p>
-<h2 id="am">2020/04/29 AM</h2>
-<p>であれから一日たったが，ついに検索結果に表示された．ちなみに広告について文句を書いた<a href="../html/2020-04-26.html">この記事</a>．なんだけどMarkdownの方が登録されている．しかも，古い命名規則のMarkdownファイルの方だ．だからリンク先が存在しない．</p>
+<a href="../index.html">トップ(TOP)</a>
+<h1 id="Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console:Google, Search, GitHub Pages">Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console:Google, Search, GitHub Pages</h1>
+
+<p>
+中々このサイトがGoogle検索にかからないので，色々としてみた記録を残しておく．
+</p>
+
+<p>
+まず<code>sitemap.xml</code>が必要だということで，<code>_config.yml</code>を一番上のディレクトリに置く．
+</p>
+
+<p>
+内容は以下である．
+</p>
+
+<pre><code>
+plugins:
+  - jekyll-sitemap
+</code></pre>
+
+<p>
+(追記:
+
+</p>
+
+<p>
+但し，上の設定をしてしまうと，自動的にjekyllがMarkdownをhtmlに変換して表示してしまう．
+</p>
+
+<p>
+普通に使うのであれば問題ないが，私は徹底的にカスタマイズしたい．だから，上の方式ではなく自前で<code>sitemap.xml</code>を生成するスクリプトを書いた．)
+
+</p>
+
+<p>
+サイトを検索結果に表示させたいのであって，中身に興味はないので追いておく．
+</p>
+
+<p>
+これで<code>https://{user_name}.github.io/sitemap.xml</code>にアクセスして，URL一覧が見れるようになった．
+</p>
+
+<p>
+でお次はどうしろと書いてあったかというと，Google Search Consoleに登録してインデクシングをしろとのことだった．
+</p>
+
+<p>
+やり方がよく分からなかったが，とりあえず以下のURLで飛んでみると，オーナーですか？と聞かれるURLが出るのでクリックした．
+</p>
+
+<pre><code>
+site:https://{user_name}.github.io
+</code></pre>
+
+<p>
+するとプロパティタイプの選択というのが表示された．
+</p>
+
+<p>
+そこでドメイン名である<code>{user_name.github.io}</code>をで確認を押すと，ログインしてDNS設定をしろと出た．そんな設定GitHub Pagesになかったぞ．
+</p>
+
+<p>
+というわけで，URLプレフィックスで登録しておくことにした．
+</p>
+
+<p>
+すると何やらgooglexxxxx.htmlを直下に置けとかいう指示があった．言われた通りに置いて認証すると成功した．
+</p>
+
+
+<p>
+さらにサイトマップを登録すればよいということだったので，左からサイトマップをクリックし，新しいサイトマップの追加を選択．そして，先程<code>_config.yml</code>を追加することで生成された<code>sitemap.xml</code>を登録する．
+</p>
+
+<p>
+ここまでは簡単にできたのだが，インデクシングにはもっと時間がかかるそうだ．で，インデックスのカバレッジを見ると，
+</p>
+
+<pre><code>
+データを処理しています．1日後にもう一度ご確認下さい
+</code></pre>
+
+<p>
+いやいや，もう2日目ですけど．なにやら1週間ぐらいかかるとか．でもネットのニュースとか数分で検索結果に出ているのに．こんな他の記事へのリンクを貼らない，へんちくりんなサイトは後回しということか．もうちょっと待ってみることにする．
+</p>
+
+<h2 id="2020/04/29 AM">2020/04/29 AM</h2>
+
+<p>
+<a href="../html/2020-04-26.html">この記事</a>
+</p>
+
 <ul>
-<li>旧名と新名</li>
+<li> 旧名と新名
+</li>
 </ul>
-<pre><code>20200426.md
-2020-04-26.md</code></pre>
-<p>そっちじゃない．</p>
-<p>しかもなんでhtmlじゃなくてMarkdownなんだよ．Markdownのリンクはindex.htmlに貼ってないから<code>sitemap.xml</code>にも載ってないのに．</p>
-<p>トップページより先に，生Markdownだけ公開されてしまいました．</p>
-<h2 id="am-1">2020/04/29 AM</h2>
-<p>あれから色々と探っていると，mdだけ登録された理由が分かった．</p>
-<p>Googleは<code>sitemap.xml</code>が更新されても自分からは見に行かないようだ．だから古いサイトを登録しようとしてしまったようだ．</p>
-<p>ここで問題だったのはjekyllがmdから自動でhtmlを作成していたのだ．だから，mdからjekyllが自動生成したhtmlがmd/xx.htmlとして，私が<code>mnake</code>でmdから自動で生成したhtmlがhtml/xx.htmlとして登録されていた．</p>
-<p>つまり同じようなサイトが二つ存在していたのだ．そしてGoogleは<code>sitemap.xml</code>の最初に載っていた，md/xx.htmlの方を見に行ったと思われる．</p>
-<p>ここで問題なのが，<code>sitemap.xml</code>からクロールする先を見にいったタイミングで，私がページの命名規則を変更し，アップロードしていたようなのだ．だから，<code>sitemap.xml</code>に登録されていたファイルが見つからなくなり，インデクシングに失敗していたのだ．</p>
-<p>Googleちゃんは正しく動いてくれていたのに，私の対応が悪かったのだ．</p>
-<h2 id="am-2">2020/05/02 AM</h2>
-<p>あれから<code>site:&lt;URL&gt;</code>を使って検索してみると，今度は<code>banner.html</code>という，上下に貼る共通のリンクが追加された．何故メインコンテンツをインデックスに追加してくれないのか．</p>
-<p>また，色々と調査した結果，トップページだけをクロールしてもらうように，Googleにお願いすることにした．方法は<code>URL検査ツール</code>を使用し，インデックス登録をリクエストを送るのだ．これはGoogle Search Console内からできる．</p>
-<h2 id="pm">2020/05/02 PM</h2>
-<p><code>site:&lt;URL&gt;</code>で確認してみるとちゃんと検索結果に現れた．</p>
-<p>しかし，カバレッジとか見てみるときちんと反映されていない．なので，URL検査からクロールをお願いしたものだけクロールして，サイトマップは確認していないのだろう．まあ，検索結果に出さえすればいいので，大した問題ではない．今後Googleがちゃんとサイトマップを見て辿ってくれるだろう．これからはGoogle Search COonsoleを見ることはないだろう．</p>
-<p>Googleさんありがとう．</p>
-<p><a href="../index.html">トップ(TOP)</a></p>
+
+<pre><code>
+20200426.md
+2020-04-26.md
+</code></pre>
+
+<p>
+そっちじゃない．
+</p>
+
+<p>
+しかもなんでhtmlじゃなくてMarkdownなんだよ．Markdownのリンクはindex.htmlに貼ってないから<code>sitemap.xml</code>にも載ってないのに．
+</p>
+
+<p>
+トップページより先に，生Markdownだけ公開されてしまいました．
+</p>
+
+
+<h2 id="2020/04/29 AM">2020/04/29 AM</h2>
+
+<p>
+あれから色々と探っていると，mdだけ登録された理由が分かった．
+</p>
+
+<p>
+Googleは<code>sitemap.xml</code>が更新されても自分からは見に行かないようだ．だから古いサイトを登録しようとしてしまったようだ．
+</p>
+
+<p>
+ここで問題だったのはjekyllがmdから自動でhtmlを作成していたのだ．だから，mdからjekyllが自動生成したhtmlがmd/xx.htmlとして，私が<code>mnake</code>でmdから自動で生成したhtmlがhtml/xx.htmlとして登録されていた．
+</p>
+
+<p>
+つまり同じようなサイトが二つ存在していたのだ．そしてGoogleは<code>sitemap.xml</code>の最初に載っていた，md/xx.htmlの方を見に行ったと思われる．
+</p>
+
+<p>
+ここで問題なのが，<code>sitemap.xml</code>からクロールする先を見にいったタイミングで，私がページの命名規則を変更し，アップロードしていたようなのだ．だから，<code>sitemap.xml</code>に登録されていたファイルが見つからなくなり，インデクシングに失敗していたのだ．
+</p>
+
+<p>
+Googleちゃんは正しく動いてくれていたのに，私の対応が悪かったのだ．
+</p>
+
+<h2 id="2020/05/02 AM">2020/05/02 AM</h2>
+
+<p>
+あれから<code>site:<URL></code>を使って検索してみると，今度は<code>banner.html</code>という，上下に貼る共通のリンクが追加された．何故メインコンテンツをインデックスに追加してくれないのか．
+</p>
+
+<p>
+また，色々と調査した結果，トップページだけをクロールしてもらうように，Googleにお願いすることにした．方法は<code>URL検査ツール</code>を使用し，インデックス登録をリクエストを送るのだ．これはGoogle Search Console内からできる．
+</p>
+
+<h2 id="2020/05/02 PM">2020/05/02 PM</h2>
+
+<p>
+<code>site:<URL></code>で確認してみるとちゃんと検索結果に現れた．
+</p>
+
+<p>
+しかし，カバレッジとか見てみるときちんと反映されていない．なので，URL検査からクロールをお願いしたものだけクロールして，サイトマップは確認していないのだろう．まあ，検索結果に出さえすればいいので，大した問題ではない．今後Googleがちゃんとサイトマップを見て辿ってくれるだろう．これからはGoogle Search COonsoleを見ることはないだろう．
+</p>
+
+<p>
+Googleさんありがとう．
+</p>
+<a href="../index.html">トップ(TOP)</a>
 </body>
 </html>

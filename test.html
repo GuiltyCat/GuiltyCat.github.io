@@ -1,30 +1,99 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
-<head>
-  <meta charset="utf-8" />
-  <title>2020-04-29</title>
-</head>
-<body>
-<h1 id="makefileについて誤解していたことdiary-makefile">Makefileについて誤解していたこと:Diary, Makefile</h1>
-<p>Makefileはこの記事の自動生成でも使用してるが，中々便利なものだ．</p>
-<p>記述の基本はターゲットと依存を書き，その下にタブで始まる処理内容を書くというものだ．</p>
-<pre><code>Target:Dependency
-    Process</code></pre>
-<p>そして，一々全てのファイル名を記述するのは面倒な時がある． だから，そういう時のために特殊変数が用意されている．</p>
-<p>例えば，あるMarkdownからhtmlを作成したいとする． この時以下のように書くことで，勝手に名前を当て嵌めてくれる．</p>
-<pre><code>html/%.html:md/%.md
-    pandoc -f markdown -t html -o $@ $&lt; </code></pre>
-<p>この時，<code>%</code>記号は同じ一つの名前を表わす． そして，<code>$&lt;</code>は依存ファイルの最初のファイル名を， <code>$@</code>はターゲット名を表す．</p>
-<p>今まで勘違いしていなのは，この<code>%</code>が全てのファイルの羅列と同義であると思い， <code>$&lt;</code>というのは依存関係にある全てを処理すると思っていたことだ．</p>
-<p>だから，依存関係にはあるが内部で処理をしないファイルの扱い方が分からなかったのだ． 例えばC言語のヘッダーなんかは，依存関係にはあるがヘッダだけでコンパイルはしないので， この表現では使えないと思っていたのだ．</p>
-<p>しかし，実際にはそんな動作はしておらず， <code>%</code>は一つのファイルを示している． そして<code>$&lt;</code>は依存関係の一番先頭にあるファイルだけを示す．</p>
-<p>だから，以下のように書いても<code>style.css</code>は<code>$&lt;</code>にはならず，処理されない．</p>
-<pre><code>html/%.html:md/%.md style.css
-    pandoc -f markdown -t html -o $@ $&lt; </code></pre>
-<h2 id="最後に">最後に</h2>
-<p>いやー，ずっと長いこと使っていたのにこんなことも知らなかったとは． サクッと調べると，確かに<code>$&lt;</code>の説明は先頭のファイルと書いていたが， 華麗に読み飛ばしてしまっていた．</p>
-<p>でも，Makefileとgccにはまだ-MD，-MMDや.dファイルという，まだ理解しきれていなオプションや書き方があるので，いずれまとめたい．</p>
-<p>にしても，こういうMakefileのテンプレートってなかなかいいのが見つからない． 汚い書き方をしていたり，モダンな書き方じゃなかったり．</p>
-<p>この記事を生成するMakefileだって人のことを言えたものではないが，その内エレガントに仕上げていきたいな．</p>
-</body>
-</html>
+<h1 id="更新履歴">更新履歴</h1>
+<ul>
+<li> 2020-04-28T19:51:32 <a href="../html/0000-00-00.html">0000-00-00 更新履歴</a>
+</li>
+<li> 2020-05-10T22:10:04 <a href="../html/2020-04-27.html">2020-04-27 運営の基本方針について</a>
+</li>
+<li> 2020-05-10T22:10:04 <a href="../html/2020-04-30.html">2020-04-30 漫画の表示方法について:HTML,CSS</a>
+</li>
+<li> 2020-05-10T10:37:23 <a href="../html/2020-05-10.html">2020-05-10 在日問題</a>
+</li>
+<li> 2020-05-08T23:29:37 <a href="../html/2020-05-07.html">2020-05-07 私(童貞)の男女感覚</a>
+</li>
+<li> 2020-05-08T23:29:37 <a href="../html/2020-05-08.html">2020-05-08 グチについて:Diary</a>
+</li>
+<li> 2020-05-07T22:12:43 <a href="../html/2020-05-02.html">2020-05-02 子猫殺しを久しぶりに読んで</a>
+</li>
+<li> 2020-05-07T22:12:43 <a href="../html/2020-05-07.html">2020-05-07 </a>
+</li>
+<li> 2020-05-06T22:02:02 <a href="../html/2020-05-02.html">2020-05-02 子猫殺しを久しぶりに読んで</a>
+</li>
+<li> 2020-05-06T22:02:02 <a href="../html/2020-05-06.html">2020-05-06 音楽の要素について:Music</a>
+</li>
+<li> 2020-05-05T22:29:43 <a href="../html/2020-05-01.html">2020-05-01 記事のネタ:Diary</a>
+</li>
+<li> 2020-05-05T22:29:43 <a href="../html/2020-05-02.html">2020-05-02 子猫殺しを久しぶりに読んで</a>
+</li>
+<li> 2020-05-05T22:29:43 <a href="../html/2020-05-05.html">2020-05-05 集団的マゾヒズム</a>
+</li>
+<li> 2020-05-05T10:01:02 <a href="../html/2020-05-01.html">2020-05-01 記事のネタ:Diary</a>
+</li>
+<li> 2020-05-05T10:01:02 <a href="../html/2020-05-04.html">2020-05-04 漫画のテスト記事:Manga</a>
+</li>
+<li> 2020-05-04T22:48:15 <a href="../html/2020-05-01.html">2020-05-01 記事のネタ:Diary</a>
+</li>
+<li> 2020-05-04T22:48:15 <a href="../html/2020-05-04.html">2020-05-04 漫画のテスト記事:Manga</a>
+</li>
+<li> 2020-05-04T08:12:39 <a href="../html/2020-05-01.html">2020-05-01 記事のネタ:Diary</a>
+</li>
+<li> 2020-05-03T22:42:24 <a href="../html/2020-05-03.html">2020-05-03 生と死を意識する時</a>
+</li>
+<li> 2020-05-03T10:48:31 <a href="../html/2020-05-01.html">2020-05-01 記事のネタ:Diary</a>
+</li>
+<li> 2020-05-02T20:44:24 <a href="../html/2020-04-28.html">2020-04-28 Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console:Google, Search, GitHub Pages</a>
+</li>
+<li> 2020-05-02T20:44:24 <a href="../html/2020-04-30.html">2020-04-30 漫画の表示方法について:HTML,CSS</a>
+</li>
+<li> 2020-05-02T20:44:24 <a href="../html/2020-05-02.html">2020-05-02 子猫殺しを久しぶりに読んで</a>
+</li>
+<li> 2020-05-02T10:18:38 <a href="../html/2020-04-28.html">2020-04-28 Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console:Google, Search, GitHub Pages</a>
+</li>
+<li> 2020-05-01T23:06:27 <a href="../html/2020-04-30.html">2020-04-30 漫画の表示方法について:HTML,CSS</a>
+</li>
+<li> 2020-05-01T08:33:22 <a href="../html/2020-04-28.html">2020-04-28 Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console:Google, Search, GitHub Pages</a>
+</li>
+<li> 2020-05-01T08:33:22 <a href="../html/2020-04-30.html">2020-04-30 漫画の表示方法について:HTML,CSS</a>
+</li>
+<li> 2020-05-01T08:32:11 <a href="../html/2020-05-01.html">2020-05-01 記事のネタ:Diary</a>
+</li>
+<li> 2020-04-30T22:38:11 <a href="../html/2020-04-30.html">2020-04-30 漫画の表示方法について</a>
+</li>
+<li> 2020-04-29T21:38:13 <a href="../html/2020-04-28.html">2020-04-28 Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console</a>
+</li>
+<li> 2020-04-29T19:21:39 <a href="../html/2020-04-28.html">2020-04-28 Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console</a>
+</li>
+<li> 2020-04-29T18:56:29 <a href="../html/2020-04-27.html">2020-04-27 運営について</a>
+</li>
+<li> 2020-04-29T15:10:56 <a href="../html/2020-04-29.html">2020-04-29 Makefileについて誤解していたこと:Diary, Makefile</a>
+</li>
+<li> 2020-04-29T09:24:12 <a href="../html/2020-04-26.html">2020-04-26 広告について思うこと:Diary</a>
+</li>
+<li> 2020-04-29T09:23:32 <a href="../html/2020-04-28.html">2020-04-28 Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console</a>
+</li>
+<li> 2020-04-28T22:49:24 <a href="../html/0000-00-00.html">0000-00-00 更新履歴</a>
+</li>
+<li> 2020-04-28T22:45:37 <a href="../html/2020-04-28.html">2020-04-28 Googleの検索結果にGitHub Pagesを載せる (GitHub Pages on Google Search):Google Search Console</a>
+</li>
+<li> 2020-04-28T22:17:22 <a href="../html/0000-00-00.html">0000-00-00 更新履歴</a>
+</li>
+<li> 2020-04-28T22:17:22 <a href="../html/2020-04-27.html">2020-04-27 運営について</a>
+</li>
+<li> 2020-04-28T22:13:02 <a href="../html/2020-04-27.html">2020-04-27 運営について</a>
+</li>
+<li> 2020-04-27T22:56:59 <a href="../html/0000-00-00.html">0000-00-00 更新履歴</a>
+</li>
+<li> 2020-04-27T22:34:31 <a href="../html/2020-04-27.html">2020-04-27 このページの運営について</a>
+</li>
+<li> 2020-04-27T22:34:31 <a href="../html/0000-00-00.html">0000-00-00 更新履歴</a>
+</li>
+<li> 2020-04-27T21:39:43 <a href="../html/2020-04-27.html">2020-04-27 このページの運営について</a>
+</li>
+<li> 2020-04-27T21:25:54 <a href="../html/2020-04-27.html">2020-04-27 このページの運営について</a>
+</li>
+<li> 2020-04-27T21:25:54 <a href="../html/2020-04-26.html">2020-04-26 広告について:Diary</a>
+</li>
+<li> 2020-04-27T21:25:54 <a href="../html/2020-04-25.html">2020-04-25 強い人と弱い人そして矛盾:Diary</a>
+</li>
+<li> 2020-04-27T21:25:54 <a href="../html/2020-04-24.html">2020-04-24 ～俺の人生～を読んで思ったこと:Diary</a>
+</li>
+</ul>
