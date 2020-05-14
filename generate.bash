@@ -43,7 +43,7 @@ if [[ "${TITLE}" == *:*Manga* ]]; then
 	DIR_NAME="html/$(basename ${NAME%.*})"
 	LINK_NAME=$(basename ${NAME%.*})
 	mkdir -p "${DIR_NAME}"
-	IMG_LIST=$(grep "http" <<<${FILE}|sed -z 's/[^\[]*\[\](\(http[^)]*\)).*/\1\n/')
+	IMG_LIST=$(grep "http" <<<${FILE}|sed -e 's/[^\[]*\[.*\](\(http[^)]*\)).*/\1\n/g')
 	MAX_NUM=$(echo "${IMG_LIST}" |wc -l)
 	IFS='
 	'
@@ -52,7 +52,8 @@ if [[ "${TITLE}" == *:*Manga* ]]; then
 		FILE_NAME=$(bash generate_comic.bash --file_name --max "${MAX_NUM}" --num "${COUNTER}")
 		bash $0 --top-link "../$(basename ${DIR_NAME}).html" --top-name "記事(Article)" --css "${CSS}" --md <(bash generate_comic.bash --max "${MAX_NUM}" --num "${COUNTER}" --img-url "${IMG_URL}" ) >"${DIR_NAME}/${FILE_NAME}"
 		LINK_NUM=$(printf "%0${#MAX_NUM}d" ${COUNTER})
-		FILE=$(echo "${FILE}" | sed -e "s/[[^\]]*](${IMG_URL//\//\\\/})/[${LINK_NUM}](${LINK_NAME//\//\\\/}\/${FILE_NAME})/")
+		FILE=$(echo "${FILE}" | sed -e "s/(${IMG_URL//\//\\\/})/(${LINK_NAME//\//\\\/}\/${FILE_NAME})/")
+		echo "$FILE" >&2
 	done
 fi
 
