@@ -73,9 +73,11 @@ function mathjax(var){
 }
 
 function code(var){
-	while ( match(var, /`[^`]+`/) != 0 ){
-		sub("`","<code>", var);
-		sub("`","</code>", var);
+	if ( disable_code == "" ){
+		while ( match(var, /`[^`]+`/) != 0 ){
+			sub("`","<code>", var);
+			sub("`","</code>", var);
+		}
 	}
 	return var
 }
@@ -106,11 +108,13 @@ function head(num, var){
 		code_count = 1;
 		print "<pre><code>";
 		disable_mathline="1";
+		disable_code="1"
 	} else {
 	code_count = 0;
 	print_stack();
 	print "</code></pre>";
 	disable_mathline=""
+	disable_code = ""
 }
 next;
 }

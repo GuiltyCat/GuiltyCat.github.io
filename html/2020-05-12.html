@@ -40,7 +40,7 @@ GNU拡張である<code>gensub</code>を使わずにいい感じに置換する�
 
 <pre><code>
 var = $0;
-white ( match(var, /<code>[^</code>]`/) != 0 ){
+white ( match(var, /`[^`]`/) != 0 ){
 	sub("`", "<code>", var);
 	sub("`", "</code>", var);
 }
