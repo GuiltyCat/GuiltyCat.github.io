@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>AWKでgensubを使わないで頑張る:Markdown, HTML</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+</head>
+<body>
+<a href="../index.html">トップ(TOP)</a>
+<h1 id="AWKでgensubを使わないで頑張る:Markdown, HTML">AWKでgensubを使わないで頑張る:Markdown, HTML</h1>
+
+<h2 id="背景">背景</h2>
+
+<p>
+<code>pandoc</code>がiPadで使えなかった．なのでMarkdownをHTMLに変換するものを自作することにした．
+</p>
+
+<p>
+<code>sed</code>の連続でもいいのだが，あまり効率が良くないので，<code>awk</code>を使う．
+</p>
+
+<p>
+厳密な文法に従わせるのは面倒なので，基本的な部分だけは抑えて，後は必要に応じて拡張することにする．
+</p>
+
+<h2 id="<code>gensub</code>を使いたくない"><code>gensub</code>を使いたくない</h2>
+
+<p>
+<code>awk</code>は色々と触ったことはあるのだが，GNU拡張を使わないのはなかなか厳しいものがある．でもちょっと頑張ってみたくなったので，<code>gensub</code>を何とか他の関数だけでできないか試してみることにした．
+</p>
+
+<p>
+<code>gensub</code>は<code>sub</code>や<code>gsub</code>の上位互換みたいなものだ．指定した位置だけ置換したり，後方参照ができたりする．後方参照ができると，例えばコードを表す\`で囲まれたMarkdownを指定することができる．こんな感じ．
+</p>
+
+<pre><code>
+var = gensub(/`[^`]+`/, "<code>\\1</code>","g", var)
+</code></pre>
+
+<p>
+<code>sub</code>とか<code>gsub</code>だと，最初のマッチだけ変更したり，あるいは全てのマッチを変更することしかできない．
+</p>
+
+<h2 id="文字列を挟む文字を置換したい">文字列を挟む文字を置換したい</h2>
+
+<p>
+でもちょっと工夫すると以外と色々できることに気付いた．例えば，先程の例の場合であれば，挟まれた領域を<code>match</code>で検索し，<code>sub</code>を2回呼び出し，それぞれの\`を変換することで，後方参照なしで同様のことができる．
+</p>
+
+<p>
+また，今回は行全体を変換したいので以下のように<code>while</code>でくるむ．
+</p>
+
+<pre><code>
+var = $0;
+white ( match(var, /`[^`]`/) != 0 ){
+	sub("`", "<code>", var);
+	sub("`", "</code>", var);
+}
+</code></pre>
+
+<p>
+これで<code>var</code>は上手くMarkdownのコード部分を解釈できた．また，これとほぼ同じコードで<code>$</code>という数式にも対応できる．
+</p>
+
+<h2 id="最後に">最後に</h2>
+
+<p>
+<code>awk</code>は古いツールだけど面白い書き方ができる．私は<code>awk</code>を見るといつも<code>prolog</code>を思い浮かべる．
+</p>
+
+<p>
+いうほど似てはいないが，特定のことに特価したプログラミング言語に引き付けられる．もっと面白い言語がきっとあるのだろう．そしてそういった言語を作ってみたいとも思う．
+</p>
+<a href="../index.html">トップ(TOP)</a>
+</body>
+</html>

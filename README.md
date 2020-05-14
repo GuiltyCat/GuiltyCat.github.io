@@ -181,30 +181,6 @@ README.md
 
 This file.
 
-banner.html
----------------
-
-これは全てのhtml/以下のファイルに，トップページに戻るためのリンクを付けるものだ．
-単純にトップページへのリンクが書いてある．
-
-これは`pandoc`の`-A`および`-B`を通じて，Bodyの前後に自動挿入される．
-詳しくは`Makefile`を読めばわかるだろう．
-
-
-This file is inserted into head and tail of all articles.
-Thus, all aritcle's head and tail have a link to top page.
-
-`pandoc` option `-A` and `-B` are called.
-See `Makefile` for more details.
-
-style.css
------------
-
-使ってないけどその内書くかも．
-
-I do not use css now.
-
-
 重要なファイル達(Important files)
 ===================
 
@@ -242,6 +218,30 @@ article.bash, upload.bash
 
 `upload.bash` detect file changes and append to update history,
 generate html from Markdown, update index.bash, commit all changes and upload to GitHub.
+
+
+generate.bash, generate\_comic.bash
+--------------------
+
+
+これは，MarkdownからHTMLを作るためのものだ．
+`generate.bash`は`md/____-__-__.md`からいい感じのHTMLを作る．
+そして，漫画の場合は各ページも作る必要があるため，
+内部で`generate_comic.bash`を呼び出し，個別のページを作っている．
+本来であれば，`pandoc`で半分はできるのだが，無駄な動作が多いのでこのようにしている．
+
+These scripts create HTML from `md/____-__-__.md`.
+`generate.bash` creates main article, and `generate_comic.bash` creates each pages for comic article.
+
+md2html.awk
+-----------------
+
+`awk`だけで作られたMarkdownをHTMLに変換するスクリプトだ．
+`pandoc`はiPadで使えないので自分で作ることにした．
+まだ不具合はあるが，まあ別に困らないのでいいだろう．
+
+This script convert Markdown to HTML by `awk`.
+It is not perfect but sufficient for me.
 
 
 index.bash, index.html
