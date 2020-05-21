@@ -44,13 +44,13 @@ function print_stack(with_p){
 	if (counter == 0){
 		return;
 	}
-	if ( with_p != "" ){
+	if ( with_p != "" && disable_p == "" ){
 		print "<p>";
 	}
 	for( i=0; i<counter; i++ ){
 		printf(stack[i]);
 	}
-	if ( with_p != "" ){
+	if ( with_p != "" && disable_p == "" ){
 		print "\n</p>"
 	}
 	counter = 0;
@@ -109,12 +109,14 @@ function head(num, var){
 		print "<pre><code>";
 		disable_mathline="1";
 		disable_code="1"
+		disable_p="1"
 	} else {
 	code_count = 0;
 	print_stack();
 	print "</code></pre>";
 	disable_mathline=""
 	disable_code = ""
+	disable_p=""
 }
 next;
 }
