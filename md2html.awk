@@ -4,6 +4,7 @@ BEGIN{
 	item_enum_count=0;
 	code_count = 0;
 }
+
 function ie_push(var){
 	item_enum[item_enum_count] = var;
 	item_enum_count++;
@@ -48,7 +49,7 @@ function print_stack(with_p){
 		print "<p>";
 	}
 	for( i=0; i<counter; i++ ){
-		printf(stack[i]);
+		printf("%s",stack[i]);
 	}
 	if ( with_p != "" && disable_p == "" ){
 		print "\n</p>"
@@ -190,6 +191,10 @@ $0 == ""{
 	next;
 }
 /^# /{
+	if (disable_code  == "1"){
+		push(inline_replace($0)"\n");
+		next
+	}
 	$1="";
 	head(1, $0);
 }
