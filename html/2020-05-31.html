@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>自炊漫画をブラウザで読む</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+</head>
+<body>
+<a href="../index.html">トップ(TOP)</a>
+<h1 id="自炊漫画をブラウザで読む">自炊漫画をブラウザで読む</h1>
+
+<h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
+
+<ul>
+<li> 環境
+</li>
+<li> Apacheの設定
+</li>
+</ul>
+
+<p>
+iPadはクソな仕様がいくつもある．
+</p>
+
+<ul>
+<li> 一つはHな漫画が排除されていること
+</li>
+<li> Hなコンテンツがないこと
+</li>
+<li> ネットワーク上のファイルを望みのアプリで開けないこと
+</li>
+<li> 有料アプリが多い
+</li>
+</ul>
+
+<p>
+高画質命なのでえ大容量のHDDに漫画を保存している．なのでネットワークごしにiPadあらアクセスして読みたいのだが，いいアプリが存在しない．
+</p>
+
+<p>
+FTPとかWebDAVとかなら広告付きならあるが，広告なんて見たくもない．また，金を払えばSAMBAとかも対応したアプリもあるが，アプリに金を払うなんて有りえない．
+</p>
+
+<p>
+ということで，同様のことを無料でできないか考えた結果，CGIで簡易漫画ビューワとファイルブラウザを作ることにした．
+</p>
+
+<p>
+色々設定が面倒だった部分もあるので，忘れないように書いておく．
+</p>
+
+<p>
+外部からアクセスできるようになると危険なので，あくまで自宅の中だけで使うことを想定している．
+</p>
+
+
+
+<h2 id="環境">環境</h2>
+
+<ul>
+<li> ArchLinux
+</li>
+<li> Apache
+</li>
+<li> Bash
+</li>
+</ul>
+
+<p>
+ファイル操作があるので，bashを使うことにする．
+</p>
+
+
+
+<h2 id="Apacheの設定">Apacheの設定</h2>
+
+<p>
+設定ファイルはこれだ．
+</p>
+
+<pre><code>
+/etc/httpd/conf/httpd.conf
+</code></pre>
+
+<p>
+そしてほとんどの設定はここをいじる．
+</p>
+
+<p>
+<code>http://localhost</code>でアクセスされる場所は以下の場所のようだ
+
+</p>
+
+<pre><code>
+DocumentRoot "/srv/http"
+</code></pre>
+
+
+<p>
+そして，Apacheは安全のためかデフォルトではCGIを読み込まない．なので，
+</p>
+
+<pre><code>
+LoadModule cgi_module modules/mod_cgi.so
+</code></pre>
+
+<p>
+をアンコメントする．そして，<code><IfModule alias_module></code>の部分で，<code>ScriptAlias /cgi-bin/ "/srv/http/cgi-bin/"</code>とあるので，多分<code>/srv/http/cgi-bin/</code>の中にCGIを置けばよいのだろうう．
+</p>
+
+<p>
+また，<code>AddHandler cgi-script .cgi</code>とあるので，これも有効にする．今回はbashを使うので
+
+</p>
+
+<pre><code>
+AddHandler cgi-script .cgi .bash
+</code></pre>
+
+<p>
+としておいた．
+</p>
+
+<p>
+さらに，このオプションのすぐ上のコメントにも書いてあるが，OptionにExecCGIを指定する必要があるとのこと．
+</p>
+
+<p>
+設定ファイルの中を探してみると，以下のようなものがあった．
+</p>
+
+<pre><code>
+<Directory "/srv/http/cgi-bin">
+    AllowOverride None
+    Options None
+    Require all granted
+</Directory>
+</code></pre>
+
+<p>
+なので，以下のように書き変えてみた．
+</p>
+
+<pre><code>
+<Directory "/srv/http/cgi-bin">
+    AllowOverride None
+    Options ExecCGI
+    Require all granted
+</Directory>
+</code></pre>
+<a href="../index.html">トップ(TOP)</a>
+</body>
+</html>
