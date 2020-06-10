@@ -2,45 +2,72 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>自炊漫画をブラウザで読む</title>
+<title>圧縮ファイルの画像をブラウザ経由で見る</title>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
 </head>
 <body>
 <a href="../index.html">トップ(TOP)</a>
-<h1 id="自炊漫画をブラウザで読む">自炊漫画をブラウザで読む</h1>
+<h1 id="圧縮ファイルの画像をブラウザ経由で見る">圧縮ファイルの画像をブラウザ経由で見る</h1>
 
 <h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
 
 <ul>
+<li> 注意
+</li>
+<li> はじめに
+</li>
 <li> 環境
 </li>
-<li> Apacheの設定
+<li> 今回作ったもの
 </li>
-<li> 2020/06/08
+<li> 技術的ポイント
+</li>
+<li> 最後に
+</li>
+<li> (補足)Apacheの設定
 </li>
 </ul>
 
+<h2 id="注意">注意</h2>
+
 <p>
-iPadはクソな仕様がいくつもある．
+ここで紹介する内容は非常に危険です．もし利用されっる場合は，細心の注意が必要です．
+</p>
+
+<p>
+個人が利用するLAN内だけで運用し，なおかつ厳重なアクセス管理をして下さい．
+</p>
+
+<p>
+外部からの攻撃を受ける危険性が高いだけでなく，他人の著作物に外部からアクセスできた場合，著作権者に無断で公開することになり，違法アップロードが成立する可能性があります．
+</p>
+
+<h2 id="はじめに">はじめに</h2>
+
+<p>
+iPadはクソな仕様がいくつかある．
 </p>
 
 <ul>
-<li> 一つはHな漫画が排除されていること
+<li> 一つはアダルティなコンテンツが排除されている
 </li>
-<li> Hなコンテンツがないこと
-</li>
-<li> ネットワーク上のファイルを望みのアプリで開けないこと
+<li> ネットワーク上のファイルを望みのアプリで開けない
 </li>
 <li> 有料アプリが多い
 </li>
 </ul>
 
 <p>
-高画質命なのでえ大容量のHDDに漫画を保存している．なのでネットワークごしにiPadあらアクセスして読みたいのだが，いいアプリが存在しない．
+そして，iPadあら自分のデスクトップPCのファイルにアクセスして，アダルティな画像やzipやrarを観賞したい．こういうコンテンツは高画質命なので，大容量のHDDに漫画を保存している．(画像とか動画って減らせても増やせないから面倒．)
+
 </p>
 
 <p>
-FTPとかWebDAVとかなら広告付きならあるが，広告なんて見たくもない．また，金を払えばSAMBAとかも対応したアプリもあるが，アプリに金を払うなんて有りえない．
+一々コピペとかするのは面倒だし，iPadの容量も最低のものを使っているので，そんなことができるストレージの余裕はない．なので，ネットワークごしにiPadあらアクセスして読みたい．
+</p>
+
+<p>
+FTPとかWebDAVとかなら広告付きのが無料であるが，広告なんて視界の端にすら入れたくない．また，金を払えばSAMBAとかに対応したアプリもあるが，私の辞書に課金という言葉は存在しない．
 </p>
 
 <p>
@@ -48,13 +75,12 @@ FTPとかWebDAVとかなら広告付きならあるが，広告なんて見た�
 </p>
 
 <p>
-色々設定が面倒だった部分もあるので，忘れないように書いておく．
+FTPだと認証が緩いのでちょと怖いというのもあった．
 </p>
 
 <p>
-外部からアクセスできるようになると危険なので，あくまで自宅の中だけで使うことを想定している．
+VPNとかを使えば，一応外部からもアクセスできるが，画像の圧縮なんかしないので，モバイル通信だとやばいと思うし，余計なリスクが増えるからやらない方がよいと思う．
 </p>
-
 
 
 <h2 id="環境">環境</h2>
@@ -68,101 +94,41 @@ FTPとかWebDAVとかなら広告付きならあるが，広告なんて見た�
 </li>
 </ul>
 
-<p>
-ファイル操作があるので，bashを使うことにする．
-</p>
 
-
-<h2 id="Apacheの設定">Apacheの設定</h2>
+<h2 id="今回作ったもの">今回作ったもの</h2>
 
 <p>
-設定ファイルはこれだ．
-</p>
-
-<pre><code>
-/etc/httpd/conf/httpd.conf
-</code></pre>
-
-<p>
-そしてほとんどの設定はここをいじる．
+<a href="https://github.com/GuiltyCat/fbvvwb">ここ</a>
 </p>
 
 <p>
-<code>http://localhost</code>でアクセスされる場所は以下の場所のようだ
-
+このCGIはアクセスしてきたユーザーのホームディレクトリ以下のファイルを参照できる．具体的には，
 </p>
 
-<pre><code>
-DocumentRoot "/srv/http"
-</code></pre>
-
+<ul>
+<li> 画像を見たり，- 画像の入ったzipやrarを開いたり
+</li>
+<li> 動画を見たり
+</li>
+<li> ファイルを削除したり
+</li>
+</ul>
 
 <p>
-そして，Apacheは安全のためかデフォルトではCGIを読み込まない．なので，
+もっともっと色々な機能を追加できるが，とりあえずこれだけできれば満足．
 </p>
 
-<pre><code>
-LoadModule cgi_module modules/mod_cgi.so
-</code></pre>
+<h2 id="技術的ポイント">技術的ポイント</h2>
 
 <p>
-をアンコメントする．そして，<code><IfModule alias_module></code>の部分で，<code>ScriptAlias /cgi-bin/ "/srv/http/cgi-bin/"</code>とあるので，多分<code>/srv/http/cgi-bin/</code>の中にCGIを置けばよいのだろうう．
+滅茶苦茶単純なbashだし，むしろ汚ないコードが多いが，ちょっとだけ工夫ポイントがある．
 </p>
 
-<p>
-また，<code>AddHandler cgi-script .cgi</code>とあるので，これも有効にする．今回はbashを使うので
 
-</p>
-
-<pre><code>
-AddHandler cgi-script .cgi .bash
-</code></pre>
+<h2 id="最後に">最後に</h2>
 
 <p>
-としておいた．
-</p>
-
-<p>
-さらに，このオプションのすぐ上のコメントにも書いてあるが，OptionにExecCGIを指定する必要があるとのこと．
-</p>
-
-<p>
-設定ファイルの中を探してみると，以下のようなものがあった．
-</p>
-
-<pre><code>
-<Directory "/srv/http/cgi-bin">
-    AllowOverride None
-    Options None
-    Require all granted
-</Directory>
-</code></pre>
-
-<p>
-なので，以下のように書き変えてみた．
-</p>
-
-<pre><code>
-<Directory "/srv/http/cgi-bin">
-    AllowOverride None
-    Options ExecCGI
-    Require all granted
-</Directory>
-</code></pre>
-
-<h2 id="2020/06/08">2020/06/08</h2>
-
-<p>
-ほぼほぼ完成した．ただ，画像ビューモードで，次の画像，前の画像へのリンクの場所でまだ悩んでいる．ニページ表示なら悩まないのだが．(縮小表示で小大小の三枚並べるか)
-
-</p>
-
-<p>
-今週か来週には公開できるだろう．
-</p>
-
-<p>
-しかし，Apache関連の話を何回もあっちこっちに書いている気がする．どれか一つに統合したい．プログラムとドキュメントを一体化させたいので，必然的に全部英語になるだろう．
+ほぼほぼ完成した．ただ，画像ビューモードで，画像サイズが違うとちょっと面倒．
 </p>
 
 <p>
@@ -173,6 +139,96 @@ AddHandler cgi-script .cgi .bash
 <p>
 英語Apacheの記事はどうしようか．あれもあれで中身が薄い．
 </p>
+
+<h2 id="(補足)Apacheの設定">(補足)Apacheの設定</h2>
+
+<p>
+この内容は本当に最低限で，セキュリティ的には全然足りていない．
+</p>
+
+<p>
+なので，各自できちんと調べた上で設定して欲しい．
+</p>
+
+<p>
+	
+まず，ApacheのCGIを有効にしておく，設定ファイルはこれだ．
+</p>
+
+<pre><code>
+/etc/httpd/conf/httpd.conf
+</code></pre>
+
+<p>
+そしてほとんどの設定はここをいじる．<code>http://<ip></code>でアクセスされる場所は以下の場所のようだ
+
+</p>
+
+<pre><code>
+DocumentRoot "/srv/http"
+</code></pre>
+
+<p>
+そして，Apacheは安全のためかデフォルトではCGIのモジュールを読み込まない．なので，
+</p>
+
+<pre><code>
+LoadModule cgi_module modules/mod_cgi.so
+LoadModule cgid_module modules/mod_cgid.so
+</code></pre>
+
+<p>
+のどっちか使う方をアンコメントする．
+</p>
+
+<p>
+また今回のスクリプトの拡張子は<code>.bash</code>なのでこれを登録しておくといいかもしれない．
+</p>
+
+<pre><code>
+AddHandler cgi-script .cgi .bash
+</code></pre>
+
+<p>
+環境によっては，<code>Options</code>に<code>ExecCGI</code>を設定しないといけない場合がある．また，<code>suexec</code>を使い，アクセスできるユーザーを特定しておく．
+</p>
+
+<pre><code>
+SuexecUserGroup <user name> <user name>
+<Directory "/srv/http/cgi-bin">
+	AllowOverride None
+	Options None
+	AuthType Digest
+	AuthName "<authentication name>"
+	AuthUserFile "<file path created by htdigest>"
+	Require valid-user
+</Directory>
+</code></pre>
+
+<p>
+さすがにBasicは恐いので，気休めだがDigest認証を使う．
+</p>
+
+<p>
+また，今回はユーザーディレクトリを使うので，homeにアクセスできるようにしておく．
+</p>
+
+<pre><code>
+<IfModule userdir_module>
+    UserDir disabled
+    UserDir enabled <user name>
+    UserDir ./
+</IfModule>
+...
+<Directory "/home/*">
+    AllowOverride None
+    Options FollowSymLinks Indexes
+    AuthType Digest
+    AuthName "<authentication name"
+    AuthUserFile "<file path created by htdigest"
+    Require valid-user
+</Directory>
+</code></pre>
 <a href="../index.html">トップ(TOP)</a>
 </body>
 </html>
