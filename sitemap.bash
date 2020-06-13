@@ -1,5 +1,5 @@
 #!/bin/bash
-ADDRESS="https://guiltycat.github.io"
+ADDRESS="https://GuiltyCat.github.io"
 function one_line(){
 	FILE=$1
 	echo "<url>"
