@@ -5,6 +5,11 @@ BEGIN{
 	code_count = 0;
 }
 
+{
+	gsub("<","&lt",$0)
+	gsub(">","&gt",$0)
+}
+
 function ie_push(var){
 	item_enum[item_enum_count] = var;
 	item_enum_count++;
