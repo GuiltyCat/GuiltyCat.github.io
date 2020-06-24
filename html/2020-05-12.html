@@ -47,7 +47,7 @@
 </p>
 
 <pre><code>
-var = gensub(/`[^`]+`/, "<code>\\1</code>","g", var)
+var = gensub(/`[^`]+`/, "&lt;code&gt;\\1&lt;/code&gt;","g", var)
 </code></pre>
 
 <p>
@@ -67,8 +67,8 @@ var = gensub(/`[^`]+`/, "<code>\\1</code>","g", var)
 <pre><code>
 var = $0;
 white ( match(var, /`[^`]`/) != 0 ){
-	sub("`", "<code>", var);
-	sub("`", "</code>", var);
+	sub("`", "&lt;code&gt;", var);
+	sub("`", "&lt;/code&gt;", var);
 }
 </code></pre>
 

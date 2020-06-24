@@ -5,10 +5,6 @@ BEGIN{
 	code_count = 0;
 }
 
-{
-	gsub("<","&lt",$0)
-	gsub(">","&gt",$0)
-}
 
 function ie_push(var){
 	item_enum[item_enum_count] = var;
@@ -220,6 +216,9 @@ $0 == ""{
 	next;
 }
 {
+
+	gsub("<","\\&lt;",$0)
+	gsub(">","\\&gt;",$0)
 	push(inline_replace($0)"\n");
 }
 END{

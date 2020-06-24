@@ -37,7 +37,7 @@ $(PROJECT):$(OBJ)
 	gcc $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(OBJ_DIR)/%.o:%.c
-	gcc $(CFLAGS) -c -o $@ $<
+	gcc $(CFLAGS) -c -o $@ $&lt;
 </code></pre>
 
 <p>
@@ -47,7 +47,7 @@ $(OBJ_DIR)/%.o:%.c
 <pre><code>
 # NOT WORKING
 $(OBJ_DIR)/%.o:%.c %.h
-	gcc $(CFLAGS) -c -o $@ $<
+	gcc $(CFLAGS) -c -o $@ $&lt;
 </code></pre>
 
 <p>
@@ -113,7 +113,7 @@ $(PROJECT):$(OBJ)
 
 -include $(DEP)
 $(OBJ_DIR)/%.o:%.c
-	$(CC) $(CFLAGS) -MMD -c -o $@ $<
+	$(CC) $(CFLAGS) -MMD -c -o $@ $&lt;
 
 .PHONY:clean
 
@@ -123,7 +123,7 @@ clean:
 
 
 
-<h2 id="<code>$<</code>という特殊変数について"><code>$<</code>という特殊変数について</h2>
+<h2 id="<code>$&lt;</code>という特殊変数について"><code>$&lt;</code>という特殊変数について</h2>
 
 <p>
 Makefileはこの記事の自動生成でも使用してるが，中々便利なものだ．
@@ -148,7 +148,7 @@ Target:Dependency
 
 <pre><code>
 html/%.html:md/%.md
-	pandoc -f markdown -t html -o $@ $< 
+	pandoc -f markdown -t html -o $@ $&lt; 
 </code></pre>
 
 <p>
@@ -173,7 +173,7 @@ html/%.html:md/%.md
 
 <pre><code>
 html/%.html:md/%.md style.css
-	pandoc -f markdown -t html -o $@ $< 
+	pandoc -f markdown -t html -o $@ $&lt; 
 </code></pre>
 
 <h2 id="最後に">最後に</h2>
