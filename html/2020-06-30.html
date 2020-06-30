@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>utf8の文字列の差分を取れるようにした</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+</head>
+<body>
+<a href="../index.html">トップ(TOP)</a>
+<h1 id="utf8の文字列の差分を取れるようにした">utf8の文字列の差分を取れるようにした</h1>
+
+<h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
+
+<ul>
+<li> できること
+</li>
+<li> 動機
+</li>
+</ul>
+
+<h2 id="できること">できること</h2>
+
+<p>
+<a href="https://github.com:GuiltyCat/utf8_diff">utf8_diff</a>
+</p>
+
+<p>
+utf-8のdiffを自分なりにいい感じに表現してくれるのだ．使い方はこうで，
+</p>
+
+<pre><code>
+./utf8_diff &lt;left string&gt; &lt;right string&gt;
+</code></pre>
+
+<p>
+同じ部分までは普通に表示されるが，差分があった場合は以下のフォーマットで表現される．
+</p>
+
+<pre><code>
+/&lt;left char&gt;/&lt;right char&gt;/&lt;left char hex&gt;/&lt;right char hex&gt;/
+</code></pre>
+
+<p>
+もちろん，ちゃんとutf-8の定義にそった一時として解釈した上での表示だ．
+</p>
+
+
+<h2 id="動機">動機</h2>
+
+<p>
+<a href="https://github.com:GuiltyCat/fbvvwb">FBVVWB</a>
+</p>
+
+<pre><code>
+―
+/
+</code></pre>
+
+<p>
+正解はこんな感じ．
+</p>
+
+<pre><code>
+― -&gt; E2 80 94
+— -&gt; E2 80 95
+</code></pre>
+
+<p>
+何故これが問題かというと，<code>nkf</code>を使って<code>E2 80 94</code>を<code>--input-url</code>した時に勝手に<code>E2 80 95</code>に変換されるのだ．
+</p>
+
+<pre><code>
+nkf -w --url-input &lt;&lt;&lt;"―"
+</code></pre>
+
+<p>
+この辺の動作については一度チェックする必要がありそうだ．
+</p>
+<a href="../index.html">トップ(TOP)</a>
+</body>
+</html>
