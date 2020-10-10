@@ -71,23 +71,16 @@
 そして，<span class="math inline">\(n\)</span>,<span class="math inline">\(m\)</span>を正の整数とした時，<span class="math inline">\(f\)</span>は<span class="math inline">\(n\)</span>,<span class="math inline">\(m\)</span>を使って次のような分数に分解したい．
 </p>
 
-<p>
-\[
+
+```math
 f = \frac{n}{m}
-\]
+<pre><code>
 
-</p>
+また，$f$の整数部を$I$，少数部を$F$として表すことにする．
 
-<p>
-また，<span class="math inline">\(f\)</span>の整数部を<span class="math inline">\(I\)</span>，少数部を<span class="math inline">\(F\)</span>として表すことにする．
-</p>
-
-<p>
-\[
+```math
 f = I + F
-\]
-
-</p>
+</code></pre>
 
 <h2 id="10倍アルゴリズム">10倍アルゴリズム</h2>
 
@@ -192,23 +185,16 @@ int main(void) {
 色々探しているとよいアディアが見つかった．ちょっとだけ問題を変形して<span class="math inline">\(I=0\)</span>の時を考える．
 </p>
 
-<p>
-\[
+
+```math
 f=F=\frac{1}{m}
-\]
+<pre><code>
 
-</p>
+この時，$n=1$になり$m$を求めればよいことになる．ここで，$m$が求まれば問題は解決するのだが，これは単純に以下である．
 
-<p>
-この時，<span class="math inline">\(n=1\)</span>になり<span class="math inline">\(m\)</span>を求めればよいことになる．ここで，<span class="math inline">\(m\)</span>が求まれば問題は解決するのだが，これは単純に以下である．
-</p>
-
-<p>
-\begin{align}
+```math
 m=\frac{1}{F}
-\end{align}
-
-</p>
+</code></pre>
 
 <p>
 ここで<span class="math inline">\(m\)</span>が厳密な整数になる保証はないが，もし<span class="math inline">\(\frac{n}{m}=f\)</span>になるのであれば，正しい<span class="math inline">\(n\)</span>,<span class="math inline">\(m\)</span>が求まったといってよいだろう．
@@ -218,47 +204,44 @@ m=\frac{1}{F}
 また，もし違った場合は<span class="math inline">\(m\)</span>の小数部分のの誤差が無視できなかったということなので，さらにその少数部分を同様の手法で求めればよい．つまり，
 </p>
 
-<p>
-\[
+
+```math
 m = I' + F'
-\]
+<pre><code>
 
-</p>
-
-<p>
-という風に解釈して，<span class="math inline">\(F'\)</span>を同様にして求めればよい．ちなみに，<span class="math inline">\(F\lt 1\)</span>であるため，<span class="math inline">\(m \gt 1\)</span>になる．したがって，<span class="math inline">\(I' \ge 1\)</span>である．
-</p>
-
+という風に解釈して，$F'$を同様にして求めればよい．ちなみに，$F\lt 1$であるため，$m \gt 1$になる．したがって，$I' \ge 1$である．
 <h1 id="アルゴリズム">アルゴリズム</h1>
 
-<p>
 前置きが長くなってしまったが，ここからが本題である．少しややこしいいが，順を追って説明していく．
-</p>
-
-<p>
 まず，fを次のように変形していく．
-</p>
 
-<p>
-\[
+```math
 f=\text{floor}(f)+\left(f-\text{floor}(f)\right)=I+F
-\]
-
-</p>
+</code></pre>
 
 <p>
-ここで，<span class="math inline">\(F\)</span>は次のようになって欲しい．\[
+ここで，<span class="math inline">\(F\)</span>は次のようになって欲しい．
+</p>
+
+```math
 F=\frac{1}{m}
-\]
-したがって，<span class="math inline">\(m\)</span>が正の整数という条件を満たすには，次のようにすればよい．\[
+<pre><code>
+したがって，$m$が正の整数という条件を満たすには，次のようにすればよい．
+```math
 m = \text{floor}\left(\frac{1}{F}\right)
-\]
-ところで，\[
+</code></pre>
+<p>
+ところで，
+</p>
+
+```math
 I+F=I+\frac{1}{m}=\frac{Im+1}{m}
-\]
-だから，\[
+<pre><code>
+だから，
+```math
 n = Im+1
-\]
+</code></pre>
+<p>
 とできる．こうして求めた<span class="math inline">\(\frac{n}{m}\)</span>が<span class="math inline">\(f\)</span>と一致すれば万事解決だ．
 </p>
 
@@ -267,34 +250,32 @@ n = Im+1
 </p>
 
 <p>
-次にこの誤差について考えてみる．<span class="math inline">\(m\)</span>の導出の際にfloorを使わなければ，<span class="math inline">\(\frac{1}{F}\)</span>は次のようになるはずである．\[
+次にこの誤差について考えてみる．<span class="math inline">\(m\)</span>の導出の際にfloorを使わなければ，<span class="math inline">\(\frac{1}{F}\)</span>は次のようになるはずである．
+</p>
+
+```math
 m \sim \frac{1}{F} = f' = I' + F'
-\]
-したがって，<span class="math inline">\(F'\sim 0\)</span>であれば，<span class="math inline">\(m=f'=I'\)</span>となり問題はなさそうだ．つまり，<span class="math inline">\(F'\)</span>の値が大きいと<span class="math inline">\(f'\)</span>と<span class="math inline">\(I'\)</span>が乖離しまずいということだ．
-</p>
-
-<p>
-ところで，この<span class="math inline">\(f'\)</span>は実はそれ自身も分数で表わせるかもしれない．となると，<span class="math inline">\(m\)</span>は分数になってしまう．
-</p>
-
-<p>
-しかし，思い出して欲しい．今，\[
+<pre><code>
+したがって，$F'\sim 0$であれば，$m=f'=I'$となり問題はなさそうだ．つまり，$F'$の値が大きいと$f'$と$I'$が乖離しまずいということだ．
+ところで，この$f'$は実はそれ自身も分数で表わせるかもしれない．となると，$m$は分数になってしまう．
+しかし，思い出して欲しい．今，
+```math
 f=\frac{Im+1}{m}
-\]
-であり，もし<span class="math inline">\(m\)</span>が<span class="math inline">\(\frac{a}{b}\)</span>という分数だったとする．しかし，\[
+</code></pre>
+<p>
+であり，もし<span class="math inline">\(m\)</span>が<span class="math inline">\(\frac{a}{b}\)</span>という分数だったとする．しかし，
+</p>
+
+```math
 f=\frac{Im+1}{m}=\frac{I\frac{a}{b}+1}{\frac{a}{b}}=\frac{Ia+b}{a}
-\]
-こんな感じで式変形できるから，<span class="math inline">\(m\)</span>が分数であろうが，<span class="math inline">\(n\)</span>と<span class="math inline">\(m\)</span>を新たに置き換えてやれば問題はない．
-</p>
-
-<p>
-つまり，<span class="math inline">\(f=\frac{n}{m}\)</span>を求めるというよりも，<span class="math inline">\(n\)</span>と<span class="math inline">\(m\)</span>を導出するために必要な分数を導出する，そしてそのために分数を導出する，...，という入れ子構造になっているのだ．
-</p>
-
-<p>
-つまり，<span class="math inline">\(f\)</span>の分数を求めるには<span class="math inline">\(f'\)</span>の分数表現が必要で，...，と続き，終的にこれが止まるのは，\[
+<pre><code>
+こんな感じで式変形できるから，$m$が分数であろうが，$n$と$m$を新たに置き換えてやれば問題はない．
+つまり，$f=\frac{n}{m}$を求めるというよりも，$n$と$m$を導出するために必要な分数を導出する，そしてそのために分数を導出する，...，という入れ子構造になっているのだ．
+つまり，$f$の分数を求めるには$f'$の分数表現が必要で，...，と続き，終的にこれが止まるのは，
+```math
 m = \frac{1}{F}
-\]
+</code></pre>
+<p>
 の<span class="math inline">\(m\)</span>がちょうど整数になる．あるいは，十分な精度で近似できた時だ．
 </p>
 
@@ -306,41 +287,38 @@ m = \frac{1}{F}
 さて，一度問題を整理する．
 </p>
 
-<p>
-\[
+
+```math
 f = I+F = \frac{n}{m_m}
-\]
-\[
+<pre><code>
+
+```math
 I = \text{floor}(f)
-\]
-\[
+</code></pre>
+
+```math
 F = f - I
-\]
+<pre><code>
 
-</p>
-
-<p>
-そして，\[
+そして，
+```math
 f'=\frac{1}{F}
-\]
-とすると，次のように変形できる．\[
+</code></pre>
+<p>
+とすると，次のように変形できる．
+</p>
+
+```math
 f = I+F = I+\frac{1}{f'} = \frac{If'+1}{f'} =\frac{n}{m}
-\]
+<pre><code>
 
-</p>
+そして，今度は$f'$を分数表現に直していけばいつかは十分な精度で収束するだろう．
+しかし，ここで問題が発生する．このプロセスをずっと繰り返し，その度に新たな$I_i$が求まったとすると，次のようになる．
 
-<p>
-そして，今度は<span class="math inline">\(f'\)</span>を分数表現に直していけばいつかは十分な精度で収束するだろう．
-</p>
-
-<p>
-しかし，ここで問題が発生する．このプロセスをずっと繰り返し，その度に新たな<span class="math inline">\(I_i\)</span>が求まったとすると，次のようになる．
-</p>
-
-<p>
-\[
+```math
 f = I_0 + \frac{1}{I_1 + \frac{1}{ I_2 +\frac{1}{I_3+ \ldots} }}
-\]
+</code></pre>
+<p>
 ちなみに，このように分数の中に分数がある分数を連分数と呼ぶ．
 </p>
 
@@ -362,98 +340,127 @@ f = I_0 + \frac{1}{I_1 + \frac{1}{ I_2 +\frac{1}{I_3+ \ldots} }}
 </p>
 
 <p>
-こんな風に．\[
-n \leftarrow n,
-m \leftarrow m
-\]
-
+こんな風に．
 </p>
 
-<p>
-これを念頭に置いた上で漸化式を作るための法則を見出すために，順番に計算していく．\[
+```math
+n \leftarrow n,
+m \leftarrow m
+<pre><code>
+
+これを念頭に置いた上で漸化式を作るための法則を見出すために，順番に計算していく．
+```math
 f = I_0 + F_0 = I_0 +  \frac{1}{I_1} = \frac{I_0 I_1 + 1}{I_1}
-\]
-ここで，<span class="math inline">\(I_1\)</span>は本当は<span class="math inline">\(f_1\)</span>であり，\[
+</code></pre>
+<p>
+ここで，<span class="math inline">\(I_1\)</span>は本当は<span class="math inline">\(f_1\)</span>であり，
+</p>
+
+```math
 f' = I_1 + F_1
-\]
-において<span class="math inline">\(F_1 = 0\)</span>と置いた時という解釈である．ところで，<span class="math inline">\(F_1 = \frac{1}{I_2}\)</span>にできたとすると，先程の式において<span class="math inline">\(I_1\)</span>を次のように置き換えることと同じになる．\[
+<pre><code>
+において$F_1 = 0$と置いた時という解釈である．ところで，$F_1 = \frac{1}{I_2}$にできたとすると，先程の式において$I_1$を次のように置き換えることと同じになる．
+```math
 I_1 \rightarrow f_1 = I_1 +  F_1 = I_1 + \frac{1}{I_2}
-\]
-したがって，一般化すれば更新式は次のようになる．\[
+</code></pre>
+<p>
+したがって，一般化すれば更新式は次のようになる．
+</p>
+
+```math
 I_i \rightarrow I_i + \frac{1}{I_{i+1}} = \frac{I_i I_{i+1} + 1}{I_{i+1}}
-\]
-それではもう一度最初から計算していく．\[
+<pre><code>
+それではもう一度最初から計算していく．
+```math
 \frac{n_0}{m_0} =  I_0
-\]
-\[
+</code></pre>
+
+```math
 \frac{n_1}{m_1} = I_0 +  \frac{1}{I_1} = \frac{I_0 I_1 + 1}{I_1}
-\]
-\[
+<pre><code>
+
+```math
 \frac{n_2}{m_2}
 =\frac{I_0 I_1 + 1}{I_1} = \frac{I_0 \left( I_1 + \frac{1}{I_2}\right) + 1}{I_1 + \frac{1}{I_2}}
 = \frac{I_0 \left( I_1 I_2 + 1 \right) + I_2}{I_1 I_2 + 1}
 = \frac{I_2 (I_0 I_1 + 1 )  +I_0}{I_1 I_2 + 1}
 = \frac{I_2 n_1   + n_0 }{ I_2 m_1 + m_0}
-\]
-\[
+</code></pre>
+
+```math
 \frac{n_3}{m_3}
 = \frac{I_2 n_1   + n_0 }{ I_2 m_1 + m_0}
 = \frac{\left(I_2 + \frac{1}{I_3}\right) n_1   + n_0 }{ \left(I_2 + \frac{1}{I_3}\right) m_1 + m_0}
 = \frac{\left(I_3 I_2 + 1\right) n_1   + I_3 n_0 }{ \left(I_3 I_2 + 1 \right) m_1 + I_3 m_0}
 = \frac{I_3 (I_2 n_1 + n_0 ) + n_1  }{ I_3 (I_2 m_1 + m_0 ) + m_1 }
 = \frac{I_3 n_2 + n_1  }{ I_3 n_2 + m_1 }
-\]
+<pre><code>
 
-</p>
-
-<p>
-何か法則が見えてきた気がする．厳密な証明は後でするとして，おそらく次のようになっているはずだ．\[
+何か法則が見えてきた気がする．厳密な証明は後でするとして，おそらく次のようになっているはずだ．
+```math
 \frac{n_i}{m_i}= \frac{I_i n_{i-1} + n_{i-2}  }{ I_i m_{i-1} + m_{i-2} }
-\]
-そして，初期値は次のようになるはず．\[
-n_0 = I_0, m_0 = 1
-\]
-\[
-n_1 = I_0I_1 + 1, m_1 = I_1
-\]
-
+</code></pre>
+<p>
+そして，初期値は次のようになるはず．
 </p>
+
+```math
+n_0 = I_0, m_0 = 1
+<pre><code>
+
+```math
+n_1 = I_0I_1 + 1, m_1 = I_1
+</code></pre>
 
 <p>
 ではこれを証明していこう．
 </p>
 
 <p>
-ある正の整数<span class="math inline">\(i \ge 2, i \in \mathbb{N}\)</span>において，以下の式が成り立つとする．\[
+ある正の整数<span class="math inline">\(i \ge 2, i \in \mathbb{N}\)</span>において，以下の式が成り立つとする．
+</p>
+
+```math
 \frac{n_i}{m_i}= \frac{I_i n_{i-1} + n_{i-2}  }{ I_i n_{i-1} + m_{i-2} }
-\]
-ただし，<span class="math inline">\(i=0,1\)</span>においては以下である．\[
+<pre><code>
+ただし，$i=0,1$においては以下である．
+```math
 n_0 = I_0, m_0 = 1
-\]
-\[
+</code></pre>
+
+```math
 n_1 = I_0I_1 + 1, m_1 = I_1
-\]
-そして，ある数<span class="math inline">\(i\)</span>までこの式が成立したとする．そして，最初に定義の通り次のように置き換える．\[
+<pre><code>
+そして，ある数$i$までこの式が成立したとする．そして，最初に定義の通り次のように置き換える．
+```math
 I_i \rightarrow I_i + \frac{1}{I_{i+1}}
-\]
-すると，<span class="math inline">\(i+1\)</span>番目は次のようになるはずだ．\[
+</code></pre>
+<p>
+すると，<span class="math inline">\(i+1\)</span>番目は次のようになるはずだ．
+</p>
+
+```math
 \frac{n_{i+1}}{m_{i+1}}
 = \frac{\left(I_i + \frac{1}{I_{i+1}}\right) n_{i-1} + n_{i-2}  }{ \left(I_i + \frac{1}{I_{i+1}}\right) n_{i-1} + m_{i-2} }
 = \frac{I_{i+1}\left(I_i + 1\right) n_{i-1} + I_{i+1}n_{i-2}  }{ I_{i+1}\left(I_i + 1\right) m_{i-1} + I_{i+1}m_{i-2} }
 = \frac{I_{i+1}\left(I_i n_{i-1} + n_{i-2}\right) + n_{i-1} } { I_{i+1}\left(I_i m_{i-1} + m_{i-2}\right) + m_{i-1} }
 = \frac{I_{i+1}n_i + n_{i-1} } { I_{i+1}m_i + m_{i-1} }
-\]
-よって，任意の正の整数<span class="math inline">\(i \in \mathbb{N}\)</span>の場合で次が成立する．\[
+<pre><code>
+よって，任意の正の整数$i \in \mathbb{N}$の場合で次が成立する．
+```math
 \frac{n_i}{m_i}= \frac{I_i n_{i-1} + n_{i-2}  }{ I_i m_{i-1} + m_{i-2} }
-\]
-ただし，\[
-n_0 = I_0, m_0 = 1
-\]
-\[
-n_1 = I_0I_1 + 1, m_1 = I_1
-\]
-
+</code></pre>
+<p>
+ただし，
 </p>
+
+```math
+n_0 = I_0, m_0 = 1
+<pre><code>
+
+```math
+n_1 = I_0I_1 + 1, m_1 = I_1
+</code></pre>
 
 <p>
 最後にC言語で書くとこんな感じになる．
