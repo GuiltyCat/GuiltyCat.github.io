@@ -244,7 +244,6 @@ m = I' + F'
 まず，fを次のように変形していく．
 </p>
 
-
 <p>
 \[
 f=\text{floor}(f)+\left(f-\text{floor}(f)\right)=I+F
@@ -253,13 +252,17 @@ f=\text{floor}(f)+\left(f-\text{floor}(f)\right)=I+F
 </p>
 
 <p>
-ここで，<span class="math inline">\(F\)</span>は次のようになって欲しい．
+ここまではプログラミング言語風に書き換えただけで，やっていることは同じだ．ここで，<span class="math inline">\(F\)</span>は次のようになっていれば<span class="math inline">\(f\)</span>は簡単に分数にできる．
 </p>
 
 <p>
 \[
 F=\frac{1}{m}
 \]
+
+</p>
+
+<p>
 したがって，<span class="math inline">\(m\)</span>が正の整数という条件を満たすには，次のようにすればよい．
 </p>
 
@@ -267,13 +270,21 @@ F=\frac{1}{m}
 \[
 m = \text{floor}\left(\frac{1}{F}\right)
 \]
-ところで，
+
+</p>
+
+<p>
+これで<span class="math inline">\(m\)</span>が求まったので，次は<span class="math inline">\(n\)</span>を求めよう．
 </p>
 
 <p>
 \[
 I+F=I+\frac{1}{m}=\frac{Im+1}{m}
 \]
+
+</p>
+
+<p>
 だから，
 </p>
 
@@ -285,22 +296,30 @@ n = Im+1
 </p>
 
 <p>
-しかし，実際には<span class="math inline">\(m\)</span>を求める際にfloorを使っている．したがって，この誤差が無視できない場合上手くいかない．
+しかし，実際には<span class="math inline">\(m\)</span>を求める際にfloorを使っている．この時の誤差が無視できない場合上手くいかない．
 </p>
 
 <p>
-次にこの誤差について考えてみる．<span class="math inline">\(m\)</span>の導出の際にfloorを使わなければ，<span class="math inline">\(\frac{1}{F}\)</span>は次のようになるはずである．
+では，この誤差について考えてみる．<span class="math inline">\(m\)</span>の導出の際にfloorを使わなければ，<span class="math inline">\(\frac{1}{F}\)</span>は次のようになるはずである．
 </p>
 
 <p>
 \[
-m \sim \frac{1}{F} = f' = I' + F'
+m \sim \frac{1}{F} = f' = \text{floor}(f') + (f' - \text{floor}(f')) = I' + F'
 \]
-したがって，<span class="math inline">\(F'\sim 0\)</span>であれば，<span class="math inline">\(m=f'=I'\)</span>となり問題はなさそうだ．つまり，<span class="math inline">\(F'\)</span>の値が大きいと<span class="math inline">\(f'\)</span>と<span class="math inline">\(I'\)</span>が乖離しまずいということだ．
+
 </p>
 
 <p>
-ところで，この<span class="math inline">\(f'\)</span>は実はそれ自身も分数で表わせるかもしれない．となると，<span class="math inline">\(m\)</span>は分数になってしまう．
+なぜなら，<span class="math inline">\(F\lt 1\)</span>だからだ．
+</p>
+
+<p>
+誤差が小さいということは<span class="math inline">\(F'\sim 0\)</span>であればよいということだ．この時，<span class="math inline">\(m=f'=I'\)</span>となり一発で分数が求まる．しかし，<span class="math inline">\(F'\)</span>の値が大きいと<span class="math inline">\(f'\)</span>と<span class="math inline">\(I'\)</span>が乖離し誤差が大きくなってしまう．
+</p>
+
+<p>
+ところで，この<span class="math inline">\(f'\)</span>は実はそれ自身も分数で表わせるかもしれない．となると，<span class="math inline">\(m\)</span>自身も分数になってしまう．
 </p>
 
 <p>
@@ -311,7 +330,11 @@ m \sim \frac{1}{F} = f' = I' + F'
 \[
 f=\frac{Im+1}{m}
 \]
-であり，もし<span class="math inline">\(m\)</span>が<span class="math inline">\(\frac{a}{b}\)</span>という分数だったとする．しかし，
+
+</p>
+
+<p>
+であり，もし<span class="math inline">\(m\)</span>が<span class="math inline">\(\frac{a}{b}\)</span>という分数だったとする．すると，
 </p>
 
 <p>
@@ -322,18 +345,22 @@ f=\frac{Im+1}{m}=\frac{I\frac{a}{b}+1}{\frac{a}{b}}=\frac{Ia+b}{a}
 </p>
 
 <p>
-つまり，<span class="math inline">\(f=\frac{n}{m}\)</span>を求めるというよりも，<span class="math inline">\(n\)</span>と<span class="math inline">\(m\)</span>を導出するために必要な分数を導出する，そしてそのために分数を導出する，...，という入れ子構造になっているのだ．
+つまり，<span class="math inline">\(f=\frac{n}{m}\)</span>を求めるには，<span class="math inline">\(m\)</span>を求める必要がある．しかし，<span class="math inline">\(n\)</span>と<span class="math inline">\(m\)</span>を求めるにはさらに別の分数を求める必要がある．そしてそのためにまた別の分数を求める必要がある．...，という入れ子構造になっているのだ．
 </p>
 
 <p>
-つまり，<span class="math inline">\(f\)</span>の分数を求めるには<span class="math inline">\(f'\)</span>の分数表現が必要で，...，と続き，終的にこれが止まるのは，
+<span class="math inline">\(f\)</span>の分数を求めるには<span class="math inline">\(f'\)</span>の分数表現が必要で，...，と続き，終的にこれが止まるのは，
 </p>
 
 <p>
 \[
-m = \frac{1}{F}
+m_i = \frac{1}{F_i}
 \]
-の<span class="math inline">\(m\)</span>がちょうど整数になる．あるいは，十分な精度で近似できた時だ．
+の<span class="math inline">\(m_i\)</span>がちょうど整数になる．あるいは，十分な精度で近似できた時だ．
+</p>
+
+<p>
+これで基本的な求め方は決まった．
 </p>
 
 <p>
@@ -385,7 +412,7 @@ f = I+F = I+\frac{1}{f'} = \frac{If'+1}{f'} =\frac{n}{m}
 </p>
 
 <p>
-そして，今度は<span class="math inline">\(f'\)</span>を分数表現に直していけばいつかは十分な精度で収束するだろう．
+そして，今度は<span class="math inline">\(f'\)</span>を同様にして分数表現に直していけば，いつかは十分な精度で収束するだろう．
 </p>
 
 <p>
@@ -442,7 +469,7 @@ f = I_0 + F_0 = I_0 +  \frac{1}{I_1} = \frac{I_0 I_1 + 1}{I_1}
 
 <p>
 \[
-f' = I_1 + F_1
+f_1 = I_1 + F_1
 \]
 において<span class="math inline">\(F_1 = 0\)</span>と置いた時という解釈である．ところで，<span class="math inline">\(F_1 = \frac{1}{I_2}\)</span>にできたとすると，先程の式において<span class="math inline">\(I_1\)</span>を次のように置き換えることと同じになる．
 </p>
@@ -739,19 +766,60 @@ int main(void) {
 
 
 <p>
-オーバーフローについてもう少し細かく見てみる．例えば今回の0.02340000000000001で想定される分数は
+オーバーフローについてもう少し細かく見てみる．例えば今回の<span class="math inline">\(0.02340000000000001\)</span>で想定される分数は
 
 </p>
 
-```math
+<p>
+\[
 0.02340000000000001=
-\frac{2340000000000001}{1000000000000000}
-<pre><code>
+\frac{
+2340000000000001}{
+100000000000000000}
+\]
 
-なので見かけの分子分母の桁や数字だけを見ると`UINT64_MAX`（18446744073709551615）に余裕で乗ると思ってしまう．しかし，2進数がゆえの誤差を含めると実は乗りきれずに`==`が成立する前にオーバーフローを起こす．
+</p>
+
+<p>
+なので見かけの分子分母の桁や数字だけを見ると<code>UINT64_MAX</code>(18446744073709551615)に余裕で乗ると思ってしまう．しかし，2進数がゆえの誤差を含めると実は乗りきれずに<code>==</code>が成立する前にオーバーフローを起こす．
+</p>
+
+<p>
+分かりにくいので縦に並べるとこんな感じ．
+</p>
+
+<p>
+\[
+2340000000000001
+\]
+
+</p>
+
+<p>
+\[
+10000000000000000
+\]
+
+</p>
+
+<p>
+\[
+18446744073709551615
+\]
+
+</p>
+
+<p>
 ちょっと分かりにくいので，厳密性は置いておいてイメージで説明する．
-10倍アルゴリズムは10進数における一桁単位で見ていく．すると，本当は0.00...01だけれども，2進数がゆえの誤差でプログラム上は0.00...0099...として現れる．（この時点で最低一桁増える）．ただ，そこからもう少し深い桁まで見れば0.00...1に十分に近似できるので`==`が成立する．逆に言えば，その桁まで見ないと`==`が成立しない．したがって，十分に近似できる桁数までを保持できる型でないとオーバーフローを起こす．
-今回だと`UINT64_MAX`(18446744073709551615)では0.02340000000000001を近似できるだけの桁数を持たなかったのでオーバーフローした．ちなみに，`uint64_t`ではなくもっと桁の多い`__uint128_t`とかを使うとプログラムは止まるので単に取り出す桁が足りなかったことが確認できる．
+</p>
+
+<p>
+10倍アルゴリズムは10進数における一桁単位で見ていく．すると，本当は0.00...01だけれども，2進数がゆえの誤差でプログラム上は0.00...0099...として現れる．（この時点で最低一桁増える）．ただ，そこからもう少し深い桁まで見れば0.00...1に十分に近似できるので<code>==</code>が成立する．逆に言えば，その桁まで見ないと<code>==</code>が成立しない．したがって，十分に近似できる桁数までを保持できる型でないとオーバーフローを起こす．
+</p>
+
+<p>
+今回だと<code>UINT64_MAX</code>(18446744073709551615)では0.02340000000000001を近似できるだけの桁数を持たなかったのでオーバーフローした．ちなみに，<code>uint64_t</code>ではなくもっと桁の多い<code>__uint128_t</code>とかを使うとプログラムは止まるので単に取り出す桁が足りなかったことが確認できる．
+</p>
 <a href="../index.html">トップ(TOP)</a>
 </body>
 </html>
