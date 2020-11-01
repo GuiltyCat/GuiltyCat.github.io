@@ -105,12 +105,12 @@ In the default configuration file.
 </p>
 
 <pre><code>
-&lt;IfModule !mpm_prefork_module&gt;
+<IfModule !mpm_prefork_module>
 	# LoadModule cgid_module modules/mod_cgid.so
-&lt;/IfModule&gt;
-&lt;IfModule mpm_prefork_module&gt;
+</IfModule>
+<IfModule mpm_prefork_module>
 	# LoadModule cgi_module modules/mod_cgi.so
-&lt;/IfModule&gt;
+</IfModule>
 </code></pre>
 
 <p>
@@ -148,12 +148,12 @@ Therefore, in order to use CGI, you should comment out like below instead of Tut
 </p>
 
 <pre><code>
-&lt;IfModule !mpm_prefork_module&gt;
+<IfModule !mpm_prefork_module>
 	LoadModule cgid_module modules/mod_cgid.so
-&lt;/IfModule&gt;
-&lt;IfModule mpm_prefork_module&gt;
+</IfModule>
+<IfModule mpm_prefork_module>
 	# LoadModule cgi_module modules/mod_cgi.so
-&lt;/IfModule&gt;
+</IfModule>
 </code></pre>
 
 <h2 id="Security">Security</h2>
@@ -171,6 +171,7 @@ I believe Tutorial, but it is my mistake.
 I should have a question "Why this LoadModule is surrounded by IfModule?"
 
 </p>
+<br>
 <a href="../index.html">トップ(TOP)</a>
 </body>
 </html>

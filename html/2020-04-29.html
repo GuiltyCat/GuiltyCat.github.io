@@ -14,7 +14,7 @@
 <ul>
 <li> ヘッダファイルの依存関係について
 </li>
-<li> <code>$<</code>という特殊変数について
+<li> <code>$&lt;</code>という特殊変数について
 </li>
 <li> 最後に
 </li>
@@ -37,7 +37,7 @@ $(PROJECT):$(OBJ)
 	gcc $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(OBJ_DIR)/%.o:%.c
-	gcc $(CFLAGS) -c -o $@ $&lt;
+	gcc $(CFLAGS) -c -o $@ $<
 </code></pre>
 
 <p>
@@ -47,7 +47,7 @@ $(OBJ_DIR)/%.o:%.c
 <pre><code>
 # NOT WORKING
 $(OBJ_DIR)/%.o:%.c %.h
-	gcc $(CFLAGS) -c -o $@ $&lt;
+	gcc $(CFLAGS) -c -o $@ $<
 </code></pre>
 
 <p>
@@ -113,7 +113,7 @@ $(PROJECT):$(OBJ)
 
 -include $(DEP)
 $(OBJ_DIR)/%.o:%.c
-	$(CC) $(CFLAGS) -MMD -c -o $@ $&lt;
+	$(CC) $(CFLAGS) -MMD -c -o $@ $<
 
 .PHONY:clean
 
@@ -148,15 +148,15 @@ Target:Dependency
 
 <pre><code>
 html/%.html:md/%.md
-	pandoc -f markdown -t html -o $@ $&lt; 
+	pandoc -f markdown -t html -o $@ $< 
 </code></pre>
 
 <p>
-この時，<code>%</code>記号は同じ一つの名前を表わす．そして，<code><span class="math inline">\(<</code>は依存ファイルの最初のファイル名を，<code>\)</span>@</code>はターゲット名を表す．
+この時，<code>%</code>記号は同じ一つの名前を表わす．そして，<code>&lt;span class="math inline"&gt;\(&lt;</code>は依存ファイルの最初のファイル名を，<code>\)&lt;/span&gt;@</code>はターゲット名を表す．
 </p>
 
 <p>
-今まで勘違いしていなのは，この<code>%</code>が全てのファイルの羅列と同義であると思い，<code>$<</code>というのは依存関係にある全てを処理すると思っていたことだ．
+今まで勘違いしていなのは，この<code>%</code>が全てのファイルの羅列と同義であると思い，<code>$&lt;</code>というのは依存関係にある全てを処理すると思っていたことだ．
 </p>
 
 <p>
@@ -164,22 +164,22 @@ html/%.html:md/%.md
 </p>
 
 <p>
-しかし，実際にはそんな動作はしておらず，<code>%</code>は一つのファイルを示している．そして<code>$<</code>は依存関係の一番先頭にあるファイルだけを示す．
+しかし，実際にはそんな動作はしておらず，<code>%</code>は一つのファイルを示している．そして<code>$&lt;</code>は依存関係の一番先頭にあるファイルだけを示す．
 </p>
 
 <p>
-だから，以下のように書いても<code>style.css</code>は<code>$<</code>にはならず，処理されない．
+だから，以下のように書いても<code>style.css</code>は<code>$&lt;</code>にはならず，処理されない．
 </p>
 
 <pre><code>
 html/%.html:md/%.md style.css
-	pandoc -f markdown -t html -o $@ $&lt; 
+	pandoc -f markdown -t html -o $@ $< 
 </code></pre>
 
 <h2 id="最後に">最後に</h2>
 
 <p>
-いやー，ずっと長いこと使っていたのにこんなことも知らなかったとは．サクッと調べると，確かに<code>$<</code>の説明は先頭のファイルと書いていたが，華麗に読み飛ばしてしまっていた．
+いやー，ずっと長いこと使っていたのにこんなことも知らなかったとは．サクッと調べると，確かに<code>$&lt;</code>の説明は先頭のファイルと書いていたが，華麗に読み飛ばしてしまっていた．
 </p>
 
 <p>
@@ -193,6 +193,7 @@ html/%.html:md/%.md style.css
 <p>
 この記事を生成するMakefileだって人のことを言えたものではないが，その内エレガントに仕上げていきたいな．
 </p>
+<br>
 <a href="../index.html">トップ(TOP)</a>
 </body>
 </html>

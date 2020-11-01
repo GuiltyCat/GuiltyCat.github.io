@@ -65,8 +65,9 @@ if [[ "${TITLE}" == *:*Manga* ]]; then
 		bash $0 --top-link "../$(basename ${DIR_NAME}).html" --top-name "記事(Article)" --css "${CSS}" --md <(bash generate_comic.bash --max "${MAX_NUM}" --num "${COUNTER}" --img-url "${IMG_URL}") >"${DIR_NAME}/${FILE_NAME}"
 		LINK_NUM=$(printf "%0${#MAX_NUM}d" ${COUNTER})
 		FILE=$(echo "${FILE}" | sed -e "s/(${IMG_URL//\//\\\/})/(${LINK_NAME//\//\\\/}\/${FILE_NAME})/")
-		echo "$FILE" >&2
+		# echo "$FILE" >&2
 	done
+	# exit
 fi
 
 cat <<EOF
@@ -80,6 +81,7 @@ cat <<EOF
 <body>
 <a href="${TOP_LINK}">${TOP_NAME}</a>
 $(awk -f md2html.awk <(RemoveNewline <<<${FILE} | TableOfContents))
+<br>
 <a href="${TOP_LINK}">${TOP_NAME}</a>
 </body>
 </html>

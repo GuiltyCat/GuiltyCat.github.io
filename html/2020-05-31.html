@@ -35,7 +35,7 @@
 </ul>
 
 <p>
-<a href="https://github.com/GuiltyCat/fbvvwb">FBVVWB</a>
+iPadからブラウザ経由でPCのzip画像を見るために，<a href="https://github.com/GuiltyCat/fbvvwb">FBVVWB</a>というCGIを作った．
 </p>
 
 <p>
@@ -157,7 +157,7 @@ bash index.bash
 </p>
 
 <pre><code>
-env QUERY_STRING="cp=/home/&lt;user&gt;" bash index.bash"
+env QUERY_STRING="cp=/home/<user>" bash index.bash"
 </code></pre>
 
 
@@ -231,7 +231,7 @@ uplink=_0_4_3
 </code></pre>
 
 <p>
-これはスタックになっている．ディレクトリの階層が下るにつれて，<code>_<num></code>がpush(追記)されていく．逆に上に上るリンクには，最後から<code>_<num></code>がpopされ，リンクの一番最後にページ内ジャンプである<code>#<num></code>が付け足されている．
+これはスタックになっている．ディレクトリの階層が下るにつれて，<code>_&lt;num&gt;</code>がpush(追記)されていく．逆に上に上るリンクには，最後から<code>_&lt;num&gt;</code>がpopされ，リンクの一番最後にページ内ジャンプである<code>#&lt;num&gt;</code>が付け足されている．
 </p>
 
 
@@ -332,7 +332,7 @@ COUNTER=0
 for i in $(seq 10); do
 	while read -r j;do
 		COUNTER=$((COUNTER+1))
-	done &lt; &lt;(sort "${i}.txt")
+	done < <(sort "${i}.txt")
 done
 echo "${COUNTER}"
 </code></pre>
@@ -347,7 +347,7 @@ function Query(){
 	QUERY="b"
 	echo "http://localhost"
 }
-echo "&lt;a href=\"$(Query)\"&gt;Hello&lt;/a&gt;"
+echo "<a href=\"$(Query)\">Hello</a>"
 echo "${QUERY}"
 </code></pre>
 
@@ -361,9 +361,9 @@ function Query(){
 	QUERY="b"
 	echo -n "http://localhost"
 }
-echo -n "&lt;a href=\""
+echo -n "<a href=\""
 Query
-echo "\"&gt;Hello&lt;/a&gt;"
+echo "\">Hello</a>"
 echo "${QUERY}"
 </code></pre>
 
@@ -380,7 +380,7 @@ echo "${QUERY}"
 
 
 <p>
-<code><video></code>タグで動画を再生すると，なんかすごくカクカクする時がある．読み込み待ちで一字停止するというより，どうもコンマ何秒ほど巻き戻して再生して，というのが繰り返されているようだ．三歩進んで一歩さがる! みたいな．
+<code>&lt;video&gt;</code>タグで動画を再生すると，なんかすごくカクカクする時がある．読み込み待ちで一字停止するというより，どうもコンマ何秒ほど巻き戻して再生して，というのが繰り返されているようだ．三歩進んで一歩さがる! みたいな．
 </p>
 
 <p>
@@ -424,15 +424,15 @@ AddHandler cgi-script .cgi .bash
 </p>
 
 <pre><code>
-SuexecUserGroup &lt;user name&gt; &lt;user name&gt;
-&lt;Directory "/srv/http/cgi-bin"&gt;
+SuexecUserGroup <user name> <user name>
+<Directory "/srv/http/cgi-bin">
 	AllowOverride None
 	Options None
 	AuthType Digest
-	AuthName "&lt;authentication name&gt;"
-	AuthUserFile "&lt;file path created by htdigest&gt;"
+	AuthName "<authentication name>"
+	AuthUserFile "<file path created by htdigest>"
 	Require valid-user
-&lt;/Directory&gt;
+</Directory>
 </code></pre>
 
 <p>
@@ -449,26 +449,27 @@ SuexecUserGroup &lt;user name&gt; &lt;user name&gt;
 </p>
 
 <p>
-本当は画像の解凍とかもbashの<code><()</code>みたいなプロセス置換が使えるといいんだけどね．
+本当は画像の解凍とかもbashの<code>&lt;()</code>みたいなプロセス置換が使えるといいんだけどね．
 </p>
 
 
 <pre><code>
-&lt;IfModule userdir_module&gt;
+<IfModule userdir_module>
     UserDir disabled
-    UserDir enabled &lt;user name&gt;
+    UserDir enabled <user name>
     UserDir ./
-&lt;/IfModule&gt;
+</IfModule>
 ...
-&lt;Directory "/home/*"&gt;
+<Directory "/home/*">
     AllowOverride None
     Options FollowSymLinks Indexes
     AuthType Digest
-    AuthName "&lt;authentication name"
-    AuthUserFile "&lt;file path created by htdigest"
+    AuthName "<authentication name"
+    AuthUserFile "<file path created by htdigest"
     Require valid-user
-&lt;/Directory&gt;
+</Directory>
 </code></pre>
+<br>
 <a href="../index.html">トップ(TOP)</a>
 </body>
 </html>

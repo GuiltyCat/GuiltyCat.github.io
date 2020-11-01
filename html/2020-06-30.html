@@ -21,7 +21,7 @@
 <h2 id="できること">できること</h2>
 
 <p>
-<a href="https://github.com:GuiltyCat/utf8_diff">utf8_diff</a>
+詳しくは，<a href="https://github.com:GuiltyCat/utf8_diff">utf8_diff</a>を見て欲しい．
 </p>
 
 <p>
@@ -29,7 +29,7 @@ utf-8のdiffを自分なりにいい感じに表現してくれるのだ．使�
 </p>
 
 <pre><code>
-./utf8_diff &lt;left string&gt; &lt;right string&gt;
+./utf8_diff <left string> <right string>
 </code></pre>
 
 <p>
@@ -37,7 +37,7 @@ utf-8のdiffを自分なりにいい感じに表現してくれるのだ．使�
 </p>
 
 <pre><code>
-/&lt;left char&gt;/&lt;right char&gt;/&lt;left char hex&gt;/&lt;right char hex&gt;/
+/<left char>/<right char>/<left char hex>/<right char hex>/
 </code></pre>
 
 <p>
@@ -48,7 +48,7 @@ utf-8のdiffを自分なりにいい感じに表現してくれるのだ．使�
 <h2 id="動機">動機</h2>
 
 <p>
-<a href="https://github.com:GuiltyCat/fbvvwb">FBVVWB</a>
+<a href="https://github.com:GuiltyCat/fbvvwb">FBVVWB</a>というのを作って使っていた時，とある現象に悩まされた．以下の二つの違いが分かるだろうか．
 </p>
 
 <pre><code>
@@ -61,8 +61,8 @@ utf-8のdiffを自分なりにいい感じに表現してくれるのだ．使�
 </p>
 
 <pre><code>
-― -&gt; E2 80 94
-— -&gt; E2 80 95
+― -> E2 80 94
+— -> E2 80 95
 </code></pre>
 
 <p>
@@ -70,12 +70,13 @@ utf-8のdiffを自分なりにいい感じに表現してくれるのだ．使�
 </p>
 
 <pre><code>
-nkf -w --url-input &lt;&lt;&lt;"―"
+nkf -w --url-input <<<"―"
 </code></pre>
 
 <p>
 この辺の動作については一度チェックする必要がありそうだ．
 </p>
+<br>
 <a href="../index.html">トップ(TOP)</a>
 </body>
 </html>

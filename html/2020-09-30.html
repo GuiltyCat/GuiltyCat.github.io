@@ -63,7 +63,7 @@
 <h2 id="定義">定義</h2>
 
 <p>
-始めに問題や文字の定義をする．ある浮動小数点<span class="math inline">\(f&gt;0\)</span>があったとする．(符号は後でどうとでもできるため)
+始めに問題や文字の定義をする．ある浮動小数点<span class="math inline">\(f>0\)</span>があったとする．(符号は後でどうとでもできるため)
 この時，<span class="math inline">\(f>1\)</span>であってもよい．また，2進数かつ指数表現で保存されているものとする．単純にはIEEE 754のbinary64をイメージしてもらいたい．
 </p>
 
@@ -110,9 +110,9 @@ C言語で書くとこんな感じになる．
 </p>
 
 <pre><code>
-#include &lt;stdio.h&gt;
-#include &lt;stdint.h&gt;
-#include &lt;math.h&gt;
+#include <stdio.h>
+#include <stdint.h>
+#include <math.h>
 
 uint64_t gcd_inner(uint64_t m, uint64_t n) {
   if (n == 0) {
@@ -125,7 +125,7 @@ uint64_t gcd(uint64_t m, uint64_t n) {
   /*  search a such that m = a*x and n = a*y
    * m = n * q + r = a * x
    * thus  q = a* z and r = a * w            */
-  if (m &lt; n) {
+  if (m < n) {
     uint64_t tmp = n;
     n = m;
     m = tmp;
@@ -623,9 +623,9 @@ n_1 = I_0I_1 + 1, m_1 = I_1
 </p>
 
 <pre><code>
-#include &lt;stdio.h&gt;
-#include &lt;stdint.h&gt;
-#include &lt;math.h&gt;
+#include <stdio.h>
+#include <stdint.h>
+#include <math.h>
 
 uint64_t gcd_inner(uint64_t m, uint64_t n) {
   if (n == 0) {
@@ -638,7 +638,7 @@ uint64_t gcd(uint64_t m, uint64_t n) {
   /*  search a such taht m = a*x and n = a*y
    * m = n * q + r = a * x
    * thus  q = a* z and r = a * w            */
-  if (m &lt; n) {
+  if (m < n) {
     uint64_t tmp = n;
     n = m;
     m = tmp;
@@ -714,8 +714,8 @@ void float2frac_10algorithm(double f, uint64_t *ret_n, uint64_t *ret_m, double e
   uint64_t n = 0;
   uint64_t m = 1;
   size_t counter = 0;
-  while (fabs((double)n / m - ans) &gt;= error) {
-    if (counter++ &gt; 10) {
+  while (fabs((double)n / m - ans) >= error) {
+    if (counter++ > 10) {
       break;
     }
     double i;
@@ -724,7 +724,7 @@ void float2frac_10algorithm(double f, uint64_t *ret_n, uint64_t *ret_m, double e
     n *= 10;
     m *= 10;
     f *= 10;
-    printf("%f -&gt; %lu/%lu = %f\n", ans, n, m, (double)n / m);
+    printf("%f -> %lu/%lu = %f\n", ans, n, m, (double)n / m);
   }
   frac_reduction(&n, &m);
   *ret_n = n;
@@ -739,7 +739,7 @@ int main(void) {
 
   puts("10algorithm.");
   float2frac_10algorithm(f, &n, &m, 0.00001);
-  printf("%f -&gt; %lu/%lu = %f\n", f, n, m, (double)n / m);
+  printf("%f -> %lu/%lu = %f\n", f, n, m, (double)n / m);
 
   return 0;
 }
@@ -747,12 +747,12 @@ int main(void) {
 </code></pre>
 
 <pre><code>
-0.023400 -&gt; 0/10 = 0.000000
-0.023400 -&gt; 0/100 = 0.000000
-0.023400 -&gt; 20/1000 = 0.020000
-0.023400 -&gt; 230/10000 = 0.023000
-0.023400 -&gt; 2340/100000 = 0.023400
-0.023400 -&gt; 117/5000 = 0.023400
+0.023400 -> 0/10 = 0.000000
+0.023400 -> 0/100 = 0.000000
+0.023400 -> 20/1000 = 0.020000
+0.023400 -> 230/10000 = 0.023000
+0.023400 -> 2340/100000 = 0.023400
+0.023400 -> 117/5000 = 0.023400
 </code></pre>
 
 
@@ -820,6 +820,7 @@ int main(void) {
 <p>
 今回だと<code>UINT64_MAX</code>(18446744073709551615)では0.02340000000000001を近似できるだけの桁数を持たなかったのでオーバーフローした．ちなみに，<code>uint64_t</code>ではなくもっと桁の多い<code>__uint128_t</code>とかを使うとプログラムは止まるので単に取り出す桁が足りなかったことが確認できる．
 </p>
+<br>
 <a href="../index.html">トップ(TOP)</a>
 </body>
 </html>

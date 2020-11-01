@@ -47,7 +47,7 @@
 </p>
 
 <pre><code>
-var = gensub(/`[^`]+`/, "&lt;code&gt;\\1&lt;/code&gt;","g", var)
+var = gensub(/`[^`]+`/, "<code>\\1</code>","g", var)
 </code></pre>
 
 <p>
@@ -67,8 +67,8 @@ var = gensub(/`[^`]+`/, "&lt;code&gt;\\1&lt;/code&gt;","g", var)
 <pre><code>
 var = $0;
 white ( match(var, /`[^`]`/) != 0 ){
-	sub("`", "&lt;code&gt;", var);
-	sub("`", "&lt;/code&gt;", var);
+", var);
+	sub("`", "</code>", var);
 }
 </code></pre>
 
@@ -85,6 +85,7 @@ white ( match(var, /`[^`]`/) != 0 ){
 <p>
 いうほど似てはいないが，特定のことに特価したプログラミング言語に引き付けられる．もっと面白い言語がきっとあるのだろう．そしてそういった言語を作ってみたいとも思う．
 </p>
+<br>
 <a href="../index.html">トップ(TOP)</a>
 </body>
 </html>

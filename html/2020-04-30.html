@@ -59,7 +59,7 @@
 <h2 id="iframe">iframe</h2>
 
 <p>
-<code><frameset></code>や<code><frame></code>を使った分割は古いと言われている．HTML5では廃止されたとか何とか．代替としては<code><iframe></code>であり，これは単に別ソースの読み込みだそうだ．
+<code>&lt;frameset&gt;</code>や<code>&lt;frame&gt;</code>を使った分割は古いと言われている．HTML5では廃止されたとか何とか．代替としては<code>&lt;iframe&gt;</code>であり，これは単に別ソースの読み込みだそうだ．
 </p>
 
 <p>
@@ -67,11 +67,11 @@
 </p>
 
 <p>
-なので，今回は<code><dev></code>の<code>id</code>を使う．<code>id</code>と<code>class</code>の使い分けも色々あるようだが，今回は左右に分割するだけなので，一意としていいだろう．そして，左の一覧は<code><iframe></code>を使わずに直書き．そして，右の画像部分は<code><iframe></code>を使って更新していくことにする．
+なので，今回は<code>&lt;dev&gt;</code>の<code>id</code>を使う．<code>id</code>と<code>class</code>の使い分けも色々あるようだが，今回は左右に分割するだけなので，一意としていいだろう．そして，左の一覧は<code>&lt;iframe&gt;</code>を使わずに直書き．そして，右の画像部分は<code>&lt;iframe&gt;</code>を使って更新していくことにする．
 </p>
 
 <p>
-ちなみに<code>id</code>は<code>#<name>{}</code>，<code>class</code>は<code>.<name>{}</code>という風に書く．
+ちなみに<code>id</code>は<code>#&lt;name&gt;{}</code>，<code>class</code>は<code>.&lt;name&gt;{}</code>という風に書く．
 </p>
 
 
@@ -91,7 +91,7 @@ __________________
 | 005 |  |      | |
 | 006 |  |      | |
 | 007 |  -------- |
-<h2 id="| 008 |  &lt;&lt; &lt;&gt; &gt;&gt; |">| 008 |  &lt;&lt; &lt;&gt; &gt;&gt; |</h2>
+<h2 id="| 008 |  << <> >> |">| 008 |  << <> >> |</h2>
 </code></pre>
 
 <p>
@@ -117,7 +117,7 @@ __________________
 </p>
 
 <p>
-また，<code>pagexx.html</code>は内部で画像を読み込む．この時，<code><image></code>を差し替えることができればよいのだが，できなさそう．
+また，<code>pagexx.html</code>は内部で画像を読み込む．この時，<code>&lt;image&gt;</code>を差し替えることができればよいのだが，できなさそう．
 </p>
 
 <p>
@@ -169,7 +169,7 @@ __________________
 </p>
 
 <ol>
-<li> 各画像に対応するページを作成する．2. 各画像と左右の移動を<code><iframe></code>にして，そこだけを入れ替える．
+<li> 各画像に対応するページを作成する．2. 各画像と左右の移動を<code>&lt;iframe&gt;</code>にして，そこだけを入れ替える．
 </li>
 </ol>
 
@@ -187,15 +187,15 @@ __________________
 </p>
 
 <p>
-このような場合色々調べてみると<code><iframe></code>を使うのがよいらしい．しかし，これはCSSを使う前提であるため，ちょっと面倒だ．HTMLで完結させるには<code><framset></code>を使うのだが，モダンなHTMLでは推奨されない．
+このような場合色々調べてみると<code>&lt;iframe&gt;</code>を使うのがよいらしい．しかし，これはCSSを使う前提であるため，ちょっと面倒だ．HTMLで完結させるには<code>&lt;framset&gt;</code>を使うのだが，モダンなHTMLでは推奨されない．
 </p>
 
 <p>
-仕方がないので<code><frame></code>を使うまではよかったのだが，今度は<code>float</code>と<code>flexbox</code>の話が出てきた．できるだけ最新のものに合わせておきたいのだが，そこまで高機能なものは作るつもりはない．だから，CSS自体オーバースペックだし，管理が面倒だからいやなのだ．
+仕方がないので<code>&lt;frame&gt;</code>を使うまではよかったのだが，今度は<code>float</code>と<code>flexbox</code>の話が出てきた．できるだけ最新のものに合わせておきたいのだが，そこまで高機能なものは作るつもりはない．だから，CSS自体オーバースペックだし，管理が面倒だからいやなのだ．
 </p>
 
 <p>
-古いと分かりつつも<code><framset></code>を使うか．あるいは，見た目は最古級だが，ちゃんと最新のHTMLを意識したサイトにするか．難しい選択だが，色々やってみて決めようと思う．
+古いと分かりつつも<code>&lt;framset&gt;</code>を使うか．あるいは，見た目は最古級だが，ちゃんと最新のHTMLを意識したサイトにするか．難しい選択だが，色々やってみて決めようと思う．
 </p>
 
 <p>
@@ -217,6 +217,7 @@ __________________
 <p>
 これもいざ描くとなれば自動で生成できるようにする．
 </p>
+<br>
 <a href="../index.html">トップ(TOP)</a>
 </body>
 </html>
