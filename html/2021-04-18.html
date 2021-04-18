@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>S.M.A.R.TでUncorrectable error in data(Offline Uncorrectable)が発生したので，ファイルを特定してHDD(ext4)からデータを救出</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+</head>
+<body>
+<a href="../index.html">トップ(TOP)</a>
+<h1 id="S.M.A.R.TでUncorrectable error in data(Offline Uncorrectable)が発生したので，ファイルを特定してHDD(ext4)からデータを救出">S.M.A.R.TでUncorrectable error in data(Offline Uncorrectable)が発生したので，ファイルを特定してHDD(ext4)からデータを救出</h1>
+
+<h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
+
+<ul>
+<li> 背景
+</li>
+<li> の前に
+</li>
+<li> ファイルの特定の流れ
+</li>
+<li> ファイルを救出する
+</li>
+<li> 新機HDDに移行する
+</li>
+</ul>
+
+<h2 id="背景">背景</h2>
+
+
+<p>
+4.0TのHDDを長いこと使っていた．
+</p>
+
+<pre><code>
+Seagate BarraCuda 3.5(SMR)
+ST4000DM004-2CV104
+</code></pre>
+
+<p>
+で，たまたま<code>gsmartctl</code>を走らせてみたらError Logが真っ赤ではないか．しかもUncorrectableとか書いてあるしもうヤバい．
+</p>
+
+<p>
+具体的にはこんなエラー
+
+</p>
+
+<pre><code>
+Uncorrectable error in data at LBA = 0x2e7ff908 = 780138760
+</code></pre>
+
+<p>
+なんて脅してきた．LBAだけ与えられてもどのファイルか分からないとどうしようもない．というわけで早速チェックしていく．
+</p>
+
+
+<p>
+そんな長いこと使っていたといってもSpindle Motor Power-on Hoursだけでいうと17,476だったので，728日およそ2年ぐらい．そこそこ起動させっぱなしにしていたとはいえ，24時間365日付けていたわけではない．
+</p>
+
+<p>
+Statisticsを見た限り，
+</p>
+
+<p>
+Number of Reallocation Canditate Logical Sectorsが16あって，Number of  Reported Uncorrectable Errosが4
+そして，Time in Under-Temperature(C)が1,360だ．
+</p>
+
+<p>
+Time in Under-Temperature(C)の意味が分からないのだが，冷えすぎるとダメなの？
+
+</p>
+
+
+
+<h2 id="の前に">の前に</h2>
+
+<p>
+こんなエラーが出るってことはHDDは壊れかけなので，できるだけ余計な負荷を与えないようにしたい．ファイルの書き込みや削除なんか．ゴミ箱を絡にしたりrmしたりも注意だ．
+</p>
+
+<p>
+そして新しいHDDの購入手続きを進めておくこと．私はバックアップをとらない過激派(HDDはどうしても常時可動させたくなっちゃう)なのでストックはない．
+</p>
+
+<h2 id="ファイルの特定の流れ">ファイルの特定の流れ</h2>
+
+<p>
+本当はS.M.A.R.T.が出してくれたエラーをそのまま使えるといいんだけれど，LBAからファイルの位置を特定する方法が見つからなかったので，<code>badblocks</code>を使ってもう一度チェックする．
+</p>
+
+<p>
+ここで<code>badblocks</code>のデフォルトのセクタサイズは1024になっているので，
+</p>
+
+<pre><code>
+sudo fdisk -l
+</code></pre>
+
+<p>
+とでもして，セクタサイズを調べておく．購入時にフォーマットしたのがデフォルトの4096なのでこれを<code>-b</code>オプションで指定する．
+</p>
+
+<pre><code>
+sudo badblocks -v /dev/sdxx -b 4096
+</code></pre>
+
+<p>
+ちなみにこの時はパーティションを区切った後のを指定しておいた方が楽だ．(/dev/sdaではなく/dev/sda1ということ)
+でないとsda1のパーティションの始まりの場所を引く必要が出てくる．
+</p>
+
+<p>
+というわけでこのコマンドを実行すると数字が出てくる．この数字がエラーの発生した箇所を示してくれている．
+</p>
+
+
+<p>
+次にこの場所にファイルがあるかどうかを確認する．これ以降は<code>debugfs</code>を使う
+私の環境ではこれ以降のコマンドは返ってくるまでにかなり時間がかかった．遅くても我慢強く待つのがよいだろう．
+</p>
+
+<pre><code>
+sudo debugfs /dev/sdxx
+debugfs: testb <block num>
+</code></pre>
+
+<p>
+ここで使用中でなければ救出の必要はない．こんな風に返ってくる
+
+</p>
+
+<p>
+使用されている場合
+
+</p>
+
+<pre><code>
+Block <block num> marked in use
+</code></pre>
+
+<p>
+使用されていない場合
+
+</p>
+
+<pre><code>
+Block <block num> not in use
+</code></pre>
+
+<p>
+今回はなんとmarked in use.ファイルが壊れてしまった．
+</p>
+
+<p>
+まあまだ何とかなるかもしれないと思い，ブロック番号からinode番号を調べる．
+</p>
+
+<pre><code>
+debugfs: icheck <block num>
+</code></pre>
+
+
+<p>
+これでファイルがあれば二つの数字が帰ってくる．一つ目がブロック番号で2つ目がinode番号だ．
+</p>
+
+
+<pre><code>
+debugfs: ncheck <inode num>
+</code></pre>
+
+<p>
+これでファイル名が特定できる．
+</p>
+
+<h2 id="ファイルを救出する">ファイルを救出する</h2>
+
+<p>
+この時点でファイルが壊れているので，後はどこまで読めるかだ．致命的な場所さえ壊れていなければ，最近の優秀なソフトでは以外とそのまま読み込めたりするので，まだ諦めてはいけない．
+</p>
+
+<p>
+ここでcpコマンドはディスクの読み込みエラーを起こすと途中で止まる
+
+</p>
+
+<pre><code>
+cp: error reading <file>: Input/output error
+</code></pre>
+
+<p>
+というわけで，それでも無理矢理読んでくれるコマンド<code>ddrescue</code>を使う．使い方は<code>cp</code>と同じだ．
+</p>
+
+<pre><code>
+ddrescue <src> <dst>
+</code></pre>
+
+<p>
+コマンドの詳細は残っていないが
+今回は512byteつまり4096の1セクタ分が壊れてしまったようだった．
+</p>
+
+<p>
+ファイル自体はzipで画像1ファイルだけ解凍に失敗したが，画像としては読み出せた．ただ画像の途中から色は変わっていたが，上出来だ．
+</p>
+
+
+<h2 id="新機HDDに移行する">新機HDDに移行する</h2>
+
+<p>
+というわけで壊れかけのHDDから新しいHDDにデータを移行する．
+</p>
+
+<p>
+パーティショニングやフォーマットについては割愛．
+</p>
+
+<p>
+今回はHDDはまだ元気そう？だったのでcpコマンドでいった．ただ，もっと自体が深刻であれば<code>ddrescue</code>を使った方がよいだろう．
+</p>
+
+<p>
+途中でcpが失敗しても分かるように，そして途中経過が分かるように次のようにした．
+</p>
+
+
+<pre><code>
+cp -r -v /mnt/<src>/* /mnt/<dst>
+</code></pre>
+
+
+<p>
+<code>-r</code>で再帰的に<code>-v</code>で途中経過を表示するようにした．
+</p>
+<br>
+<a href="../index.html">トップ(TOP)</a>
+</body>
+</html>
