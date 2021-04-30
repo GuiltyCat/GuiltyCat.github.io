@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>画像ビューワを作ったので色々な所(Pypi, AUR)にアップロードしようとして躓いた所:ArchLinux, AUR, Pypi, tkinter</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+</head>
+<body>
+<a href="../index.html">トップ(TOP)</a>
+<h1 id="画像ビューワを作ったので色々な所(Pypi, AUR)にアップロードしようとして躓いた所:ArchLinux, AUR, Pypi, tkinter">画像ビューワを作ったので色々な所(Pypi, AUR)にアップロードしようとして躓いた所:ArchLinux, AUR, Pypi, tkinter</h1>
+
+<h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
+
+<ul>
+<li> アプリの概要
+</li>
+<li> Pypiに上げようとして躓いた所
+</li>
+<li> AURに上げようとしてPKGBUILDで躓いた所
+</li>
+<li> GitHubから持ってきたGitのLogに個人用メールアドレスが!
+</li>
+</ul>
+
+
+<p>
+<a href="https://github.com/GuiltyCat/SaltViewer">SaltViewer</a>というのを開発した．ざっくりと言うと，<code>mcomix</code>から<code>mcomix3</code>への移行の中で中々使い辛い所が出てきたのだ．それを解決するために自分の欲しい機能を詰めこんだものを作ることにした．
+</p>
+
+
+<h2 id="アプリの概要">アプリの概要</h2>
+
+<p>
+そもそも<code>mcomix</code>や<code>mcomix3</code>の代替なんて作らなくても色々あったりする．<code>vimiv</code>とか．でもキーバインドが馴染めなくて，カスタマイズが上手くできなかったりした．
+</p>
+
+<p>
+<code>mcomix3</code>になってから特にDeleteが消えたり，External Commandが上手く設定できなかったりと不便になってしまった．<code>mcomix2</code>で我慢していたが，python2は嫌なので作って乗り換えることにした．
+</p>
+
+<h3 id=" 特徴"> 特徴</h3>
+
+<ul>
+<li> 数字指定でページジャンプができる
+</li>
+<li> 先頭と末尾へのジャンプも可能
+</li>
+<li> 2ページ表示に対応
+</li>
+<li> 右左，左右への切り替えも対応
+</li>
+<li> 超シンプルなシングルファイルスクリプト
+</li>
+<li> アニメーションGIF, SVGに対応
+</li>
+<li> zip, rar, 7z, pdfに対応(7zはやたらと遅い)
+</li>
+<li> キーバインドを設定できる
+</li>
+<li> pipやyayでインストールできる
+</li>
+</ul>
+
+<p>
+結構モリモリの割にコード数は非常にコンパクトなはず．
+</p>
+
+<h2 id="Pypiに上げようとして躓いた所">Pypiに上げようとして躓いた所</h2>
+
+<p>
+リポジトリ直下にファイルが多いことは悪だと考えているので，<code>src</code>とか<code>setup.cfg</code>を置きたくないので，<code>setup.py</code>一本でいく．<code>MANIFEST.in</code>も作らない．
+</p>
+
+<p>
+また，これはライブラリではなくコマンドとして実行することを想定している
+
+</p>
+
+
+<h3 id=" `setup.py`を書く"> `setup.py`を書く</h3>
+
+<p>
+descriptionも面倒なので<code>README.md</code>から拝借．setup_requiresはPKGBUILDでの紆余曲折の名残りで書いたが別にいらないと思う．本当に最低限しか書いていない．
+</p>
+
+<p>
+重要なのが最後の<code>entory_points</code>で，これによって<code>salt-viewer</code>というコマンドを生成してくれる．これによって,<code>pip</code>や<code>pyinstaller</code>みたいにコマンドとして実行できるようにしてくれる．
+</p>
+
+
+<pre><code>
+import setuptools
+
+with open("README.md", "r") as f:
+    description = f.read()
+
+requirements=[
+        "natsort",
+        "pillow",
+        "send2trash",
+        "rarfile",
+        "py7zr",
+        "cairosvg",
+        "pdf2image",
+    ]
+setuptools.setup(
+    name="salt-viewer",
+    version="0.1.2",
+    description="Simple image viewer",
+    long_description=description,
+    long_description_content_type='text/markdown',
+    url="https://github.com/GuiltyCat/SaltViewer",
+    author="GuiltyCat",
+    keywords="image, viewer, archive, animation",
+    install_requires=requirements,
+    setup_requires=requirements,
+    py_modules=['salt_viewer'],
+    entry_points={"console_scripts": ["salt-viewer=salt_viewer:main"]},
+)
+</code></pre>
+
+<h3 id=" アップロードして気付くPypiのstable性"> アップロードして気付くPypiのstable性</h3>
+
+<p>
+Pypiって同名のパッケージができないようかなり厳密に作られていて，ある意味で融通が聞かない．なので，アップロードする時は慎重にする必要がある．
+</p>
+
+<p>
+具体的には
+
+</p>
+
+<ul>
+<li> <code>name</code>
+</li>
+<li> <code>version</code>
+</li>
+</ul>
+
+<p>
+こいつを重複してアップロードすることはできない．一度削除してもだ．なので，アップロードして失敗に気付くと，自動的にバージョンを上げざるをえなくなる．
+</p>
+
+
+<h2 id="AURに上げようとしてPKGBUILDで躓いた所">AURに上げようとしてPKGBUILDで躓いた所</h2>
+
+<p>
+問題はただ一つだ．公式パッケージにないpythonライブラリへの依存をどう解決するかだ．これはArchWikiを見ても書いていないしすんごい分かり難いので解説する．
+</p>
+
+<p>
+まず，pythonのパッケージだが，基本は公式パッケージのものを優先して<code>depends</code>に書く．これは当然誰もが考えるだろう．でも中には存在しないものもあったりする
+
+</p>
+
+<p>
+そして<code>pip</code>はよほど特別なものでない限り使わないのが原則だ．
+</p>
+
+
+<h3 id=" AURにはある場合"> AURにはある場合</h3>
+
+<p>
+ほぼ間違いなくAURに上がっているので<code>depends</code>に<code>python-pdf2image</code>とか書いたりするのだが，<code>makepkg -s</code>をすると全ての依存関係が解決されませんでしたとか出て，失敗する．
+</p>
+
+<p>
+うんやかんや悩んだが，答えは簡単で公式リポジトリ以外のパッケージは<code>makepkg</code>する前に手動でいれるのが原則なのだ．なので挙動としてはこれでOKで何も問題ないのだ．
+</p>
+
+<p>
+逆に言えば，<code>yay -S</code>とかの場合は<code>makepkg</code>を実行する前に依存関係を公式リポジトリとAURから検索してインストールしてくれているのだ．
+</p>
+
+
+<pre><code>
+pkgname=salt-viewer
+pkgver=0.1.2
+pkgrel=1
+arch=("any")
+url="https://github.com/GuiltyCat/SaltViewer"
+license=("GPL")
+depends=("python" "unrar" "poppler" "python-send2trash" "python-pillow"  "python-send2trash" "python-cairosvg" "python-natsort" "python-py7zr" "python-pdf2image" "python-rarfile")
+makedepends=("python-setuptools")
+md5sums=('SKIP')
+
+optdepends=("unarchiver: unrar alternative" "libarchive: unar alternative")
+
+source=("https://github.com/GuiltyCat/SaltViewer/archive/refs/tags/v${pkgver}.tar.gz")
+package(){
+	cd SaltViewer-"${pkgver}"
+	python setup.py install --verbose --root="${pkgdir}/" --optimize=1 
+}
+</code></pre>
+
+<p>
+このまま<code>makepkg -s</code>を実行しても<code>python-pdf2image</code>と<code>python-rarfile</code>は見つからないがこれで正解．PKGBUILDをアップロードして，<code>yay -S</code>をすると，自動でAURから探し出してインストールしてくれる．
+</p>
+
+
+<h2 id="GitHubから持ってきたGitのLogに個人用メールアドレスが!">GitHubから持ってきたGitのLogに個人用メールアドレスが!</h2>
+
+<p>
+今の今まで気付いていなかったが，<code>git log</code>で登録したメールアドレスが表示されるのね．それはいいんだけれど，これPublicなのよね．
+</p>
+
+<p>
+ということで，盛大なやらかしをしてしまっておりました．一応対策しましたが，修正しきれていない部分があるかも．
+</p>
+
+<p>
+で全てのコミットのuser.emailとuser.nameを書き換えるには<code>filter-branch</code>を使う
+
+</p>
+
+<pre><code>
+git filter-branch -f --env-filter 'export GIT_COMMITTER_EMAIL="<email>"; GIT_COMMITTER_EMAIL="<email>"'
+</code></pre>
+
+<p>
+最後にこれを無理矢理<code>push</code>する．
+</p>
+
+<pre><code>
+git push -f origin main --all
+</code></pre>
+<br>
+<a href="../index.html">トップ(TOP)</a>
+</body>
+</html>
