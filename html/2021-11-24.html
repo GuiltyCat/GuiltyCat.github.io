@@ -20,20 +20,62 @@
 </li>
 <li> Conclusion
 </li>
+<li> References
+</li>
 </ul>
 
-
 <h2 id="Introduction">Introduction</h2>
+
+<p>
+A trie is a data structure for strings and can distinguish any two strings except for a same string.
+The trie is used to implement an associative array.
+
+</p>
+
+
 
 <h2 id="Crit-bit trees">Crit-bit trees</h2>
 
 <h3 id=" Definition"> Definition</h3>
+
+<p>
+According to <a href="crit-bit">[1](https://cr.yp.to/critbit.html)</a>.
+
+</p>
+
+<p>
+The crit-bit trees treat a string as a binary data.
+And a crit-bit is a first different bit of two binary data.
+If there are two binary data a=0100 and b=0120, crit-bit is 0 in a and 1 in b at third position from head.
+
+</p>
+
+<p>
+Define crit-bit position as a first different position of two binary data from head.
+Define crit-bit as a bit at crit-bit position of a binary data.
+For example, a is equal to 0100 then crit-bit position is 1(index starts from 0) and crit-bit is 1.
+
+</p>
+
+<p>
+Define crit-bit node as a recursive data structure that has crit-bit position, left child and right child.
+
+</p>
+
 
 <h3 id=" Weak point"> Weak point</h3>
 
 <h2 id="How to improve">How to improve</h2>
 
 <h2 id="Conclusion">Conclusion</h2>
+
+
+<h2 id="References">References</h2>
+
+<ul>
+<li> [1] https://cr.yp.to/critbit.html
+</li>
+</ul>
 <br>
 <a href="../index.html">トップ(TOP)</a>
 </body>
