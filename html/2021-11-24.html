@@ -12,21 +12,28 @@
 <h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
 
 <ul>
-<li> Introduction
+<li> 1. Introduction
 </li>
-<li> Crit-bit tree
+<li> 2. Crit-bit tree
 </li>
-<li> How to improve
+<li> 3. How to improve
 </li>
-<li> Why it works
+<li> 4. Why it works
 </li>
-<li> Conclusion
+<li> 5. Conclusion
 </li>
 <li> References
 </li>
 </ul>
 
-<h2 id="Introduction">Introduction</h2>
+<ol>
+<li> Introduction
+<p>
+
+</p>
+<h2 id=""></h2>
+</li>
+</ol>
 
 <p>
 A trie is a data structure for strings and can distinguish any two strings except for a same string.
@@ -42,9 +49,16 @@ For example, 'a' is expressed as 0100 and '\0' is 0000 or all 0 byte.
 
 
 
-<h2 id="Crit-bit tree">Crit-bit tree</h2>
+<ol>
+<li> Crit-bit tree
+<p>
 
-<h3 id=" Definition"> Definition</h3>
+</p>
+<h2 id=""></h2>
+</li>
+</ol>
+
+<h3 id=" 2-1. Definition"> 2-1. Definition</h3>
 
 <p>
 According to <a href="crit-bit">[1](https://cr.yp.to/critbit.html)</a>.
@@ -112,7 +126,7 @@ It is OK to use other padding methods, like all 1 or 0110 if you like.
 </p>
 
 
-<h3 id=" Weak point"> Weak point</h3>
+<h3 id=" 2-2. Weak point"> 2-2. Weak point</h3>
 
 <p>
 If you use crit-bit trees only on ASCII string, there is no problem because '\0' will not appear in the string except for end of string.
@@ -135,7 +149,14 @@ However, there is no information about length in crit-bit node definition.
 
 </p>
 
-<h2 id="How to improve">How to improve</h2>
+<ol>
+<li> How to improve
+<p>
+
+</p>
+<h2 id=""></h2>
+</li>
+</ol>
 
 <p>
 The most simple way is add a linked list to a crit-bit node and use a linear search.
@@ -160,7 +181,14 @@ If you want to register less than 65535 bytes string, use two bytes to express l
 
 </p>
 
-<h2 id="Why it works">Why it works</h2>
+<ol>
+<li> Why it works
+<p>
+
+</p>
+<h2 id=""></h2>
+</li>
+</ol>
 
 <p>
 You think that some conflicts that crit-bit is not defined will occurs.
@@ -201,7 +229,7 @@ If A is end with '\0', crit-bit is not different whether I remove '\0' or not.
 
 </p>
 
-<h3 id=" The case length is expressed as Big Endianness"> The case length is expressed as Big Endianness</h3>
+<h3 id=" 4-1. The case length is expressed as Big Endianness"> 4-1. The case length is expressed as Big Endianness</h3>
 
 <p>
 When B end with "\0", length should be longer than 256 because there is no need to think about case of string length 0.
@@ -219,7 +247,7 @@ However, B is longer than 1 byte. Thus such B does not exists.
 
 </p>
 
-<h3 id=" The case length is expressed as Little Endianness"> The case length is expressed as Little Endianness</h3>
+<h3 id=" 4-2. The case length is expressed as Little Endianness"> 4-2. The case length is expressed as Little Endianness</h3>
 
 <p>
 When B end with "\0" and A end with non zero byte.
@@ -235,7 +263,14 @@ This means that such B does not exists.
 </p>
 
 
-<h2 id="Conclusion">Conclusion</h2>
+<ol>
+<li> Conclusion
+<p>
+
+</p>
+<h2 id=""></h2>
+</li>
+</ol>
 
 <p>
 From above, by adding length bytes to the end of string, crit-bit trees can distinguish any kinds of byte strings of any length.
