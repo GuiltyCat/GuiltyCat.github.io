@@ -14,9 +14,11 @@
 <ul>
 <li> Introduction
 </li>
-<li> Crit-bit trees
+<li> Crit-bit tree
 </li>
 <li> How to improve
+</li>
+<li> Why it works
 </li>
 <li> Conclusion
 </li>
@@ -32,9 +34,15 @@ The trie is used to implement an associative array.
 
 </p>
 
+<p>
+I use word bytes as 8bit and use 4bit to express one word for simplicity.
+For example, 'a' is expressed as 0100 and '\0' is 0000 or all 0 byte.
+
+</p>
 
 
-<h2 id="Crit-bit trees">Crit-bit trees</h2>
+
+<h2 id="Crit-bit tree">Crit-bit tree</h2>
 
 <h3 id=" Definition"> Definition</h3>
 
@@ -44,30 +52,195 @@ According to <a href="crit-bit">[1](https://cr.yp.to/critbit.html)</a>.
 </p>
 
 <p>
-The crit-bit trees treat a string as a binary data.
+The crit-bit tree treats a string as a binary data.
 And a crit-bit is a first different bit of two binary data.
-If there are two binary data a=0100 and b=0120, crit-bit is 0 in a and 1 in b at third position from head.
+For example, there are two binary data A=0100 and B=0110, crit-bit is 0 in a and 1 in b at third position from head.
+
+</p>
+
+<ol>
+<li> Define crit-bit position as a first different position of two binary data from head.
+</li>
+<li> Define crit-bit as a bit at crit-bit position of a binary data.
+</li>
+</ol>
+
+<p>
+For example, 
+crit-bit of crib-bit position 0 of A is 0,
+crit-bit of crib-bit position 1 of A is 1,
+crit-bit of crib-bit position 2 of A is 0,
+crit-bit of crib-bit position 3 of A is 0.
+
+</p>
+
+<ol>
+<li> Define crit-bit node as a recursive data structure that has crit-bit position, left child and right child.
+</li>
+</ol>
+
+<p>
+If crit-bit is 0, that means trace right node of crit-bit node.
+If crit-bit is 1, that means trace left node of crit-bit node.
+
+</p>
+
+<pre><code>
+struct crit_bit_node{
+	size_t crit_bit_position;
+	struct crit_bit_node* right;
+	struct crit_bit_node* left;
+};
+</code></pre>
+
+
+<ol>
+<li> Define crit-bit as 0 when crit-bit position is longer than a string length.
+</li>
+</ol>
+
+<p>
+For example, if you registered "abc" and "abd" to a ctib-bit trie and then want to register "a",
+crit-bit position is over the length of "a".
+In this case, I think "a" has a continuous '0' after the end of string like "a\0\0\0\0..." but keep a string length as 1.
 
 </p>
 
 <p>
-Define crit-bit position as a first different position of two binary data from head.
-Define crit-bit as a bit at crit-bit position of a binary data.
-For example, a is equal to 0100 then crit-bit position is 1(index starts from 0) and crit-bit is 1.
-
-</p>
-
-<p>
-Define crit-bit node as a recursive data structure that has crit-bit position, left child and right child.
+It is OK to use other padding methods, like all 1 or 0110 if you like.
 
 </p>
 
 
 <h3 id=" Weak point"> Weak point</h3>
 
+<p>
+If you use crit-bit trees only on ASCII string, there is no problem because '\0' will not appear in the string except for end of string.
+However, if you want to treat every pattern of byte string as string, a problem occurs.
+
+</p>
+
+<p>
+The problem is caused by definition 4 above.
+There is no way to distinguish strings that have several same non zero bytes at the head and have non equal length of zero bytes.
+
+</p>
+
+<p>
+For example, A = "a\0" = 0100 0000 , B = "a\0\0" = 0100 0000 0000.(\0 means 0000 in this paper.)
+There is no crib-bit position, because a and b has same bit pattern according to definition 4.
+A is regarded as "a\0\0", and b is also regarded as "a\0\0" when calculating crit-bit.
+The only difference point is true length. A is 2 and B is 3.
+However, there is no information about length in crit-bit node definition.
+
+</p>
+
 <h2 id="How to improve">How to improve</h2>
 
+<p>
+The most simple way is add a linked list to a crit-bit node and use a linear search.
+If there is no crit-bit on one crit_bit_node, compare all strings registerd to a linked list in crit-bit node.
+But it is not beautiful.
+
+</p>
+
+<p>
+I introduce a new way to add length information as a byte at the end of string.
+For example, if you want to register A == "a\0" == 0100 0000, add length of string 2 at the end of string.
+0100 0000 to 0100 0000 0010.
+B == "a\0\0" == 0100 0000 0000 is length of 3 then 0100 0000 0000 0011 is used.
+That's all.
+
+</p>
+
+<p>
+You can use any number of bytes to express length.
+For example, if you will not register longer than 255 string, only one bytes are required.
+If you want to register less than 65535 bytes string, use two bytes to express length.
+
+</p>
+
+<h2 id="Why it works">Why it works</h2>
+
+<p>
+You think that some conflicts that crit-bit is not defined will occurs.
+I will prove that conflict do not occur.
+
+</p>
+
+<p>
+First, the conflict occurs only when tried to calculate crit-bit between two strings that only difference is the end of string.
+One string has no zero padded after string.
+One string has some zero padded after string.
+
+</p>
+
+<p>
+In other cases there exists a non zero string between two strings. Thus crit-bit can be defined.
+
+</p>
+
+<p>
+Think that every string is added length information as bytes to the end of string.
+
+</p>
+
+<ol>
+<li> Define A as a string that end is not 0 and B as a zero padded string of A.
+</li>
+</ol>
+
+<p>
+This means that B = A"\0...". For simplicity I use B = A"\0"  single byte 0 padded string.
+The problem is that such B exists or not.
+
+</p>
+
+<p>
+If A is end with '\0', crit-bit is not different whether I remove '\0' or not.
+
+</p>
+
+<h3 id=" The case length is expressed as Big Endianness"> The case length is expressed as Big Endianness</h3>
+
+<p>
+When B end with "\0", length should be longer than 256 because there is no need to think about case of string length 0.
+
+</p>
+
+<p>
+From definition B has non zero byte before end '\0' because A is not end with '\0'.
+This means that the length of B should be longer than A at least 256.
+
+</p>
+
+<p>
+However, B is longer than 1 byte. Thus such B does not exists.
+
+</p>
+
+<h3 id=" The case length is expressed as Little Endianness"> The case length is expressed as Little Endianness</h3>
+
+<p>
+When B end with "\0" and A end with non zero byte.
+This means that A is longer than B.
+Because length byte must be equal to A and B and last byte is largest digit. B is zero byte and A is non-zero byte.
+This will not occur because B is 1 byte longer than A from definition.
+
+</p>
+
+<p>
+This means that such B does not exists.
+
+</p>
+
+
 <h2 id="Conclusion">Conclusion</h2>
+
+<p>
+From above, by adding length bytes to the end of string, crit-bit trees can distinguish any kinds of byte strings of any length.
+
+</p>
 
 
 <h2 id="References">References</h2>
