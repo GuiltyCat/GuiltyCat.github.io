@@ -11,29 +11,9 @@
 
 <h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
 
-<ul>
-<li> 1. Introduction
-</li>
-<li> 2. Crit-bit tree
-</li>
-<li> 3. How to improve
-</li>
-<li> 4. Why it works
-</li>
-<li> 5. Conclusion
-</li>
-<li> References
-</li>
-</ul>
 
-<ol>
-<li> Introduction
-<p>
 
-</p>
-<h2 id=""></h2>
-</li>
-</ol>
+<h2 id=" 1. Introduction"> 1. Introduction</h2>
 
 <p>
 A trie is a data structure for strings and can distinguish any two strings except for a same string.
@@ -49,14 +29,7 @@ For example, 'a' is expressed as 0100 and '\0' is 0000 or all 0 byte.
 
 
 
-<ol>
-<li> Crit-bit tree
-<p>
-
-</p>
-<h2 id=""></h2>
-</li>
-</ol>
+<h2 id=" 2. Crit-bit tree"> 2. Crit-bit tree</h2>
 
 <h3 id=" 2-1. Definition"> 2-1. Definition</h3>
 
@@ -149,14 +122,7 @@ However, there is no information about length in crit-bit node definition.
 
 </p>
 
-<ol>
-<li> How to improve
-<p>
-
-</p>
-<h2 id=""></h2>
-</li>
-</ol>
+<h2 id=" 3. How to improve"> 3. How to improve</h2>
 
 <p>
 The most simple way is add a linked list to a crit-bit node and use a linear search.
@@ -181,14 +147,7 @@ If you want to register less than 65535 bytes string, use two bytes to express l
 
 </p>
 
-<ol>
-<li> Why it works
-<p>
-
-</p>
-<h2 id=""></h2>
-</li>
-</ol>
+<h2 id=" 4. Why it works"> 4. Why it works</h2>
 
 <p>
 You think that some conflicts that crit-bit is not defined will occurs.
@@ -263,14 +222,7 @@ This means that such B does not exists.
 </p>
 
 
-<ol>
-<li> Conclusion
-<p>
-
-</p>
-<h2 id=""></h2>
-</li>
-</ol>
+<h2 id=" 5. Conclusion"> 5. Conclusion</h2>
 
 <p>
 From above, by adding length bytes to the end of string, crit-bit trees can distinguish any kinds of byte strings of any length.
@@ -278,7 +230,7 @@ From above, by adding length bytes to the end of string, crit-bit trees can dist
 </p>
 
 
-<h2 id="References">References</h2>
+<h2 id=" References"> References</h2>
 
 <ul>
 <li> [1] https://cr.yp.to/critbit.html
