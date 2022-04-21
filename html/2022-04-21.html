@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ルーターのIPアドレスを任意のメールで送信する工夫</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+</head>
+<body>
+<a href="../index.html">トップ(TOP)</a>
+<h1 id="ルーターのIPアドレスを任意のメールで送信する工夫">ルーターのIPアドレスを任意のメールで送信する工夫</h1>
+
+<h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
+
+<ul>
+<li> はじめに
+</li>
+<li> GitHubを使ってIPアドレスを通知する
+</li>
+<li> cronを使って自動化
+</li>
+<li> まとめ
+</li>
+</ul>
+
+<h2 id="はじめに">はじめに</h2>
+
+<p>
+我が家ではNTTのルーターを使っており，VPNの機能を使って自宅サーバーにアクセスできるようにしている．
+</p>
+
+<p>
+用途としては広告ブロック用のProxyサーバーや，fbvvwbを使ってファイルを見たりするためだ．
+</p>
+
+<p>
+固定IPやドメイン名は有料なので使っていない，だから，ルーターを再起動するとIPアドレスが変わってしまう．
+</p>
+
+<p>
+そこでこのルーターにはIPアドレスのメール通知機能がついている．のだが，これの使い勝手が悪すぎる．例えばGmailやYahoo Mailで送るサンプルがあったりするのだが，テストメール送信みたいな機能がないから，実際にルーターを再起動しないとメールを送ってくれない．
+</p>
+
+<p>
+しかも認証に失敗したとか，Gmailでは信頼性の低いアプリを許可しないといけないとか，面倒すぎるし上手くいかなかった場合のエラーの理由が全然分からない．
+</p>
+
+
+<p>
+その次に，自宅サーバーからpostfixを使って<code>sendmail</code>しようとしたが，それも上手くいかなかった．DNSの参照までは上手くいっているんだけど．やっぱり勝手に立てたあまりに不信なサーバーのメールは弾いてしまうのだろうか．
+</p>
+
+<p>
+というわけで，メールをルーターや自宅サーバーから送るのは明らめて，他のサービスになんとかしてもらう方法を考えた．
+</p>
+
+<p>
+でその結果GitHubの通知機能を使って何とかできたのでその方法を紹介する．
+</p>
+
+
+<h2 id="GitHubを使ってIPアドレスを通知する">GitHubを使ってIPアドレスを通知する</h2>
+
+<p>
+もちろんGitHubのPrivate Repositoryを使う．グローバルIPがバレたとてそう簡単にはVPNサーバーに入れないが，無駄なリスクを取る必要はない．
+</p>
+
+<p>
+方法としては単純で，まず準備として．
+</p>
+
+<ol>
+<li> GitHubのアカウントを作る
+</li>
+<li> Private Repositoryを作る
+</li>
+<li> SettingのIntegrationsのEmail notificationsに受け取りたいメールアドレスを設定する
+</li>
+</ol>
+
+<p>
+そして，これに対して自宅サーバーでは次のようにする．
+</p>
+
+
+<ol>
+<li> 自宅サーバーから<code>inet-ip.info</code>とかにアクセスし自分のグローバルIPアドレスを取得
+</li>
+<li> 適当にファイルを更新する
+</li>
+<li> コミットメッセージに自分のグローバルIPアドレスを書き込む
+</li>
+<li> <code>git push origin main</code>
+</li>
+</ol>
+
+<p>
+これでコミットメッセージがメールで送られる．コミットメッセージにIPアドレスを入れているので，それでIPアドレスが分かる．
+</p>
+
+
+<h2 id="cronを使って自動化">cronを使って自動化</h2>
+
+<p>
+実際には上の処理を自動でさせないと不便だ．というわけで<code>crontab</code>を使う．
+</p>
+
+<p>
+さらに，IPアドレスの変更があった時だけ送信するようにしたい．
+</p>
+
+<p>
+こんな簡単な処理だったら<code>bash</code>で書くのが簡単なのでこうする．GitHubのPrivate Repositoryをcloneしてその中に以下のようなbash scriptを書く．
+</p>
+
+
+<pre><code>
+#!/bin/bash
+
+cd "$(dirname "$0")"
+
+SITE=inet-ip.info
+IP=$(curl "$SITE" | cut -d, -f2)
+IP="${IP// /}"
+
+TXT="ip.txt"
+
+if [[ $(cat "${TXT}") != "${IP}" ]]; then
+	echo "${IP}" >"${TXT}"
+	git add "${TXT}"
+	git commit -m "${IP}"
+	git push origin main
+fi
+</code></pre>
+
+<p>
+やっていることは非常に単純だ．
+</p>
+
+<ol>
+<li> リポジトリのあるフォルダ内に入る
+</li>
+<li> どこでもよいが<code>inet-ip.info</code>のようなサイトを使ってグローバルIPを返してもらう．3. いい感じに整形する．4. <code>ip.txt</code>というファイルに書き込まれたIPアドレスと比較
+</li>
+<li> 違えば<code>ip.txt</code>を更新し，コミットメッセージにIPアドレスを書き込んでpushする
+</li>
+<li> 一致すれば何もしない
+</li>
+</ol>
+
+<p>
+1が必要なのはip.txtが保存される場所を同じリポジトリにしたいからだ．
+</p>
+
+
+<p>
+後は<code>crontab -e</code>でスクリプトの場所を指定して実行させればよい．せっかちなので1分置きに判定しまくる．実際には一時間とか一日とかでもいいと思う．
+</p>
+
+<pre><code>
+* * * * * bash ...bash
+</code></pre>
+
+
+<p>
+これでIPアドレスが変わっても，自宅サーバーがそれを検知して，IPアドレスをコミットメッセージとしてGitHubにpush．その結果GitHubがメール通知をしてくれる．
+</p>
+
+
+<h2 id="まとめ">まとめ</h2>
+
+<p>
+こんな簡単なことで済むなら苦労してルーターでメールを送る設定をする必要もなかった．Gmailが安全に振ってくれているのは理解できるが，色々やりたい人にとってはどんどん不便になっているとも言えそうだ．
+</p>
+<br>
+<a href="../index.html">トップ(TOP)</a>
+</body>
+</html>
