@@ -21,6 +21,8 @@
 </ul>
 
 
+
+
 <p>
 色々なサイトを見たがそのままは動かない．おそらく当時は動いていたのだろうかアップデートされたのだろう．
 </p>
@@ -63,11 +65,11 @@ FROM jupyterhub/jupyterhub
 RUN apt update && apt upgrade -y
 RUN apt install -y python3 python3-pip
 
-COPY ./bootstrap.sh /srv/jupyterhub/bootstrap-script/bootstrap.sh
+COPY ./bootstrap.sh /root/bootstrap.sh
 COPY ./setOwner.bash /root/setOwner.bash
 
 RUN python3 -m pip install -U pip
-RUN pip install --no-cache jupyterhub-nativeauthenticator notebook
+RUN pip install --no-cache jupyterhub-nativeauthenticator notebook jupyterlab
 
 COPY ./jupyterhub_config_append.py /root/
 
@@ -117,7 +119,7 @@ def pre_spawn_hook(spawner):
         pwd.getpwnam(username)
     except KeyError:
         subprocess.check_call(
-            ["sh", "/srv/jupyterhub/bootstrap-script/bootstrap.sh", username]
+            ["sh", "/root/bootstrap.sh", username]
         )
 
 c.Spawner.pre_spawn_hook = pre_spawn_hook
@@ -133,60 +135,113 @@ c.Spawner.pre_spawn_hook = pre_spawn_hook
 
 <pre><code>
 /tree/{username}  ->  /home/{username}
-````
-
-となるわけで，JupyterHubにログインした時に`/home/{username}`の位置に自動で入るようになる．ここで，このユーザー名のディレクトリが存在しないとログインしてもnotebookが開けない．
-そこで，ユーザーの作成と必要なディレクトリを準備するのが`nativeauthenticator`と`bootstrap.sh`というわけだ．
-`nativeauthenticator`はユーザーの作成を同じWeb上でできるようにしてくれるものだ．そして，管理者権限を持つユーザーを事前に登録しておかないと，誰も入れなくなってしまうが，それを次で設定している．
 </code></pre>
+
+<p>
+となるわけで，JupyterHubにログインした時に<code>/home/{username}</code>の位置に自動で入るようになる．ここで，このユーザー名のディレクトリが存在しないとログインしてもnotebookが開けない．
+</p>
+
+<p>
+そこで，ユーザーの作成と必要なディレクトリを準備するのが<code>nativeauthenticator</code>と<code>bootstrap.sh</code>というわけだ．
+</p>
+
+<p>
+<code>nativeauthenticator</code>はユーザーの作成を同じWeb上でできるようにしてくれるものだ．そして，管理者権限を持つユーザーを事前に登録しておかないと，誰も入れなくなってしまうが，それを次で設定している．
+</p>
+
+<pre><code>
 c.Authenticator.admin_users = {"<your admin user name>"}
-<pre><code>
-
-この時のユーザー名はホスト側のもので，パスワードもホスト側のものが使われる．
-次に，ユーザーは作ったもののユーザー毎のフォルダ．今回は`/home/<username>`がまだない．そこで，`bootstrap.sh`を使ってユーザーが作成された時に自動でフォルダを生成してくれるものを使う．
-ちなみにこのbootstrap.shだがhomeの場合notebookを作らない設定にしても自動で作られる．おそらくだが，`c.Spawner.default_url`の箇所さえ作れば後は自動でやってくれるのだろう．下のコードはnotebookまで作って冗長だがまあいいだろう．面倒なのでこれでいく．
-
 </code></pre>
-#!/bin/sh
-adduser -q --gecos '""' --disabled-password $1
-mkdir -p -m 777 /home/$1/notebook
-chown <span class="math inline">\(1: /home/\)</span>1/notebook
-<pre><code>
 
-そしてこれを`c.Spawner.pre_spawn_hook`と紐付けて呼び出すことで，ディレクトリの準備をしている．
+<p>
+この時のユーザー名はホスト側のもので，パスワードもホスト側のものが使われる．
+</p>
+
+<p>
+次に，ユーザーは作ったもののユーザー毎のフォルダ．今回は<code>/home/&lt;username&gt;</code>がまだない．そこで，<code>bootstrap.sh</code>を使ってユーザーが作成された時に自動でフォルダを生成してくれるものを使う．
+</p>
+
+<pre><code>
+#!/bin/sh
+if [[ $2 -eq 1 ]]; then
+	adduser -q --gecos '""' --disabled-password $1
+	mkdir -p -m 774 /home/$1
+else
+	chown $1:$1 -R /home/$1
+fi
+sudo -u $1 jupyter lab --generate-config
+echo "c.NotebookApp.notebook_dir=\"home/$1\"" >>/home/$1/.jupyter/jupyter_lab_config.py
+</code></pre>
+
+<p>
+そしてこれを<code>c.Spawner.pre_spawn_hook</code>と紐付けて呼び出すことで，ディレクトリの準備をしている．
+</p>
+
 
 <h3 id=" コンテナにマウントする場所の準備"> コンテナにマウントする場所の準備</h3>
 
-次にJupyterHubの設定を保存する場所を作っておく．コンテナだけ立ててその中にユーザー名やパスワード等の設定やnotebookを入れると，`docker-compose build`で全部消えてしまう．なので，そういった場所はホストマシンの場所をコンテナ内にマウントして，そこに保存するようにする．
+<p>
+次にJupyterHubの設定を保存する場所を作っておく．コンテナだけ立ててその中にユーザー名やパスワード等の設定やnotebookを入れると，<code>docker-compose build</code>で全部消えてしまう．なので，そういった場所はホストマシンの場所をコンテナ内にマウントして，そこに保存するようにする．
+</p>
+
+<p>
 保存するのは以下の二つだ．
-</code></pre>
+</p>
+
+<pre><code>
 mkdir jupyterhub
 mkdir home
-<pre><code>
+</code></pre>
 
-jupyterhubは`/srv/jupyterhub`以下に保存されるユーザー名などの情報を保存する．またnotebookの保存場所は先程設定した`/home/<username>`なので`/home`全体をマウントすることにする．
+<p>
+jupyterhubは<code>/srv/jupyterhub</code>以下に保存されるユーザー名などの情報を保存する．またnotebookの保存場所は先程設定した<code>/home/&lt;username&gt;</code>なので<code>/home</code>全体をマウントすることにする．
+</p>
+
 <h3 id=" マウント時の設定setOwner.bashを書く"> マウント時の設定setOwner.bashを書く</h3>
 
+<p>
 ところでホスト側での所有者の設定と，コンテナ内での所有者は一致しない．というのもコンテナを落とすとユーザー設定自体が消えてしまうからだ．つまり，そんなユーザーはいないのにそのユーザー名だけ設定されることになる．
-その結果，起動時にユーザー登録して上手く起動しても，一度落としてもう一度立ち上げたらサーバーの立ち上げに失敗したりする．
-したがって，コンテナ起動時にユーザーの追加と所有者の再設定を行う必要がある．具体的にはユーザーの追加と，`/home/{username}`のフォルダの所有者の変更だ．これは次のようにすることにした．
-</code></pre>
-#!/bin/bash
-for i in /home/*; do 
-	NAME=<span class="math inline">\((basename \)</span>i); 
-	adduser -q --gecos '""' --disabled-password $NAME
-	chown <span class="math inline">\(NAME:\)</span>NAME -R "${i}"; 
-done
-<pre><code>
+</p>
 
-本当は上の`c.Spawner.pre_spawn_hook`で上手くいけるとよかったのだが，なぜか失敗したので荒技でいく．詳しくは調査していないが，恐らく`c.Spawner.pre_spawn_hook`より先に`c.Spawner.default_url`の中のファイルが参照されて，開けません，というエラーが出ているんだと予想している．
+<p>
+その結果，起動時にユーザー登録して上手く起動しても，一度落としてもう一度立ち上げたらサーバーの立ち上げに失敗したりする．
+</p>
+
+<p>
+したがって，コンテナ起動時にユーザーの追加と所有者の再設定を行う必要がある．具体的にはユーザーの追加と，<code>/home/{username}</code>のフォルダの所有者の変更だ．これは次のようにすることにした．
+</p>
+
+<pre><code>
+#!/bin/bash
+if [[ "$(ls /home/*)" -ne "" ]]; then
+	for i in /home/*; do 
+		NAME=$(basename $i); 
+		adduser -q --gecos '""' --disabled-password $NAME
+		chown $NAME:$NAME -R "${i}"; 
+	done
+fi
+</code></pre>
+
+<p>
+本当は上の<code>c.Spawner.pre_spawn_hook</code>で上手くいけるとよかったのだが，なぜか失敗したので荒技でいく．詳しくは調査していないが，恐らく<code>c.Spawner.pre_spawn_hook</code>より先に<code>c.Spawner.default_url</code>の中のファイルが参照されて，開けません，というエラーが出ているんだと予想している．
+</p>
+
 <h3 id=" docker-compose.ymlを書く"> docker-compose.ymlを書く</h3>
 
-細かい所はどうでもいいが，`entrypoint`の設定で`jupyterhub -f /root/jupyterhub_config.py`と忘れずにconfigの場所を指定しておくこと．そしてポートを開けておくことを忘れずに．
+<p>
+細かい所はどうでもいいが，<code>entrypoint</code>の設定で<code>jupyterhub -f /root/jupyterhub_config.py</code>と忘れずにconfigの場所を指定しておくこと．そしてポートを開けておくことを忘れずに．
+</p>
+
+<p>
 そして，先程のマウントポイントを忘れずに設定しておこう．
-実際には一番最初の段階は`/srv/jupyterhub`にはマウントせずに，その中身だけをコピペしておき，(homeだけマウントしてそこに`cp`すればよい)
+</p>
+
+<p>
+実際には一番最初の段階は<code>/srv/jupyterhub</code>にはマウントせずに，その中身だけをコピペしておき，(homeだけマウントしてそこに<code>cp</code>すればよい)
 次に/srv/jupyterhubをマウントするようにすれば必要なファイルが全てそろった状態になる．
-</code></pre>
+</p>
+
+<pre><code>
 version: "3"
 services:
   jhub:
@@ -208,11 +263,17 @@ services:
     volumes:
       - ./mount/jupyterhub:/srv/jupyterhub
       - ./mount/home:/home
-<pre><code>
+</code></pre>
 
 <h2 id="まとめ">まとめ</h2>
 
+<p>
 中々面倒だった．野良docker imageを使う方が楽かもしれないが，勉強にはなった．
+</p>
+
+<p>
+2022/5/20にJupyter Labを使ったものに変更し，一部間違いを修正．
+</p>
 <br>
 <a href="../index.html">トップ(TOP)</a>
 </body>
