@@ -13,6 +13,14 @@
 
 
 
+
+<h1 id=" 2022/06/12"> 2022/06/12</h1>
+
+<p>
+I found counterexample in big endian. I fixed proof.
+
+</p>
+
 <h2 id=" 1. Introduction"> 1. Introduction</h2>
 
 <p>
@@ -34,7 +42,7 @@ For example, 'a' is expressed as 0100 and '\0' is 0000 or all 0 byte.
 <h3 id=" 2-1. Definition"> 2-1. Definition</h3>
 
 <p>
-According to <a href="crit-bit">[1](https://cr.yp.to/critbit.html)</a>.
+According to <a href="crit-bit">1</a>.
 
 </p>
 
@@ -188,31 +196,77 @@ If A is end with '\0', crit-bit is not different whether I remove '\0' or not.
 
 </p>
 
+<p>
+If 1byte is 8bit. This problem is simply such A B will exist or not.
+
+</p>
+
+<pre><code>
+A = x.x  x.x1
+B = x.x  x.x1 00000000
+</code></pre>
+
+<p>
+This discuss is not limited to 1byte == 8bit.
+If 2bit is used to express length.
+
+</p>
+
+<pre><code>
+A = x...x 1
+B = x...x 10
+</code></pre>
+
 <h3 id=" 4-1. The case length is expressed as Big Endianness"> 4-1. The case length is expressed as Big Endianness</h3>
 
 <p>
-When B end with "\0", length should be longer than 256 because there is no need to think about case of string length 0.
+Counterexample exists. If express length as 2bit.
+
+</p>
+
+<pre><code>
+A = 001
+B = 0010
+</code></pre>
+
+<p>
+Original A is <code>0</code> and add <code>01</code> to express length 1.
+Original B is <code>00</code> and add <code>10</code> to express length 2.
 
 </p>
 
 <p>
-From definition B has non zero byte before end '\0' because A is not end with '\0'.
-This means that the length of B should be longer than A at least 256.
-
-</p>
-
-<p>
-However, B is longer than 1 byte. Thus such B does not exists.
+So big endianness cannot be used.
 
 </p>
 
 <h3 id=" 4-2. The case length is expressed as Little Endianness"> 4-2. The case length is expressed as Little Endianness</h3>
 
 <p>
-When B end with "\0" and A end with non zero byte.
-This means that A is longer than B.
-Because length byte must be equal to A and B and last byte is largest digit. B is zero byte and A is non-zero byte.
+When B end with "\0" and A end with non zero byte,
+length of A is bigger than B.
+Because the largest digit of length A is 1 from definition.
+On the other hand the largest digit is 0 in B.
+The largest digit of B is zero byte and A is non-zero byte.
 This will not occur because B is 1 byte longer than A from definition.
+
+</p>
+
+<p>
+Think about simple example below.
+
+</p>
+
+<pre><code>
+A = x1
+B = x10
+</code></pre>
+
+<p>
+The end of A is 1 and end of B is 0.
+Each length is little endianness, thus the last bit is used to express the largest digit of length.
+This means that the length of A must be larger than B.
+However, B must be longer than A.
 
 </p>
 
@@ -221,11 +275,10 @@ This means that such B does not exists.
 
 </p>
 
-
 <h2 id=" 5. Conclusion"> 5. Conclusion</h2>
 
 <p>
-From above, by adding length bytes to the end of string, crit-bit trees can distinguish any kinds of byte strings of any length.
+From above, by adding length bytes to the end of string as little endianness, crit-bit trees can distinguish any kinds of byte strings of any length.
 
 </p>
 
