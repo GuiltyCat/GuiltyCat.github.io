@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>How to install ssh client(termux) on Chromecast with Google TV(4K)</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+</head>
+<body>
+<a href="../index.html">トップ(TOP)</a>
+<h1 id="How to install ssh client(termux) on Chromecast with Google TV(4K)">How to install ssh client(termux) on Chromecast with Google TV(4K)</h1>
+
+<h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
+
+
+
+<p>
+UpdateDate 2023/1/14
+
+</p>
+
+<p>
+I need small PC that can use ssh to access my development server.
+Chromecast with Google TV(4K) is my solution.
+
+</p>
+
+<p>
+However, I found no article about installing ssh client App on Chromecast.
+(Because too easy?)
+
+</p>
+
+<h2 id=" CAUTION"> CAUTION</h2>
+
+<p>
+Do not install termux from Play Store on Chromecast.
+You will found <code>pkg install command</code> failed.
+
+</p>
+
+<p>
+You have to download the latest termux apk from the internet.
+
+</p>
+
+
+<h2 id=" Step1. Enable developer options of Chromecast"> Step1. Enable developer options of Chromecast</h2>
+
+<p>
+You have to install app from unknow source. Thus authority is required.
+Otherwise you cannot install termux from apk file.
+
+</p>
+
+<ol>
+<li> Open setting(Top Right of Home)
+</li>
+<li> System -> Device Information -> Android TV OS Build
+</li>
+<li> Click 7 times
+</li>
+</ol>
+
+<h2 id=" Step2. Install APKMirror Installer(beta) on Chromecast"> Step2. Install APKMirror Installer(beta) on Chromecast</h2>
+
+<p>
+Open Play Store, search and install APKMirror Installer(beta).
+
+</p>
+
+<p>
+This application support to install apk.
+You can install via Play Store on Chromecast.
+
+</p>
+
+<h2 id=" Step3. Install Web Browser on Chromecast"> Step3. Install Web Browser on Chromecast</h2>
+
+<p>
+Next, you have to download termux apk. 
+However, sending file from PC or smartphoe to Chromecast is very annoying.
+So, I install Sleipnir from Play Store and download termux apk directly.
+
+</p>
+
+<h2 id=" Step2. Download termux apk from web page on Chromecast"> Step2. Download termux apk from web page on Chromecast</h2>
+
+<p>
+Open web browser on chromecast and search termux apk.
+You will find latest termux apk easily.
+
+</p>
+
+<p>
+Do not forget a download location of termux apk.
+
+</p>
+
+<h2 id=" Step3. Install termux"> Step3. Install termux</h2>
+
+<p>
+Then open APKMirror and select termx apk.
+Install will start.
+
+</p>
+
+<h2 id=" Step3. Install ssh client on termux"> Step3. Install ssh client on termux</h2>
+
+<p>
+Open termux and install ssh client.
+You can choose openssh or dropbear.
+
+</p>
+
+<pre><code>
+pkg upgrade
+pkg install openssh <or dropbear>
+</code></pre>
+
+<h2 id=" Step4. ssh-keygen on termux"> Step4. ssh-keygen on termux</h2>
+
+<p>
+Generate Public-key and Private key for public key authentication.
+
+</p>
+
+<pre><code>
+ssh-keygen <your option>
+</code></pre>
+
+<h2 id=" Step5. Send id_rsa.pub to your server"> Step5. Send id_rsa.pub to your server</h2>
+
+<p>
+Let's send id_rsa.pub to server by any way.
+
+</p>
+
+<p>
+I use scp by enabling password login on ssh.
+
+</p>
+
+
+<pre><code>
+scp -P <port> ~/.ssh/id_rsa.pub <username>@<servername>:<save location>
+</code></pre>
+
+<h2 id=" Step6. Write ~/.ssh/config"> Step6. Write ~/.ssh/config</h2>
+
+<p>
+In order to save typing number. Use ssh config file.
+
+</p>
+
+<pre><code>
+Host <name>
+  Hostname <servername>
+  IdentityFile ~/.ssh/id_rsa.pub
+  Port <port>
+  User <username>
+</code></pre>
+<br>
+<a href="../index.html">トップ(TOP)</a>
+</body>
+</html>
