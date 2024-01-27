@@ -44,7 +44,7 @@ EOF
 function Write(){
 	NUM=$1
 	FILE="$(find ./md -type f | sort -n | tail -n+$((NUM + 1)) | head -n 1)"
-	vim "${FILE}"
+	nvim "${FILE}"
 }
 COMIC="False"
 while [[ $# -ne 0 ]]; do
@@ -78,4 +78,4 @@ done
 
 TODAY=$(date +%Y-%m-%d)
 
-vim "./md/${TODAY}.md"
+nvim "./md/${TODAY}.md"
