@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title># LLVM IR Reference</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+</head>
+<body>
+<a href="../index.html">トップ(TOP)</a>
+<h1 id=" LLVM IR Reference"> LLVM IR Reference</h1>
+
+<p>
+新しいプログラミング言語を作ろうとして，今回もインタープリターを書こうとしていたんだけれど，どうせだったらインタープリタの実行マシン（ソフト上の）をLLVMにしてしまえば，後々コンパイルするにも便利だから，実行マシンをLLVM IRを受け付けるようなものにしようと考えた．
+</p>
+<h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
+
+
+<p>
+新しいプログラミング言語を作ろうとして，今回もインタープリターを書こうとしていたんだけれど，どうせだったらインタープリタの実行マシン（ソフト上の）をLLVMにしてしまえば，後々コンパイルするにも便利だから，実行マシンをLLVM IRを受け付けるようなものにしようと考えた．
+</p>
+
+<p>
+そこでLLVMのリファレンスを読んでいたのだが，英語だとどうしても目が滑るというが，一文一文は理解できるけれど，別の段に移ったら前の段を忘れるので日本語にしておく．
+</p>
+
+<p>
+この原因って，やっぱり言語の理解にリソースが使われて，言語が示す内容そのものにリソースが避けていないからな気がする．練習をかねながら試しに書いていく．
+</p>
+
+<p>
+前編翻訳するつもりはなく，自分が欲しいものだけできたらOKの方針でいく．
+</p>
+
+<h2 id=" 目的"> 目的</h2>
+
+<p>
+新しいプログラミング言語を作るので，それに必要な最低限のLLVM IRの文法や書き方を覚える．変数や関数の定義，あとはスコープの概念と構造体，配列やポインターが扱えればOKかなと考えている．もちろん基本的な四則演算と制御演算もだ．
+</p>
+
+<p>
+もちろん翻訳内容や正確性，最新版に追従しているという保証もないのでご注意を．さらに，今回の用途で使うので適当なコメントを追加している．
+</p>
+
+<p>
+さらに，コード中の英語のコメントは勝手に日本語に変えたりもしている．なので，コピペして，LLVMのコンパイルができなくても知りません．
+</p>
+
+<h2 id=" 構文"> 構文</h2>
+
+<h3 id=" 識別子"> 識別子</h3>
+
+<p>
+global識別子とlocal識別子があり，global識別子は'@'から始まる．local識別子は'%'から始まる．さらに，3つのフォーマットがあってそれぞれ目的が違う．
+</p>
+
+<ol>
+<li> named valueは<code>[%@][-a-zA-Z&lt;span class="math inline"&gt;\(._][-a-zA-Z\)&lt;/span&gt;._0-9]*</code>．クオートで囲ったものとかもいけるらしいが，今回はいらないのでスキップ．2. unnamed valuesは<code>[%@][0-9]+</code>でunsigned numeric valueを使える．一時変数には丁度いいかもしれない．3. constantsは長くなるので後で
+</li>
+</ol>
+
+<p>
+予約語は色々あるので被らないように．でも<code>@%</code>で始まる予約語はないので衝突はしないよ．
+</p>
+
+
+<pre><code>
+%result = mul i32 %X, 8
+%result = shl i32 %X, 3
+%0 = shl i32 %X, %X
+%1 = shl i32 %0, %0
+%result = add i32 %1, %1
+</code></pre>
+
+<p>
+shlは左シフト演算のことか？
+コンマ区切りが独特に感じる．どうせだったらmul，shl，addの後にもコンマを入れたらいいのにしていない．
+</p>
+
+<ol>
+<li> コメントは<code>;</code>から始まりその行の終わりまで．2. unnamedな一時変数は計算結果がnamed変数に代入されない時に使われる．3. unnamed変数は通常連番が使われる．別にスキップしてもよさげ．
+</li>
+</ol>
+
+<p>
+ノート:（下まで読まないと書いてあることが分からなさそうなのでここでは仮）
+basic blockと無名関数の引数は0から始まる？
+
+</p>
+
+
+<h3 id=" 文字列定数"> 文字列定数</h3>
+
+<p>
+文字列は<code>"</code>で区切られる．<code>\</code>を使ってエスケープすれば全ての文字が扱える．
+</p>
+
+<p>
+エスケープには2種類あって，
+</p>
+
+
+<ol>
+<li> <code>\\</code>は<code>\</code>自身を表す
+</li>
+<li> <code>\</code>から始まり2つの16進数文字，(0-9, a-f or A-F)はそのbyteの文字を表す
+</li>
+</ol>
+
+
+<p>
+<code>"</code>自身を現したい場合は<code>\22</code>を使う．
+</p>
+
+<p>
+また，文字列は改行によって終了しない．つまり複数行を受け取る．(この場合改行は改行文字として入るのだろうか，それとも無視されるのだろうか)
+
+</p>
+
+
+<h2 id=" 高度な構造"> 高度な構造</h2>
+
+<h3 id=" Module構造"> Module構造</h3>
+
+<p>
+LLVMのプログラムはModuleの集まりである．それぞれのmoduleには関数，グローバル変数，シンボルテーブルの要素が入っている．そしてmodule同士はLLVM linkerによって繋げられる．前方宣言とかシンボルテーブル要素の結合とかもいい感じにしてくれる．
+</p>
+
+
+<p>
+hello worldのmoduleはこんな感じ
+
+</p>
+
+<pre><code>
+; グローバル定数で文字列を宣言．@.str = private unnamed_addr constant [13 x i8] c"hello world\0A\00"
+
+; puts関数を外部宣言
+declare i32 @puts(ptr nocapture) nounwind
+
+; main関数を定義
+define i32 @main() {
+  ; puts関数を呼び出してstdoutに出力
+  call i32 @puts(ptr @.str)
+  ret i32 0
+}
+
+; 名前付きメタデータ
+!0 = !{i32 42, null, !"string"}
+!foo = !{!0}
+</code></pre>
+
+<p>
+よく分からないものがいくつかある．<code>private, nounwind</code>あとコメントにある<code>named metadata</code>以下のやつは何を意味しているのか．
+</p>
+
+<p>
+また一般に，moduleはグローバル値(関数と変数)のリストからなる．グローバル値はメモリの場所へのポインタで表される．(上の例では文字配列へのポインターや関数へのポインター)
+
+</p>
+
+
+<h3 id=" リンケージ型"> リンケージ型</h3>
+
+<p>
+全てのグローバル変数や関数は次の内のどれかのリンケージ型を持つ．詳細の説明は全部書くと大変なので概要だけ．
+</p>
+
+<ul>
+<li> <code>private</code>
+<p>
+    - そのmodule内のオブジェクトからアクセスされる．- <code>internal</code>
+    - <code>private</code>と似ているが，オブジェクトファイルからはローカルシンボルとして見える．(C言語のstaticに相当)
+
+</p>
+</li>
+<li> <code>avairable_externally</code>
+<p>
+    - このリンクを持つグローバル値はmoduleのオブジェクトファイルには出力されない．いわゆる外部宣言．定義する時だけ使われる．宣言には使ってはいけない．- <code>linkonce</code>
+    - 他のモジュールの同名のグローバル値と同一に見做される．一度も参照されなかった場合破棄されうる．- <code>weak</code>
+    - <code>linkonce</code>と似ているが，参照がなかった場合でも破棄されない．- <code>common</code>
+    - <code>weak</code>と似ている．C言語で言う所のグローバルスコープの<code>int X;</code>
+
+</p>
+</li>
+<li> <code>appending</code>
+</li>
+</ul>
+<p>
+    - 配列へのポインターのグローバル変数だけに適用される．2つのグローバル変数が一緒にリンクされた場合に，グローバル配列が一緒に追加される．(?)使い道と意味がよく分からなかった．- <code>extern_weak</code>
+    - ELFオブジェクトファイルモデルに従う．シンボルはリンクされるまでは<code>weak</code>であり，リンクがない場合，そのシンボルは未定義ではなくnullになる．- <code>linkonce_odr</code>, <code>weak_odr</code>
+    - odrが付くと，すべてのグローバル値が同値であることを意味する．- <code>external</code>
+    - 上記の識別子が何も付かなかった場合は，これになる．リンクされた時も外から参照できるように解決される．
+</p>
+
+
+<p>
+宣言する場合，<code>external</code>か<code>extern_weak</code>以外の指定はルール違反．
+</p>
+
+<h2 id=" 呼出規約"> 呼出規約</h2>
+
+<p>
+functions, calls，invokesはオプションを持ちうる．動的な呼び出し元，呼び出し先の規約は一致している必要がある．さもなければその動作は未定義．現在サポートされている呼出規約は以下の通りで，今後追加される予定．
+</p>
+
+<ul>
+<li> <code>ccc</code>
+<p>
+    - C言語の呼出規約で，他のオプションが指定されない限りデフォルトはこれ．- <code>fastcc</code>
+
+</p>
+</li>
+<li> <code>coldcc</code>
+</li>
+<li> <code>ghccc</code>
+</li>
+<li> <code>cc 11</code>
+</li>
+<li> <code>anyregcc</code>
+</li>
+<li> <code>preserve_mostcc</code>
+</li>
+<li> <code>preserve_allcc</code>
+</li>
+<li> <code>preserve_nonecc</code>
+</li>
+<li> <code>cxx_fast_tlscc</code>
+</li>
+<li> <code>tailllcc</code>
+</li>
+<li> <code>swiftcc</code>
+</li>
+<li> <code>swifttailcc</code>
+</li>
+<li> <code>cfguard_checkcc</code>
+</li>
+<li> <code>cc &lt;n&gt;</code>
+</li>
+</ul>
+
+
+<h2 id=" 表示スタイル"> 表示スタイル</h2>
+
+<p>
+全てのグローバル変数や関数は以下のどれかの表示スタイルを持つ．
+</p>
+
+
+<ul>
+<li> <code>default</code>
+</li>
+</ul>
+<p>
+    - ELFオブジェクトファイルのフォーマットを使う．他のmoduleから宣言が見える．- <code>hidden</code>
+    - 同じオブジェクトからは参照できるが，それ以外からは見れない．つまり他のmoduleからは直接参照することができない．- <code>protected</code>
+    - シンボルは動的シンボルとして配置されるが，定義されたmodule内ではローカルシンボルとして扱われる．他のmoduleからは上書きできない．
+</p>
+
+
+<p>
+<code>internal</code>や<code>private</code>としてリンクされた場合は，<code>defaullt</code>の表示スタイルに設定しなくてはならない．
+</p>
+
+
+<h2 id=" DLLストレージクラス"> DLLストレージクラス</h2>
+<br>
+<a href="../index.html">トップ(TOP)</a>
+</body>
+</html>
