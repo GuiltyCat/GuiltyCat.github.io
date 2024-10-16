@@ -14,26 +14,7 @@
 </p>
 <h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
 
-<ul>
-<li> || 1byte | 1byte | 1byte | 1byte || 1byte | 1byte | 1byte | 1byte ||
-</li>
-<li> intを2個定義するとこうなる
-</li>
-<li> || int || int ||
-</li>
-<li> short intを2個定義するとこうなる
-</li>
-<li> || short int | short int || 1byte | 1byte | 1byte | 1byte ||
-</li>
-<li> short intとintをアライメント跨ぎが発生するように配置した場合
-</li>
-<li> || short int | int | 1byte | 1byte ||
-</li>
-<li> アライメントを揃えた場合
-</li>
-<li> || short int | 1byte | 1byte || int ||
-</li>
-</ul>
+
 <p>
 先日はLLVM IR Referenceから攻めようとしたがこれを読んだって書けるようになりそうになかったので，その方針は諦めてC言語から実際にLLVM IRのコードを出力しながら触って覚えることにする．
 </p>
@@ -338,9 +319,27 @@ non_main:                               # @non_main
 </p>
 
 <p>
-次は引数有りのmain関数
-
+次に移る前に少しだけ．上記コマンドはこれから何回も実行するので，<code>make</code>で自動化しておく．まず次のようなMakefileを作る．面倒だから全て直書きだ．
 </p>
+
+<pre><code>
+all: a.out
+
+main.ll: main.c
+	clang -emit-llvm -S -O0 main.c
+
+main.s: main.ll
+	llc main.ll
+
+a.out: main.s
+	clang main.s
+</code></pre>
+
+<p>
+後は<code>make</code>コマンドを実行するだけでよい．main.llだけ更新した場合でもそこから先のmain.sとa.outのファイルだけ生成される．
+</p>
+
+
 
 
 <h2 id=" 引き数有りのmain関数"> 引き数有りのmain関数</h2>
@@ -485,6 +484,10 @@ $ echo $?
 
 <h2 id=" 変数の定義"> 変数の定義</h2>
 
+<p>
+まずは局所的変数から順番に．そしてその他として，<code>static</code>や<code>extern</code>，<code>const</code>について動作を見ていく．
+</p>
+
 <h3 id=" 数値の変数"> 数値の変数</h3>
 
 <p>
@@ -538,16 +541,19 @@ define i32 @main() {
 </p>
 
 <pre><code>
-例えば||がアライメントだとするとこんな感じ．------------------------------------------------------------------------------
-<h2 id="|| 1byte   | 1byte  | 1byte  | 1byte  || 1byte   | 1byte  | 1byte  | 1byte  ||">|| 1byte   | 1byte  | 1byte  | 1byte  || 1byte   | 1byte  | 1byte  | 1byte  ||</h2>
-<h2 id="intを2個定義するとこうなる">intを2個定義するとこうなる</h2>
-<h2 id="||            int                     ||               int                  ||">||            int                     ||               int                  ||</h2>
-<h2 id="short intを2個定義するとこうなる">short intを2個定義するとこうなる</h2>
-<h2 id="||  short int       |  short int      || 1byte   | 1byte  | 1byte  | 1byte  ||">||  short int       |  short int      || 1byte   | 1byte  | 1byte  | 1byte  ||</h2>
-<h2 id="short intとintをアライメント跨ぎが発生するように配置した場合">short intとintをアライメント跨ぎが発生するように配置した場合</h2>
-<h2 id="|| short int        |              int                    | 1byte  | 1byte  ||">|| short int        |              int                    | 1byte  | 1byte  ||</h2>
-<h2 id="アライメントを揃えた場合">アライメントを揃えた場合</h2>
-<h2 id="|| short int        | 1byte  | 1byte  ||               int                  ||">|| short int        | 1byte  | 1byte  ||               int                  ||</h2>
+例えば||がアライメントだとするとこんな感じ．|| 1byte   | 1byte  | 1byte  | 1byte  || 1byte   | 1byte  | 1byte  | 1byte  ||
+
+intを2個定義するとこうなる
+||            int                     ||               int                  ||
+
+short intを2個定義するとこうなる
+||  short int       |  short int      || 1byte   | 1byte  | 1byte  | 1byte  ||
+
+short intとintをアライメント跨ぎが発生するように配置した場合
+|| short int        |              int                    | 1byte  | 1byte  ||
+
+アライメントを揃えた場合
+|| short int        | 1byte  | 1byte  ||               int                  ||
 </code></pre>
 
 <p>
@@ -932,12 +938,10 @@ define i32 @main() {
 }
 </code></pre>
 
-
-
 <h3 id=" ポインタの変数"> ポインタの変数</h3>
 
 <p>
-最後にポインタを見てみる．
+次にポインタを見てみる．
 </p>
 
 <pre><code>
@@ -967,17 +971,473 @@ define dso_local i32 @main() #0 {
 </p>
 
 <p>
-しかし，ここで疑問に思うのが<code>ptr %2</code>が<code>a</code>のアドレスだとして，<code>ptr %3</code>はなぜアドレスにならないのだろうか．<code>store</code>には何かルールがあるのかもしれない．
+しかし，ここで疑問に思うのが<code>ptr %2</code>が<code>a</code>のアドレスだとして，<code>ptr %3</code>はなぜアドレスにならないのだろうか．<code>store</code>には何かルールがありそう．後でLLVM IR Referenceを見て追記する．
 </p>
 
 <h3 id=" 配列の変数"> 配列の変数</h3>
+
+<pre><code>
+int main(void) {
+  int a[10] = {0};
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+define i32 @main() {
+  %2 = alloca [10 x i32], align 16
+  call void @llvm.memset.p0.i64(ptr align 16 %2, i8 0, i64 40, i1 false)
+  ret i32 0
+}
+declare void @llvm.memset.p0.i64(ptr nocapture writeonly, i8, i64, i1 immarg) #1
+</code></pre>
+
+<p>
+局所的変数の配列として定義した場合は<code>alloca</code>を使い，その引数が増えるイメージだ．<code>memset</code>については後に回す．
+</p>
+
+<p>
+まとめて比較するとこんな感じになる．
+</p>
+
+
+<pre><code>
+  uint8_t a[10] = {0};
+  uint16_t b[10] = {0};
+  uint32_t c[10] = {0};
+  uint64_t d[10] = {0};
+  float e[10] = {0};
+  double f[10] = {0};
+</code></pre>
+
+<p>
+<code>unsigned</code>は<code>int</code>扱いと一緒だろうからこちらだけその通りか確かめた．
+</p>
+
+
+<pre><code>
+  %2 = alloca [10 x i8], align 1
+  %3 = alloca [10 x i16], align 16
+  %4 = alloca [10 x i32], align 16
+  %5 = alloca [10 x i64], align 16
+  %6 = alloca [10 x float], align 16
+  %7 = alloca [10 x double], align 16
+</code></pre>
+
+
+<p>
+次に配列の要素にアクセスする方法を見ていく．さっきの続きと見做してもらってよい．
+</p>
+
+
+<pre><code>
+  uint8_t aa = a[1];
+  uint16_t bb = b[1];
+  uint32_t cc = c[1];
+  uint64_t dd = d[1];
+  float ee = e[1];
+  double ff = f[1];
+</code></pre>
+
+<pre><code>
+  %14 = getelementptr inbounds [10 x i8], ptr %2, i64 0, i64 1
+  %15 = load i8, ptr %14, align 1
+  store i8 %15, ptr %8, align 1
+  %16 = getelementptr inbounds [10 x i16], ptr %3, i64 0, i64 1
+  %17 = load i16, ptr %16, align 2
+  store i16 %17, ptr %9, align 2
+  %18 = getelementptr inbounds [10 x i32], ptr %4, i64 0, i64 1
+  %19 = load i32, ptr %18, align 4
+  store i32 %19, ptr %10, align 4
+  %20 = getelementptr inbounds [10 x i64], ptr %5, i64 0, i64 1
+  %21 = load i64, ptr %20, align 8
+  store i64 %21, ptr %11, align 8
+  %22 = getelementptr inbounds [10 x float], ptr %6, i64 0, i64 1
+  %23 = load float, ptr %22, align 4
+  store float %23, ptr %12, align 4
+  %24 = getelementptr inbounds [10 x double], ptr %7, i64 0, i64 1
+  %25 = load double, ptr %24, align 8
+  store double %25, ptr %13, align 8
+</code></pre>
+
+<p>
+構造体の時と同じく<code>getelemptr</code>が出てきた．<code>inbouds</code>は今回が固定のアドレスだから範囲を指定できるという意味だろう．<code>getelementptr</code>自体はあくまでポインタを返すだけだから，<code>load</code>で読み出して<code>store</code>でセットしている．
+</p>
+
+<p>
+ここで分からないのが，<code>getelementptr</code>の最後の引数で，これが何番目の要素を取るのかに対応しているはず．そうなると，<code>ptr %2</code>などで渡された値の型が何かによってアドレスは変化するはずだ．しかしそれっぽい型の指定は<code>inbounds</code>ぐらいでそれ以外の引数が存在していない．<code>inbounds</code>の指定を読んでいい感じにしているということだろうか．このあたりもLLVM IR Referenceを読み込む必要がありそうだ．
+</p>
+
+<p>
+今度はさらに続きで値の書き込みを見てみる．
+</p>
+
+<pre><code>
+  a[2] = 1;
+  b[2] = 1;
+  c[2] = 1;
+  d[2] = 1;
+  e[2] = 1;
+  f[2] = 1;
+</code></pre>
+
+<pre><code>
+  %26 = getelementptr inbounds [10 x i8], ptr %2, i64 0, i64 2
+  store i8 1, ptr %26, align 1
+  %27 = getelementptr inbounds [10 x i16], ptr %3, i64 0, i64 2
+  store i16 1, ptr %27, align 4
+  %28 = getelementptr inbounds [10 x i32], ptr %4, i64 0, i64 2
+  store i32 1, ptr %28, align 8
+  %29 = getelementptr inbounds [10 x i64], ptr %5, i64 0, i64 2
+  store i64 1, ptr %29, align 16
+  %30 = getelementptr inbounds [10 x float], ptr %6, i64 0, i64 2
+  store float 1.000000e+00, ptr %30, align 8
+  %31 = getelementptr inbounds [10 x double], ptr %7, i64 0, i64 2
+  store double 1.000000e+00, ptr %31, align 16
+</code></pre>
+
+<p>
+<code>getelementptr</code>の使い方自体は全く一緒．違いは<code>store</code>になっているぐらいだ．
+</p>
+
+<h3 id=" 関数ポインタ"> 関数ポインタ</h3>
 
 
 <h2 id=" 四則演算の記述方法"> 四則演算の記述方法</h2>
 
 <p>
-次は四則演算をどう書けばよいのかを見ていく．ここからは一々全部書くのは面倒なので必要な所だけ見ていく．
+次は四則演算をどう書けばよいのかを見ていく．題材は次のmain.cだ．
 </p>
+
+
+<pre><code>
+int main(void) {
+  return 1+2;
+}
+</code></pre>
+
+<p>
+と思ったのだが，<code>-O0</code>指定をしているのに最適化されて<code>ret i32 3</code>になってしまっていた．なので次を試す．
+</p>
+
+<pre><code>
+int main(void) {
+  int a = 2;
+  int b = 3;
+  int c = a + b;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+define i32 @main() {
+  %2 = alloca i32, align 4
+  %3 = alloca i32, align 4
+  %4 = alloca i32, align 4
+  store i32 2, ptr %2, align 4
+  store i32 3, ptr %3, align 4
+  %5 = load i32, ptr %2, align 4
+  %6 = load i32, ptr %3, align 4
+  %7 = add nsw i32 %5, %6
+  store i32 %7, ptr %4, align 4
+  ret i32 0
+}
+</code></pre>
+
+<p>
+<code>%2</code>が<code>a</code>，<code>%3</code>が<code>b</code>，<code>%4</code>が<code>c</code>にあたる．
+</p>
+
+<p>
+最初の<code>alloca</code>は変数の確保で，その次の<code>store</code>は<code>a=2, b=3</code>を表している．
+</p>
+
+<p>
+その次の<code>%5, %6</code>は一度別の変数に移し変えて代入している．見た感じからするに，<code>add</code>のような演算の前は自動的に新しい変数で受けるようになっているっぽい．
+</p>
+
+<p>
+そして，今回のメインとなる演算がその次の<code>%7</code>に代入している行だ．
+</p>
+
+<pre><code>
+  %7 = add nsw i32 %5, %6
+</code></pre>
+
+<p>
+<code>nsw</code>は何を意味しているのか?
+
+</p>
+
+<p>
+LLVM IR Referenceを見てみると，
+</p>
+
+<pre><code>
+add [nuw] [nsw] <ty> <op1>, <op2>
+</code></pre>
+
+<p>
+のようになっており<code>nuw</code>と<code>nsw</code>が設定できるようになっている．
+</p>
+
+<p>
+<code>nuw</code>はNo Unsigned Wrapの略で，<code>nsw</code>はNo Signed Wrapの略のようだ．そしてこの指定があるとオーバーフローが発生した場合の値は未定義になる．
+</p>
+
+<p>
+最適化する場合にオーバーフローが起きないことを明示するためのものっぽい．なので実装する時には外しても問題はないだろう．
+</p>
+
+
+<p>
+その後は元々確保していた<code>%4</code>に<code>store</code>して完了．
+</p>
+
+
+<p>
+次に片方が変数で片方が値だった場合を見てみる．
+</p>
+
+<pre><code>
+int main(void) {
+  int a = 2;
+  int c = a + 3;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+define i32 @main() {
+  %2 = alloca i32, align 4
+  %3 = alloca i32, align 4
+  store i32 2, ptr %2, align 4
+  %4 = load i32, ptr %2, align 4
+  %5 = add nsw i32 %4, 3
+  store i32 %5, ptr %3, align 4
+  ret i32 0
+}
+</code></pre>
+
+<p>
+<code>%2</code>が<code>a</code>に<code>%3</code>が<code>c</code>に対応している．
+</p>
+
+<p>
+一番の差は<code>add</code>の所で，本来は変数が入っていた所に直接値が入っている．
+</p>
+
+<pre><code>
+  %5 = add nsw i32 %4, 3
+</code></pre>
+
+<p>
+アセンブリの場合即値かどうかで命令が変わることがあるが，LLVM Assemblyはそんなことはないようだ．
+</p>
+
+<p>
+次にかけ算や割り算を見ていく．
+</p>
+
+<pre><code>
+int main(void) {
+  int a = 2;
+  int b = 3;
+  int c = a + b;
+  int d = a - b;
+  int e = a * b;
+  int f = a / b;
+  int g = a % b;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+  %11 = add nsw i32 %9, %10
+  %14 = sub nsw i32 %12, %13
+  %17 = mul nsw i32 %15, %16
+  %20 = sdiv i32 %18, %19
+  %23 = srem i32 %21, %22
+</code></pre>
+
+<p>
+直接値が入っている場合も次の通り．
+</p>
+
+<pre><code>
+int main(void) {
+  int a = 2;
+  int c = a + 3;
+  int d = a - 3;
+  int e = a * 3;
+  int f = a / 3;
+  int g = a % 3;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+  %9 = add nsw i32 %8, 3
+  %11 = sub nsw i32 %10, 3
+  %13 = mul nsw i32 %12, 3
+  %15 = sdiv i32 %14, 3
+  %17 = srem i32 %16, 3
+</code></pre>
+
+<p>
+まあ予想通り．
+</p>
+
+<p>
+次に<code>unsigned</code>だった場合を見てみると，
+</p>
+
+<pre><code>
+int main(void) {
+  int a = 2;
+  int b = 3;
+  int c = a + b;
+  int d = a - b;
+  int e = a * b;
+  int f = a / b;
+  int g = a % b;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+  %11 = add i32 %9, %10
+  %14 = sub i32 %12, %13
+  %17 = mul i32 %15, %16
+  %20 = udiv i32 %18, %19
+  %23 = urem i32 %21, %22
+</code></pre>
+
+<p>
+<code>nsw</code>がつくつかないの判断はよく分からないがこんなものなのだろう．(<code>unsigned</code>なので<code>2-3</code>はオーバーフローが発生するから分かるが，なぜ<code>add</code>でも<code>nsw</code>が消えるのか)
+
+</p>
+
+
+<p>
+<code>sdiv</code>と<code>srem</code>の最初の<code>s</code>はsignedで，<code>udiv</code>と<code>urem</code>の最初のuはunsignedの意味だろう．<code>uint64_t</code>の場合は<code>i32</code>が<code>i64</code>に変化するだけ．ただし，<code>mul</code>と<code>add</code>の<code>nsw</code>が消える．<code>int64_t</code>の場合は<code>i32</code>が<code>i64</code>に変化するだけ．ただし，<code>mul</code>と<code>add</code>の<code>nsw</code>が復活．
+</p>
+
+<p>
+<code>float</code>の場合は
+
+</p>
+
+<pre><code>
+  %10 = fadd float %8, %9
+  %13 = fsub float %11, %12
+  %16 = fmul float %14, %15
+  %19 = fdiv float %17, %18
+</code></pre>
+
+<p>
+<code>double</code>の場合は
+
+</p>
+
+<pre><code>
+  %10 = fadd double %8, %9
+  %13 = fsub double %11, %12
+  %16 = fmul double %14, %15
+  %19 = fdiv double %17, %18
+</code></pre>
+
+<p>
+インクリメントは次のようになった．
+</p>
+
+<pre><code>
+  %4 = add i32 %3, 1
+</code></pre>
+
+<p>
+ここまで来れば後は大体予想が付くので次に移る．
+</p>
+
+<h2 id=" ビット演算"> ビット演算</h2>
+
+<p>
+まずは，AND，OR，NOT，XORを見ていく．
+</p>
+
+<pre><code>
+int main(void) {
+  unsigned int a = 0;
+  unsigned int b = 1;
+  unsigned int c = a & b;
+  unsigned int d = a | b;
+  unsigned int e = a ^ b;
+  unsigned int f = ~a;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+  %10 = and i32 %8, %9
+  %13 = or i32 %11, %12
+  %16 = xor i32 %14, %15
+  %18 = xor i32 %17, -1
+</code></pre>
+
+<p>
+ここでNOTが<code>xor &lt;ty&gt; &lt;op1&gt;, -1</code>で表現されているのがおやっと思ったポイントだ．<code>-1</code>なので全て<code>1</code>が立ったものに対してXORを取ることになる．考えてみれば，もし相手側が<code>0</code>であれば<code>1</code>になるし，<code>1</code>であれば<code>0</code>と確かにNOTになっている．
+</p>
+
+<p>
+次にシフト演算を追加してみる．
+</p>
+
+<pre><code>
+  unsigned int g = a >> b;
+  unsigned int h = a << b;
+</code></pre>
+
+<pre><code>
+  %23 = lshr i32 %21, %22
+  %26 = shl i32 %24, %25
+</code></pre>
+
+<p>
+あんまり対称的な名前ではないのが気になる．<code>shl</code>はshift leftでいいだろう．<code>lshr</code>はlogical shift rightのことらしい．
+</p>
+
+<p>
+となるとarithmaticがあるはずなので，試しに<code>int</code>にしてみる．
+</p>
+
+<pre><code>
+int main(void) {
+  int a = -1;
+  int b = -2;
+  int g = a >> b;
+  int h = a << b;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+  %8 = ashr i32 %6, %7
+  %11 = shl i32 %9, %10
+</code></pre>
+
+<p>
+左方向にはいくらシフトしようが符号が問題になることはないが，右方向にシフトする場合は型によって符号が問題になることがある．だから予想通り<code>ashr</code>というarithmatic shift rightになっていた．
+</p>
+
+
+<h2 id=" 型のキャスト"> 型のキャスト</h2>
+
+<h2 id=" 制御構文"> 制御構文</h2>
+
+
+
+<h1 id=" まとめ"> まとめ</h1>
+
 
 <h2 id=" 変数の記述方法"> 変数の記述方法</h2>
 
