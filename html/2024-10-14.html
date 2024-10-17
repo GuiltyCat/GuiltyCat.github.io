@@ -1103,7 +1103,13 @@ declare void @llvm.memset.p0.i64(ptr nocapture writeonly, i8, i64, i1 immarg) #1
 <h3 id=" 関数ポインタ"> 関数ポインタ</h3>
 
 
-<h2 id=" 四則演算の記述方法"> 四則演算の記述方法</h2>
+<h2 id=" 演算子"> 演算子</h2>
+
+<p>
+演算子は数字を取る場合とVectorを取る場合があり，ここでは分かりやすさのために数字を取る場合を主に見ていく．
+</p>
+
+<h3 id=" 四則演算"> 四則演算</h3>
 
 <p>
 次は四則演算をどう書けばよいのかを見ていく．題材は次のmain.cだ．
@@ -1359,7 +1365,7 @@ int main(void) {
 ここまで来れば後は大体予想が付くので次に移る．
 </p>
 
-<h2 id=" ビット演算"> ビット演算</h2>
+<h3 id=" ビット演算"> ビット演算</h3>
 
 <p>
 まずは，AND，OR，NOT，XORを見ていく．
@@ -1429,11 +1435,302 @@ int main(void) {
 左方向にはいくらシフトしようが符号が問題になることはないが，右方向にシフトする場合は型によって符号が問題になることがある．だから予想通り<code>ashr</code>というarithmatic shift rightになっていた．
 </p>
 
+<h3 id=" 比較演算"> 比較演算</h3>
 
-<h2 id=" 型のキャスト"> 型のキャスト</h2>
+<p>
+次は比較演算子を見てみる．
+</p>
+
+<pre><code>
+int main(void) {
+  int a = 1;
+  int b = 2;
+  int c = a < b;
+  int d = a > b;
+  int e = a <= b;
+  int f = a >= b;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+  %10 = icmp slt i32 %8, %9
+  %11 = zext i1 %10 to i32
+  %14 = icmp sgt i32 %12, %13
+  %15 = zext i1 %14 to i32
+  %18 = icmp sle i32 %16, %17
+  %19 = zext i1 %18 to i32
+  %22 = icmp sge i32 %20, %21
+  %23 = zext i1 %22 to i32
+</code></pre>
+
+<p>
+ここでは<code>icmp</code>と<code>zext</code>で比較演算を実現している．
+</p>
+
+<p>
+<code>icmp</code>はその名の通りinteger comparisonではなかろうか．文法は次のようになっている．
+</p>
+
+<pre><code>
+icmp <cond> <ty> <op1>, <op2>
+</code></pre>
+
+<p>
+<code>&lt;cond&gt;</code>には色々あって以下の通りだ．
+</p>
+
+<ul>
+<li> eq: equal
+</li>
+<li> ne: not equal
+</li>
+<li> ugt: unsigned greater than
+</li>
+<li> uge: unsigned greater or equal
+</li>
+<li> ult: unsigned less than
+</li>
+<li> ule: unsigned less or equal
+</li>
+<li> sgt: signed greater than
+</li>
+<li> sge: signed greater or equal
+</li>
+<li> slt: signed less than
+</li>
+<li> sle: signed less or equal
+</li>
+</ul>
+
+<p>
+戻り値は<code>i1</code>になる．
+</p>
+
+<p>
+<code>zext</code>は0拡張と言うもので，<code>i1</code>を<code>i32</code>に拡張していると読める．そして<code>i1</code>なので1bitしかないが，<code>i32</code>は32bitあるので，その差分の31bitを0で拡張しているのだろう．
+</p>
+
+<p>
+次に<code>double</code>の場合を見ていく．
+</p>
+
+<pre><code>
+  %10 = fcmp olt double %8, %9
+  %11 = zext i1 %10 to i32
+  %12 = sitofp i32 %11 to double
+  %15 = fcmp ogt double %13, %14
+  %16 = zext i1 %15 to i32
+  %17 = sitofp i32 %16 to double
+  %20 = fcmp ole double %18, %19
+  %21 = zext i1 %20 to i32
+  %22 = sitofp i32 %21 to double
+  %25 = fcmp oge double %23, %24
+  %26 = zext i1 %25 to i32
+  %27 = sitofp i32 %26 to double
+</code></pre>
+
+<p>
+<code>icomp</code>が<code>fcomp</code>に変化した．また<code>fcomp</code>は<code>icomp</code>とおおよそ同じだが<code>&lt;cond&gt;</code>の条件が違う．
+</p>
+
+<p>
+LLVM IR Referenceによると以下だ．
+</p>
+
+<ul>
+<li> false: no comparison, always returns false
+</li>
+<li> oeq: ordered and equal
+</li>
+<li> ogt: ordered and greater than
+</li>
+<li> oge: ordered and greater than or equal
+</li>
+<li> olt: ordered and less than
+</li>
+<li> ole: ordered and less than or equal
+</li>
+<li> one: ordered and not equal
+</li>
+<li> ord: ordered (no nans)
+</li>
+<li> ueq: unordered or equal
+</li>
+<li> ugt: unordered or greater than
+</li>
+<li> uge: unordered or greater than or equal
+</li>
+<li> ult: unordered or less than
+</li>
+<li> ule: unordered or less than or equal
+</li>
+<li> une: unordered or not equal
+</li>
+<li> uno: unordered (either nans)
+</li>
+<li> true: no comparison, always returns true
+</li>
+</ul>
+
+<p>
+ここでのorderedとは引数の値がQNANではないこと，unorderedの意味はoperandがQNANを取り得ることを意味している．
+</p>
+
+<p>
+まあとりあえずunorderedにしておけば何とかはなりそう．
+</p>
+
+<p>
+また，最後の<code>sitofp</code>についてはこちらも型の変換にあたる．文法は以下だ．
+</p>
+
+<pre><code>
+siteofp <ty> <value> to <ty2>
+</code></pre>
+
+<p>
+見ての通り，<code>i32</code>の値を<code>double</code>に変換している．
+</p>
+
+<h3 id=" 論理演算"> 論理演算</h3>
+
+<p>
+次は論理演算のAND，OR，NOTを見ていく．
+</p>
+
+<pre><code>
+#include <stdbool.h>
+int main(void) {
+  bool a = true;
+  bool b = false;
+  bool c = a && b;
+  bool e = a || b;
+  bool d = !a;
+  return 0;
+}
+</code></pre>
+
+<p>
+これはちょっと色々な命令が出てきてしまった．ざっくりとしたイメージだが，ANDとORの命令を条件分岐で上手く実現している．
+</p>
+
+
+<pre><code>
+  %8 = trunc i8 %7 to i1
+  br i1 %8, label %9, label %12
+
+9:                                                ; preds = %0
+  %11 = trunc i8 %10 to i1
+  br label %12
+
+12:                                               ; preds = %9, %0
+  %13 = phi i1 [ false, %0 ], [ %11, %9 ]
+  %14 = zext i1 %13 to i8
+  %16 = trunc i8 %15 to i1
+  br i1 %16, label %20, label %17
+
+17:                                               ; preds = %12
+  %19 = trunc i8 %18 to i1
+  br label %20
+
+20:                                               ; preds = %17, %12
+  %21 = phi i1 [ true, %12 ], [ %19, %17 ]
+  %22 = zext i1 %21 to i8
+  %24 = trunc i8 %23 to i1
+  %25 = xor i1 %24, true
+  %26 = zext i1 %25 to i8
+</code></pre>
+
+<p>
+<code>trunc</code>はinteger型の数値を型変換する命令だ．
+</p>
+
+<pre><code>
+trunc <ty> <value> to <ty2>
+</code></pre>
+
+<p>
+<code>br</code>は制御構文でありちょっと先取りしてしまうが，ifとgotoを一緒にしたような命令だ．
+</p>
+
+<pre><code>
+br i1 <cond>, label <iftrue>, label <iffalse>
+br label <dest>
+</code></pre>
+
+<p>
+それ以外の<code>trunc</code>そして<code>zext</code>は全て<code>i1</code>や<code>i8</code>への変換をしているだけ．
+</p>
+
+<p>
+次に<code>phi</code>について説明する．
+</p>
+
+<pre><code>
+phi <ty> [ <val0>, <label0>], ...
+</code></pre>
+
+<p>
+これは静的単一代入(SSA)におけるφ関数に相当する．何のこっちゃなので色々と調べてみると，どうやらどのブロックからやってきたのかで値を切り替えるもののようだ．具体的には下で見ていく．またこの<code>phi</code>は基本ブロックの先頭にある必要がある．基本ブロックの説明は後で．
+</p>
+
+
+<p>
+<code>&&</code>にあたる命令は，
+</p>
+
+<pre><code>
+  %13 = phi i1 [ false, %0 ], [ %11, %9 ]
+</code></pre>
+
+<p>
+そもそも<code>bool a</code>は巡って<code>%8</code>になり，<code>%9</code>のラベルへと導かれている．そして<code>bool b</code>は巡って<code>%11</code>になっている．
+</p>
+
+<p>
+したがって，<code>phi</code>に到達する前のブロックが<code>%0</code>からやってきた場合は<code>false</code>を，<code>%9</code>からやってきた場合は<code>%11</code>を返す．
+</p>
+
+<p>
+先程の流れからもある通り，このブロックへは<code>%9</code>を通ってやって来るので，<code>%11</code>が選択されることになる．
+</p>
+
+<p>
+<code>||</code>にあたる命令は以下だ．
+</p>
+
+<pre><code>
+  %21 = phi i1 [ true, %12 ], [ %19, %17 ]
+</code></pre>
+
+<p>
+ここまでの説明はもっと上手くまとめれそうなので一旦ここまでで後日修正する．
+</p>
+
+<p>
+<code>!</code>にあたる命令は
+
+</p>
+
+<pre><code>
+  %25 = xor i1 %24, true
+</code></pre>
+
+<p>
+これ自体はビット演算のNOTと考え方と同じなので省略する．
+</p>
+
 
 <h2 id=" 制御構文"> 制御構文</h2>
 
+<h3 id=" 条件分岐"> 条件分岐</h3>
+
+<h3 id=" ループ"> ループ</h3>
+
+<h3 id=" ジャンプ"> ジャンプ</h3>
+
+<h2 id=" 型のキャスト"> 型のキャスト</h2>
 
 
 <h1 id=" まとめ"> まとめ</h1>
