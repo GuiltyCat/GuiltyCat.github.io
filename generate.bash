@@ -77,6 +77,11 @@ cat <<EOF
 <meta charset="UTF-8">
 <title>${TITLE}</title>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+<style>
+    .MathJax{
+        font-size: 1.3em !important;
+    }
+</style>
 </head>
 <body>
 <a href="${TOP_LINK}">${TOP_NAME}</a>
