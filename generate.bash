@@ -77,12 +77,20 @@ cat <<EOF
 <meta charset="UTF-8">
 <title>${TITLE}</title>
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
-<style>
-    .MathJax{
-        font-size: 1.3em !important;
-    }
-</style>
 </head>
+<style>
+/* デスクトップ用 */
+code {
+    font-size: 1rem;
+}
+
+/* モバイル用 */
+@media (max-width: 768px) {
+    code {
+        font-size: 4vw; /* ビューポートの幅に基づいたサイズ */
+    }
+}
+</style>
 <body>
 <a href="${TOP_LINK}">${TOP_NAME}</a>
 $(awk -f md2html.awk <(RemoveNewline <<<${FILE} | TableOfContents))
