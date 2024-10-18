@@ -552,19 +552,20 @@ define i32 @main() {
 </p>
 
 <pre><code>
-例えば||がアライメントだとするとこんな感じ．|| 1byte   | 1byte  | 1byte  | 1byte  || 1byte   | 1byte  | 1byte  | 1byte  ||
+例えば||がアライメントだとするとこんな感じ．
+|| 1byte | 1byte | 1byte | 1byte || 1byte | 1byte | 1byte | 1byte ||
 
 intを2個定義するとこうなる
-||            int                     ||               int                  ||
+||            int                ||           int                 ||
 
 short intを2個定義するとこうなる
-||  short int       |  short int      || 1byte   | 1byte  | 1byte  | 1byte  ||
+||  short int    |  short int    || 1byte | 1byte | 1byte | 1byte ||
 
 short intとintをアライメント跨ぎが発生するように配置した場合
-|| short int        |              int                    | 1byte  | 1byte  ||
+|| short int     |                 int            | 1byte | 1byte ||
 
 アライメントを揃えた場合
-|| short int        | 1byte  | 1byte  ||               int                  ||
+|| short int     | 1byte | 1byte ||          int                  ||
 </code></pre>
 
 <p>
