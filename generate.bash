@@ -79,15 +79,12 @@ cat <<EOF
 <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
 </head>
 <style>
-/* デスクトップ用 */
 code {
     font-size: 1rem;
 }
-
-/* モバイル用 */
 @media (max-width: 768px) {
     code {
-        font-size: 4vw; /* ビューポートの幅に基づいたサイズ */
+        font-size: 4vw;
     }
 }
 </style>
