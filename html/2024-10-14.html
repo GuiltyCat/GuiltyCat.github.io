@@ -39,11 +39,19 @@ code {
 </p>
 
 <p>
+ありがちな間違いとして記事の中ではLLVM Assemblyをいい感じに意訳しているため，例えば変数の番号の順番が抜けたり入れ替わったりしている場合がある．こうなるとそのままではLLVM Assemblyをコンパイルすることができなくなってしまう．でもこの記事ではそれを分かっていて分かりやすさを重要視しているためあしからず．
+</p>
+
+<p>
 とりあえず上から順番に試したものを記述していく．
 </p>
 
 <p>
-まとめて知りたい人は最後の方にまとめて書く予定なのでそこを見て欲しい．
+なので<code>if</code>はこう展開しないといけないとかいうのを言いたいわけではなく，用意されている命令を好きに使って展開すればよい．
+</p>
+
+<p>
+なので，基本的な書き方については別の記事にまとめようと思う．
 </p>
 
 <h2 id=" 事前情報として"> 事前情報として</h2>
@@ -79,10 +87,6 @@ LLVMのアップデートに追従できなくなるリスクを取ってでも�
 
 <p>
 その方法はひたすらC言語で色々書いて，それをLLVM Assemblyに変換しその対応関係から学んでいく．
-</p>
-
-<p>
-また，LLVM Assemblyは長いのでLLVM Assemblyのことをasmと書くのでご注意を．
 </p>
 
 <p>
@@ -1114,6 +1118,10 @@ declare void @llvm.memset.p0.i64(ptr nocapture writeonly, i8, i64, i1 immarg) #1
 
 <h3 id=" 関数ポインタ"> 関数ポインタ</h3>
 
+<p>
+ここで書きたい所だが関数の呼び出し方とかと比較しないといけないので，関数の定義や呼び出し方を見てからもう一度振り替える．最後の方に載せている．
+</p>
+
 
 <h2 id=" 演算子"> 演算子</h2>
 
@@ -1632,21 +1640,21 @@ int main(void) {
   %8 = trunc i8 %7 to i1
   br i1 %8, label %9, label %12
 
-9:                                                ; preds = %0
+9:
   %11 = trunc i8 %10 to i1
   br label %12
 
-12:                                               ; preds = %9, %0
+12:
   %13 = phi i1 [ false, %0 ], [ %11, %9 ]
   %14 = zext i1 %13 to i8
   %16 = trunc i8 %15 to i1
   br i1 %16, label %20, label %17
 
-17:                                               ; preds = %12
+17:
   %19 = trunc i8 %18 to i1
   br label %20
 
-20:                                               ; preds = %17, %12
+20:
   %21 = phi i1 [ true, %12 ], [ %19, %17 ]
   %22 = zext i1 %21 to i8
   %24 = trunc i8 %23 to i1
@@ -1684,9 +1692,8 @@ phi <ty> [ <val0>, <label0>], ...
 </code></pre>
 
 <p>
-これは静的単一代入(SSA)におけるφ関数に相当する．何のこっちゃなので色々と調べてみると，どうやらどのブロックからやってきたのかで値を切り替えるもののようだ．具体的には下で見ていく．またこの<code>phi</code>は基本ブロックの先頭にある必要がある．基本ブロックの説明は後で．
+これは静的単一代入(SSA)におけるφ関数に相当する．何のこっちゃなので調べてみると，どうやらどのブロックからやってきたのかで値を切り替えるもののようだ．具体的には下で見ていく．またこの<code>phi</code>は基本ブロックの先頭にある必要がある．基本ブロックの説明は後で．
 </p>
-
 
 <p>
 <code>&&</code>にあたる命令は，
@@ -1709,7 +1716,28 @@ phi <ty> [ <val0>, <label0>], ...
 </p>
 
 <p>
-<code>||</code>にあたる命令は以下だ．
+したがって，もっと単純化すると次のようなイメージ．
+</p>
+
+<pre><code>
+0:
+    if (<a>) { goto %9; } else { goto %12 };
+9:
+    goto %12;
+12:
+    ret = if (<from %0>) { false; } if (<from %9>) { <b>; };
+</code></pre>
+
+<p>
+もし<code>&lt;a&gt;</code>が<code>true</code>であれば<code>%9</code>,<code>%12</code>と経由し<code>&lt;b&gt;</code>が評価され，<code>&lt;a&gt;</code>が<code>false</code>であれば<code>%12</code>に直接入って<code>false</code>となる．
+</p>
+
+<p>
+言い替えれば<code>&lt;a&gt;</code>が<code>false</code>であれば<code>false</code>に，<code>&lt;a&gt;</code>が<code>true</code>であれば<code>&lt;b&gt;</code>の値が評価されることになる．これは確かにANDになっている．
+</p>
+
+<p>
+次は<code>||</code>を見てみる．
 </p>
 
 <pre><code>
@@ -1717,11 +1745,25 @@ phi <ty> [ <val0>, <label0>], ...
 </code></pre>
 
 <p>
-ここまでの説明はもっと上手くまとめれそうなので一旦ここまでで後日修正する．
+さっきとの差分は<code>phi</code>の最初の判定の値が<code>false</code>ではなく<code>true</code>になっていることだ．同じように書き直すと次のようになる．
 </p>
 
+<pre><code>
+12:
+    if (<a>) { goto %20; } else { goto %17 };
+17:
+    goto %20;
+20:
+    ret = if (<from %12>) { true; } if (<from %17>) { <b>; };
+</code></pre>
+
 <p>
-<code>!</code>にあたる命令は
+<code>&lt;a&gt;</code>が<code>true</code>であれば<code>true</code>を，<code>&lt;a&gt;</code>が<code>false</code>であれば<code>&lt;b&gt;</code>の値を返す．ちょうどANDと逆のようなロジックでこれも確かにORになっている．
+</p>
+
+
+<p>
+最後に<code>!</code>にあたる命令は
 
 </p>
 
@@ -1736,21 +1778,646 @@ phi <ty> [ <val0>, <label0>], ...
 
 <h2 id=" 制御構文"> 制御構文</h2>
 
-<h3 id=" 条件分岐"> 条件分岐</h3>
+<p>
+どうやって，条件によって実行される命令が変化させるのかを見ていく．
+</p>
 
-<h3 id=" ループ"> ループ</h3>
+
+<h3 id=" 条件分岐(if)"> 条件分岐(if)</h3>
+
+<p>
+まずは簡単な<code>if</code>から．
+</p>
+
+<pre><code>
+#include <stdbool.h>
+int main(void) {
+  bool a = true;
+  bool b = false;
+  if (a) {
+    b = true;
+  } else {
+    b = false;
+  }
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+  br i1 %5, label %6, label %7
+
+6:
+  store i8 1, ptr %3, align 1
+  br label %8
+
+7:
+  store i8 0, ptr %3, align 1
+  br label %8
+
+8:
+</code></pre>
+
+<p>
+<code>%5</code>が<code>a</code>，<code>%3</code>が<code>b</code>にあたる．
+</p>
+
+<p>
+<code>phi</code>が出てくるのかと思ったら，もっとシンプルに<code>br</code>だけで実現していた．書いてあるままなので詳細は省略．
+</p>
+
+<h3 id=" 条件分岐(三項演算子)"> 条件分岐(三項演算子)</h3>
+
+<p>
+厳密には制御構文ではなく名前の通り演算子の所に入れるべきかもしれないが一旦はここに配置しておく．
+</p>
+
+<pre><code>
+#include <stdbool.h>
+int main(void) {
+  bool a = true;
+  int b = a ? 1 : 2;
+  return 0;
+}
+</code></pre>
+
+<p>
+ここはちょっと面白いことをしていたので処理の少し前から載せる．
+</p>
+
+<pre><code>
+  %2 = alloca i8, align 1
+  %3 = alloca i32, align 4
+  store i8 1, ptr %2, align 1
+  %4 = load i8, ptr %2, align 1
+  %5 = trunc i8 %4 to i1
+  %6 = zext i1 %5 to i64
+  %7 = select i1 %5, i32 1, i32 2
+  store i32 %7, ptr %3, align 4
+</code></pre>
+
+<p>
+まず<code>a</code>は<code>bool</code>だから<code>i8</code>で確保され<code>1</code>が代入される．そして，<code>i8</code>から<code>i1</code>に変換した後(<code>trunc</code>)，<code>i64</code>に変換している(<code>zext</code>)．にもかかわらず，結局使っているのは<code>%5</code>で<code>trunc</code>した後の値で，<code>zext</code>は使っていない．
+</p>
+
+<p>
+結局は下記の通りに<code>select</code>というそのままの名前のものを呼び出している．
+</p>
+
+<pre><code>
+  %7 = select i1 %5, i32 1, i32 2
+</code></pre>
+
+<h3 id=" 条件分岐(switch)"> 条件分岐(switch)</h3>
+
+<p>
+<code>switch</code>はどうなるのかを見てみる．
+</p>
+
+<pre><code>
+int main(void) {
+  int a = 10;
+  switch (a) {
+    case 1:
+      a = 1;
+      break;
+    case 2:
+      a = 2;
+      break;
+    default:
+      a = 10;
+      break;
+  }
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+define i32 @main() {
+  %2 = alloca i32, align 4
+  store i32 10, ptr %2, align 4
+  %3 = load i32, ptr %2, align 4
+  switch i32 %3, label %6 [
+    i32 1, label %4
+    i32 2, label %5
+  ]
+
+4:                                                ; preds = %0
+  store i32 1, ptr %2, align 4
+  br label %7
+
+5:                                                ; preds = %0
+  store i32 2, ptr %2, align 4
+  br label %7
+
+6:                                                ; preds = %0
+  store i32 10, ptr %2, align 4
+  br label %7
+
+7:                                                ; preds = %6, %5, %4
+  ret i32 0
+}
+</code></pre>
+
+<p>
+そのまんまの命令が出てきて驚いた．
+</p>
+
+<p>
+<code>%6</code>が<code>default</code>なんだろうぐらいはあるが，それ以外はそのまんまなので詳しい解説はしない．
+</p>
 
 <h3 id=" ジャンプ"> ジャンプ</h3>
 
+<p>
+次は<code>goto</code>がどうなるかを見ていく．
+</p>
+
+<pre><code>
+int main(void) {
+  int a = 0;
+  goto LABEL;
+  a = 1;
+LABEL:
+  a = 2;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+  %2 = alloca i32, align 4
+  store i32 0, ptr %2, align 4
+  br label %3
+
+3:
+  store i32 2, ptr %2, align 4
+</code></pre>
+
+<p>
+見ての通り単純に<code>br</code>が呼ばれているだけだった．そういえば<code>br</code>は何の略なのだろうか．
+</p>
+
+<h3 id=" ループ"> ループ</h3>
+
+<p>
+まずは単純な<code>while</code>から．
+</p>
+
+<pre><code>
+#include <stdbool.h>
+int main(void) {
+  int c = 0;
+  while (true) {
+    c++;
+    if (c > 10) {
+      break;
+    }
+  }
+  return 0;
+}
+</code></pre>
+
+
+<pre><code>
+define i32 @main() {
+  %2 = alloca i32, align 4
+  store i32 0, ptr %2, align 4
+  br label %3
+
+3:
+  %4 = load i32, ptr %2, align 4
+  %5 = add nsw i32 %4, 1
+  store i32 %5, ptr %2, align 4
+  %6 = load i32, ptr %2, align 4
+  %7 = icmp sgt i32 %6, 10
+  br i1 %7, label %8, label %9
+
+8:
+  br label %10
+
+9:
+  br label %3
+
+10:
+  ret i32 0
+}
+</code></pre>
+
+<p>
+単純な<code>br</code>の組み合わせで，<code>goto</code>を使って<code>while</code>を書き直したらこんな感じかという印象だが，不思議に思ったのがこの部分だ．
+</p>
+
+<pre><code>
+  br i1 %7, label %8, label %9
+<中略>
+9:
+  br label %3
+</code></pre>
+
+
+<p>
+ここはこんな書き方しなくても
+
+</p>
+
+<pre><code>
+  br i1 %7, label %8, label %3
+</code></pre>
+
+<p>
+これで終わるはずなのだが，わざわざ<code>9:</code>を挟んでいる．何故なのだろうか？
+さっきあった<code>if</code>の展開の仕方と組み合わせるとこんな風になるのだろうが，とすると<code>while</code>の本質はどこになるのだろうか．
+</p>
+
+<p>
+試しに一番単純な無限ループを変換してみる．
+</p>
+
+<pre><code>
+#include <stdbool.h>
+int main(void) {
+  while (true)
+    ;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+define i32 @main() {
+  br label %2
+
+2:
+  br label %2
+}
+</code></pre>
+
+<p>
+ここから類推すると<code>8:</code>と<code>9:</code>は<code>if</code>によって発生し，<code>9:</code>の基本ブロックの中の<code>br label %3</code>が<code>while</code>によって発生したと考えるのが妥当だろう．
+</p>
+
+<p>
+次に<code>for</code>を見てみる．
+</p>
+
+<pre><code>
+int main(void) {
+  for (int i = 0; i < 10; i++)
+    ;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+define i32 @main() {
+  %2 = alloca i32, align 4
+  store i32 0, ptr %2, align 4
+  br label %3
+
+3:
+  %4 = load i32, ptr %2, align 4
+  %5 = icmp slt i32 %4, 10
+  br i1 %5, label %6, label %10
+
+6:
+  br label %7
+
+7:
+  %8 = load i32, ptr %2, align 4
+  %9 = add nsw i32 %8, 1
+  store i32 %9, ptr %2, align 4
+  br label %3, !llvm.loop !6
+
+10:
+  ret i32 0
+}
+</code></pre>
+
+<p>
+解釈としては<code>for</code>が始まった時点で<code>br</code>でジャンプする．(<code>br label %3</code>)
+
+</p>
+
+<p>
+そして<code>3:</code>のブロックでは<code>if</code>と同じ扱いで<code>i&lt;10</code>を処理している．その<code>if</code>の行き先が<code>6:</code>と<code>10:</code>になっている．
+</p>
+
+<p>
+<code>6:</code>はそのまま<code>7:</code>にいって<code>for</code>の中身の処理をしている．<code>10:</code>はループの終了だ．
+</p>
+
+<p>
+最後に<code>do while</code>を見ている．
+</p>
+
+<pre><code>
+int main(void) {
+  int c = 0;
+  do {
+    c++;
+  } while (c < 10);
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+define i32 @main() {
+  %2 = alloca i32, align 4
+  store i32 0, ptr %2, align 4
+  br label %3
+
+3:
+  %4 = load i32, ptr %2, align 4
+  %5 = add nsw i32 %4, 1
+  store i32 %5, ptr %2, align 4
+  br label %6
+
+6:
+  %7 = load i32, ptr %2, align 4
+  %8 = icmp slt i32 %7, 10
+  br i1 %8, label %3, label %9, !llvm.loop !6
+
+9:
+  ret i32 0
+}
+</code></pre>
+
+<p>
+さっきの<code>for</code>との違いを見てみると，足し算と<code>if</code>の基本ブロックの順番が逆になっている．さらに<code>while</code>や<code>for</code>と比べてもブロックの数が1つ少ないという特徴がある．<code>while</code>や<code>for</code>の場合は<code>if</code>文と<code>goto</code>それぞれ分かれて作られていたのが，<code>do while</code>だと一体化しているようなイメージ．
+</p>
+
+
 <h2 id=" 型のキャスト"> 型のキャスト</h2>
 
+<p>
+次にキャストについて扱う．すでに何度かでてきたのでそれで全部かを確認してみる．
+</p>
+
+<pre><code>
+#include <stdint.h>
+int main(void) {
+  int8_t a = 10;
+  int16_t b = a;
+  int32_t c = a;
+  int64_t d = a;
+  float e = a;
+  double f = a;
+  a = d;
+  b = d;
+  c = d;
+  e = d;
+  f = d;
+  a = f;
+  b = f;
+  c = f;
+  d = f;
+  e = f;
+  f = e;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+  %9 = sext i8 %8 to i16
+  %11 = sext i8 %10 to i32
+  %13 = sext i8 %12 to i64
+  %15 = sitofp i8 %14 to float
+  %17 = sitofp i8 %16 to double
+  %19 = trunc i64 %18 to i8
+  %21 = trunc i64 %20 to i16
+  %23 = trunc i64 %22 to i32
+  %25 = sitofp i64 %24 to float
+  %27 = sitofp i64 %26 to double
+  %29 = fptosi double %28 to i8
+  %31 = fptosi double %30 to i16
+  %33 = fptosi double %32 to i32
+  %35 = fptosi double %34 to i64
+  %37 = fptrunc double %36 to float
+  %39 = fpext float %38 to double
+</code></pre>
+
+<h3 id=" 整数同士"> 整数同士</h3>
+
+<p>
+小さい型から大きい型へ．
+</p>
+
+<pre><code>
+sext <ty> <op1> to <ty2>
+</code></pre>
+
+<p>
+大きい型から小さい型へ
+
+</p>
+
+<pre><code>
+trunc <ty> <op1> to <ty2>
+</code></pre>
+
+<h3 id=" 整数と浮動小数点数"> 整数と浮動小数点数</h3>
+
+
+<p>
+整数から浮動小数点数であれば．
+</p>
+
+<pre><code>
+sitofp <ty> <op1> to <ty2>
+</code></pre>
+
+<p>
+浮動小数点数から整数であれば
+
+</p>
+
+<pre><code>
+fptosi <ty> <op1> to <ty2>
+</code></pre>
+
+<h3 id=" 浮動小数点数同士"> 浮動小数点数同士</h3>
+
+<p>
+小さい型から大きい型へ．
+</p>
+
+<pre><code>
+fpext <ty> <op1> to <ty2>
+</code></pre>
+
+
+<p>
+大きい型から小さい型へ
+
+</p>
+
+<pre><code>
+fptrunc <ty> <op1> to <ty2>
+</code></pre>
+
+<h2 id=" 関数の定義と呼び出し・宣言"> 関数の定義と呼び出し・宣言</h2>
+
+<p>
+いよいよ終わりに近付いてきた．
+</p>
+
+<p>
+まずは関数の定義と呼び出しと定義の方法から．
+</p>
+
+<pre><code>
+int add(int a, int b) { 
+    return a + b; 
+}
+int main(void) { 
+    return add(1, 2); 
+}
+</code></pre>
+
+<p>
+適当に省略するとこんな感じ．
+</p>
+
+<pre><code>
+define i32 @add(i32 %0, i32 %1) {
+  %7 = add nsw i32 %0, %1
+  ret i32 %7
+}
+
+define i32 @main() {
+  %2 = call i32 @add(i32 1, i32 2)
+  ret i32 %2
+}
+</code></pre>
+
+<p>
+定義の方法は<code>main</code>関数と全く同じでよさそう．そして呼び出しの場合には戻り値の型と<code>@</code>を付けた関数名，そして引数が続く．
+</p>
+
+<p>
+次は簡単な再帰関数を見てみる．
+</p>
+
+<pre><code>
+int fact(int n) {
+  if (n == 0) {
+    return 0;
+  } else {
+    return n * fact(n - 1);
+  }
+}
+int main(void) { 
+  return fact(5); 
+}
+</code></pre>
+
+<p>
+いい感じに省略するとこんな感じになる．
+</p>
+
+<pre><code>
+define i32 @fact(i32 noundef %0) {
+  %2 = alloca i32, align 4
+  %5 = icmp eq i32 %0, 0
+  br i1 %5, label %6, label %7
+
+6:
+  store i32 1, ptr %2, align 4
+  br label %13
+
+7:
+  %10 = sub nsw i32 %0, 1
+  %11 = call i32 @fact(i32 noundef %10)
+  %12 = mul nsw i32 %0, %11
+  store i32 %12, ptr %2, align 4
+  br label %13
+
+13:
+  %14 = load i32, ptr %2, align 4
+  ret i32 %14
+}
+
+define i32 @main() {
+  %2 = call i32 @fact(i32 noundef 5)
+  ret i32 %2
+}
+</code></pre>
+
+<p>
+再帰関数はそのまま書けるようだ．
+</p>
+
+
+<h2 id=" 関数ポインタ"> 関数ポインタ</h2>
+
+<p>
+まずはシンプルな関数ポインタの変数を宣言して代入し，使ってみる．
+</p>
+
+<pre><code>
+int increment(int a) { 
+  return a++; 
+}
+int main(void) {
+  int (*func)(int) = increment;
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+define i32 @increment(i32 noundef %0) {
+  %2 = alloca i32, align 4
+  store i32 %0, ptr %2, align 4
+  %3 = load i32, ptr %2, align 4
+  %4 = add nsw i32 %3, 1
+  store i32 %4, ptr %2, align 4
+  ret i32 %3
+}
+
+define dso_local i32 @main() #0 {
+  %2 = alloca ptr, align 8
+  store ptr @increment, ptr %2, align 8
+  %3 = load ptr, ptr %2, align 8
+  %4 = call i32 %3(i32 noundef 1)
+  ret i32 0
+}
+</code></pre>
+
+<p>
+見る限りは普通に代入しているだけに見える．
+</p>
+
+<p>
+また関数呼び出しは通常の呼び出しと全く一緒に見える．得に意識する必要がないということだろうか．
+</p>
 
 <h1 id=" まとめ"> まとめ</h1>
 
+<p>
+ここまでで一通りの機能を見てきた．
+</p>
 
-<h2 id=" 変数の記述方法"> 変数の記述方法</h2>
+<p>
+ただし，<code>include</code>とかそういうプリプロセッサは見ていないが，普通にアセンブリを書く分には問題なさそうだったので，必要になってから追記することにする．
+</p>
 
-<h2 id=" 関数の定義と呼び出し方法，後は宣言とか"> 関数の定義と呼び出し方法，後は宣言とか</h2>
+<p>
+型の扱いは非常にシンプルになっていて，特にメモリの確保がほぼ共通化されていることに驚いた．
+</p>
+
+<p>
+アセンブリではそこまでやらないだろうとは思っていたがその通り．
+</p>
+
+<p>
+また，関数呼び出しそのものがサポートされているので，gotoだけで関数を作る必要がない所も便利だ．
+</p>
+
+<p>
+ただ，ここまでの機能を全て構文木から構成できるようにするのは骨が折れるので，gotoを駆使して書く方がまずは簡単そうな気がする．
+</p>
+
+<p>
+何となくの書き方は見えてきたので，次の記事ではそのあたりをもっときれいにまとめていく．また，一部無視した所や命令で疑問が残る所があったので，そのあたりも含めて詳しくLLVM IR Referenceを読み込んでいく．
+</p>
 <br>
 <a href="../index.html">トップ(TOP)</a>
 </body>
