@@ -843,6 +843,44 @@ declare void @llvm.memset.p0.i64(ptr nocapture writeonly, i8, i64, i1 immarg) #1
 さっきと一緒で全て<code>getelementptr</code>と<code>store</code>で操作していることが分かる．これの解釈も後回し．
 </p>
 
+<p>
+次にビットフィールドも見てみる．
+</p>
+
+<pre><code>
+struct A {
+  int a : 1;
+  int b : 3;
+};
+int main(void) {
+  struct A a = {0};
+  return 0;
+}
+</code></pre>
+
+<pre><code>
+%struct.A = type { i8, [3 x i8] }
+
+@__const.main.a = private unnamed_addr constant %struct.A { i8 0, [3 x i8] undef }, align 4
+
+define i32 @main() {
+  %2 = alloca %struct.A, align 4
+  call void @llvm.memcpy.p0.p0.i64(ptr align 4 %2, ptr align 4 @__const.main.a, i64 4, i1 false)
+  ret i32 0
+}
+</code></pre>
+
+<p>
+<code>i32</code>で定義したはずだが，一番小さい<code>i8</code>に圧縮されている．まあこれでも十分ことたりるのだが，<code>i1</code>ぐらい使ってもよさげな気はする．
+</p>
+
+<p>
+謎なのは<code>[3 x i8]</code>の所で配列っぽいがこれで合っているのだろうか？
+配列の定義からすると<code>i8</code>が3つという解釈になりそうだが，<code>i1</code>が3つなのでは？
+
+</p>
+
+
 <h3 id=" 共用体の変数"> 共用体の変数</h3>
 
 <p>
@@ -2176,9 +2214,9 @@ int main(void) {
 </code></pre>
 
 <pre><code>
-  %9 = sext i8 %8 to i16
-  %11 = sext i8 %10 to i32
-  %13 = sext i8 %12 to i64
+  %9 = zext i8 %8 to i16
+  %11 = zext i8 %10 to i32
+  %13 = zext i8 %12 to i64
   %15 = sitofp i8 %14 to float
   %17 = sitofp i8 %16 to double
   %19 = trunc i64 %18 to i8
@@ -2201,7 +2239,7 @@ int main(void) {
 </p>
 
 <pre><code>
-sext <ty> <op1> to <ty2>
+zext <ty> <op1> to <ty2>
 </code></pre>
 
 <p>
@@ -2222,6 +2260,7 @@ trunc <ty> <op1> to <ty2>
 
 <pre><code>
 sitofp <ty> <op1> to <ty2>
+uitofp <ty> <op1> to <ty2>
 </code></pre>
 
 <p>
@@ -2231,6 +2270,7 @@ sitofp <ty> <op1> to <ty2>
 
 <pre><code>
 fptosi <ty> <op1> to <ty2>
+fptoui <ty> <op1> to <ty2>
 </code></pre>
 
 <h3 id=" 浮動小数点数同士"> 浮動小数点数同士</h3>

@@ -200,9 +200,9 @@ int main(void){
 </p>
 
 <pre><code>
-define i32 @main() {
-  ret i32 0
-}
+1:define i32 @main() {
+2:  ret i32 0
+3:}
 </code></pre>
 
 <p>
@@ -217,6 +217,266 @@ define i32 @main() {
 <code>ret</code>は<code>return</code>を意味しており，<code>i32 0</code>は<code>0</code>を意味している．
 </p>
 
+<h2 id=" 演算をする"> 演算をする</h2>
+
+<p>
+まずは単純な足し算をどう実装すればよいのかを見ていく．<code>1+2</code>を実装すると次のようになる．
+</p>
+
+<pre><code>
+1:define i32 @main() {
+2:  %1 = add i32 1, 2
+3:  ret i32 %1
+4:}
+</code></pre>
+
+<p>
+C言語で言うと次のようなイメージ．
+</p>
+
+<pre><code>
+1:int main(void){
+2:  return 1+2;
+3:}
+</code></pre>
+
+<p>
+ここで<code>%1</code>のように<code>%</code>から始まるトークンは局所的変数名である．(大域的変数名は<code>@</code>から始まる)
+<code>add</code>命令によって型を指定した後に直接値を入れて<code>1+2</code>をし，その結果を<code>%1</code>に代入．そして<code>%1</code>を<code>return</code>している．
+</p>
+
+<p>
+特徴としては<code>add</code>する際に型を指定している．型には様々な種類があるが，C言語の型との対応は次の通り．
+</p>
+
+<pre><code>
+| C type      | LLVM type |
+|-------------+-----------|
+| :1          | i1        |
+| int8_t      | i8        |
+| int16_t     | i16       |
+| int32_t     | i32       |
+| int64_t     | i64       |
+| uint8_t     | i8        |
+| uint16_t    | i16       |
+| uint32_t    | i32       |
+| uint64_t    | i64       |
+| float       | float     |
+| double      | double    |
+| long double | x86_fp80  |
+</code></pre>
+
+<p>
+C言語には直接の対応がなくビットフィールドで表現する必要があるが，LLVMでは1bitの幅の数字も扱える．
+</p>
+
+<p>
+main関数の実行結果はBashを使っていれば，以下のように確かめることができる．
+</p>
+
+<pre><code>
+$ ./a.out
+$ echo $?
+3
+</code></pre>
+
+<h2 id=" 変数を使う"> 変数を使う</h2>
+
+<p>
+先程の例では直接<code>1+2</code>を実装したが，一度変数に入れてから計算する場合を見てみよう．
+</p>
+
+<pre><code>
+ 1:define i32 @main() {
+ 2:  %1 = alloca i32
+ 3:  %2 = alloca i32
+ 4:  store i32 1, ptr %1
+ 5:  store i32 2, ptr %2
+ 6:  %3 = load i32, ptr %1
+ 7:  %4 = load i32, ptr %2
+ 8:  %5 = add i32 %3, %4
+ 9:  ret i32 %5
+10:}
+</code></pre>
+
+<p>
+C言語で言うと次のようなイメージ．
+</p>
+
+<pre><code>
+1:int main(void){
+2:  int a = 1;
+3:  int b = 2;
+4:  return a + b;
+5:}
+</code></pre>
+
+<p>
+変数を使いたい場合，まずメモリを確保する所から始まる．(1-2行目)
+具体的には，<code>alloca</code>を使いその関数内で有効なメモリを確保する．(スタックに積まれ，関数が終わったら解放される)
+この時<code>alloca</code>の戻り値はポインタであることに注意する必要がある．つまり<code>%1</code>や<code>%2</code>はポインタ型が入っている．
+</p>
+
+<p>
+次に確保したメモリに値を書き込む．(4-5行目)
+具体的には<code>store</code>を使うがこちらも型を忘れずに指定する必要がある．代入したい値はもちろん<code>i32</code>だが，代入先はポインタであるため<code>ptr</code>になる．
+</p>
+
+<p>
+次に代入した値を<code>load</code>で読み出す．(6-7行目)
+ここで<code>store</code>したんだから<code>add</code>には<code>%1</code>，<code>%2</code>を渡せばいいじゃんと思うかもしれないが，<code>%1</code>と<code>%2</code>はポインタ型だから数字ではない．したがって，<code>%1</code>と<code>%2</code>に入っている値を取り出すには一度<code>load</code>する必要がある．
+</p>
+
+<p>
+値を取り出せた後はその値を足す．(8行目)
+ここで<code>add</code>は直接の値でも変数の値でもどちらでもよいことが分かる．
+</p>
+
+<h2 id=" 変数の型を変換する"> 変数の型を変換する</h2>
+
+<p>
+今までは全て<code>int</code>として<code>i32</code>を扱ってきたため問題なかったが，実際には色々な型を使いたくなる．そして異なる型同士で演算したくもなってくる．
+</p>
+
+<p>
+そういう場合には必ず型を変換してから演算する必要がある．そして型を変換するためには変換する前の型が何で，した後の型が何かもきっちりと指定する必要がある．
+</p>
+
+<p>
+また型を変換するには整数か浮動小数点かどうか，少ないビット数から大きいビット数に変換するのか，大きいビット数から小さいビット数に変換するのかどうかで全然変わってくる．それに合わせて全て命令を使い分ける必要がある．
+</p>
+
+<p>
+ここでは2つの型を比較し，より少ないビット数の型を小さい型，より大きいビット数を大きい型と表現する．また変換元の型を<code>&lt;from type&gt;</code>，変換先の型を<code>&lt;to type&gt;</code>．そして変換したい値を<code>&lt;op&gt;</code>で表現する．
+</p>
+
+
+<h3 id=" 整数同士の変換"> 整数同士の変換</h3>
+
+<p>
+小さい型から大きい型へ．
+</p>
+
+<pre><code>
+zext <from type> <op> to <to type>
+</code></pre>
+
+<p>
+この名前はおそらくzero extensionの意味と思われ，変換時に増えたビットは0埋めする．
+</p>
+
+<p>
+例えば<code>i8</code>の<code>%1</code>の値を<code>i16</code>に変換したい時は次のようになる．
+</p>
+
+<pre><code>
+%2 = zext i8 %1 to i16
+</code></pre>
+
+<p>
+この場合数値の拡張が行われ，<code>i8</code>の前のビットは0であると見做して<code>i16</code>まで拡張する．
+</p>
+
+
+<p>
+大きい型から小さい型へ
+
+</p>
+
+<pre><code>
+trunc <from type> <op> to <to type>
+</code></pre>
+
+<p>
+逆に<code>i16</code>の<code>%1</code>の値を<code>i8</code>に変換したい場合は次のようになる．
+</p>
+
+<pre><code>
+%2 = trunc i16 %1 to i8
+</code></pre>
+
+<p>
+この場合は余った値を削るだけでよいためそのままの名前だ．
+</p>
+
+
+<h3 id=" 整数と浮動小数点数の変換"> 整数と浮動小数点数の変換</h3>
+
+
+<p>
+整数から浮動小数点数であれば．
+</p>
+
+<pre><code>
+sitofp <from type> <op> to <to type>
+uitofp <from type> <op> to <to type>
+</code></pre>
+
+<p>
+signed integer to floating pointとunsigned integer to floating pointの略だろう．
+</p>
+
+<p>
+例えば<code>i32</code>から<code>double</code>への変換は次のようになる．
+</p>
+
+<pre><code>
+%2 = sitofp i16 %1 to double
+</code></pre>
+
+<p>
+浮動小数点数から整数であれば
+
+</p>
+
+<pre><code>
+fptosi <from type> <op> to <to type>
+fptoui <from type> <op> to <to type>
+</code></pre>
+
+<p>
+floating point to signed integerとfloating point to unsigned integerの略だろう．
+</p>
+
+<p>
+こちらも<code>double</code>から<code>u32</code>の変換は次のようになる．
+</p>
+
+<pre><code>
+%2 = fptoui double %1 to u32
+</code></pre>
+
+
+<h3 id=" 浮動小数点数同士の変換"> 浮動小数点数同士の変換</h3>
+
+<p>
+小さい型から大きい型へ．
+</p>
+
+<pre><code>
+fpext <from type> <op> to <to type>
+</code></pre>
+
+<p>
+floating point extensionと思われる．これは例えば，<code>float</code>から<code>double</code>への拡張だ．
+</p>
+
+
+<p>
+大きい型から小さい型へ
+
+</p>
+
+<pre><code>
+fptrunc <from type> <op> to <to type>
+</code></pre>
+
+<p>
+floating point truncと思われる．これは例えば先程の逆で，<code>double</code>から<code>float</code>への縮小だ．
+</p>
+
+
+<h2 id=" Hello, World"> Hello, World</h2>
 
 
 <h2 id=" 構文"> 構文</h2>
