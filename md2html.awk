@@ -142,7 +142,7 @@ function head(num, var){
 	next;
 }
 
-/^```$/{
+/^```/{
 	print_stack();
 	if (code_count == 0){
 		code_count = 1;
