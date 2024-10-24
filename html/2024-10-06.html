@@ -217,6 +217,96 @@ define i32 @main() {
 <code>ret</code>は<code>return</code>を意味しており，<code>i32 0</code>は<code>0</code>を意味している．
 </p>
 
+<p>
+という訳で何もしないプログラムはこれだけだ．
+</p>
+
+<h2 id=" 関数の定義"> 関数の定義</h2>
+
+<p>
+もうちょっとだけ詳しく解説する．
+</p>
+
+<p>
+LLVMはC言語と同じく関数を定義することができる．そして実行できるプログラムにはmain関数がいて上のように<code>define</code>で定義されている．
+</p>
+
+<p>
+もちろんmain関数以外の自作の関数も<code>define</code>を使って定義できるが，mainという名前の関数は一つしか定義できない．
+</p>
+
+<p>
+そしてmain関数に限らず全ての関数は基本ブロックで構成されている．
+</p>
+
+
+<pre><code>
+define <ret type> @<func name>(<Args>){
+    <Basic Blocks>
+}
+
+</code></pre>
+
+<p>
+ちなみに<code>&lt;Args&gt;</code>は引数のリストで，以下のように任意の数の引数を設定できる．<code>&lt;type&gt;</code>は引数の型で<code>&lt;op&gt;</code>はその引数にアクセスするための名前．
+</p>
+
+<pre><code>
+<type> <op1>, <type> <op2>, ...
+</code></pre>
+
+<p>
+そして，<code>&lt;Basic Blocks&gt;</code>は同様に，基本ブロックの集まりである．
+</p>
+
+<pre><code>
+<Basic Block1>
+<Basic Block2>
+...
+</code></pre>
+
+<p>
+そして一つ一つの<code>&lt;Bacic Block&gt;</code>は次のようにラベルと処理で構成されている
+
+</p>
+
+<pre><code>
+<label>:
+  <Instrunctions>
+</code></pre>
+
+<p>
+<code>&lt;Instrunctions&gt;</code>は<code>&lt;Instruction&gt;</code>という一つ一つの命令の集まりである．
+</p>
+
+<pre><code>
+  <Instruction>
+  <Instruction>
+  ...
+</code></pre>
+
+<p>
+つまり関数を全て展開するとこんな感じになる．
+</p>
+
+<pre><code>
+define <ret type> @<func name>(<Args>){
+<label1>:
+    <Instruction1.1>
+    ...
+<label2>:
+    <Instruction2.1>
+    ...
+...
+}
+</code></pre>
+
+<p>
+そして<code>&lt;label1&gt;:</code>にあたる，関数の最初の基本ブロックのラベルはエントリーポイントとも呼ばれて，明示的に与えない場合は暗黙の内に<code>0:</code>が割り振られる．したがって，<code>%0</code>という変数も自動的に割り当てられることになるので，同名の変数を間違って上書きして使わないように注意する必要がある．(エラーが出るので，エラーが出た場合に疑う一つの要素にしてもらえれば)
+
+</p>
+
+
 <h2 id=" 演算をする"> 演算をする</h2>
 
 <p>
@@ -264,7 +354,7 @@ int main(void){
 | float       | float     |
 | double      | double    |
 | long double | x86_fp80  |
-| :<label>    | label     |
+| label:      | label     |
 | void*       | ptr       |
 </code></pre>
 
