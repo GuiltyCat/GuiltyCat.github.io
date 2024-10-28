@@ -241,8 +241,8 @@ LLVMはC言語と同じく関数を定義することができる．そして実
 
 
 <pre><code>
-define <ret type> @<func name>(<Args>){
-    <Basic Blocks>
+define &lt;ret type&gt; @&lt;func name&gt;(&lt;Args&gt;){
+    &lt;Basic Blocks&gt;
 }
 
 </code></pre>
@@ -252,7 +252,7 @@ define <ret type> @<func name>(<Args>){
 </p>
 
 <pre><code>
-<type> <op1>, <type> <op2>, ...
+&lt;type&gt; &lt;op1&gt;, &lt;type&gt; &lt;op2&gt;, ...
 </code></pre>
 
 <p>
@@ -260,8 +260,8 @@ define <ret type> @<func name>(<Args>){
 </p>
 
 <pre><code>
-<Basic Block1>
-<Basic Block2>
+&lt;Basic Block1&gt;
+&lt;Basic Block2&gt;
 ...
 </code></pre>
 
@@ -271,8 +271,8 @@ define <ret type> @<func name>(<Args>){
 </p>
 
 <pre><code>
-<label>:
-  <Instrunctions>
+&lt;label&gt;:
+  &lt;Instrunctions&gt;
 </code></pre>
 
 <p>
@@ -280,8 +280,8 @@ define <ret type> @<func name>(<Args>){
 </p>
 
 <pre><code>
-  <Instruction>
-  <Instruction>
+  &lt;Instruction&gt;
+  &lt;Instruction&gt;
   ...
 </code></pre>
 
@@ -290,12 +290,12 @@ define <ret type> @<func name>(<Args>){
 </p>
 
 <pre><code>
-define <ret type> @<func name>(<Args>){
-<label1>:
-    <Instruction1.1>
+define &lt;ret type&gt; @&lt;func name&gt;(&lt;Args&gt;){
+&lt;label1&gt;:
+    &lt;Instruction1.1&gt;
     ...
-<label2>:
-    <Instruction2.1>
+&lt;label2&gt;:
+    &lt;Instruction2.1&gt;
     ...
 ...
 }
@@ -510,7 +510,7 @@ entry:
 </p>
 
 <pre><code>
-zext <from type> <op> to <to type>
+zext &lt;from type&gt; &lt;op&gt; to &lt;to type&gt;
 </code></pre>
 
 <p>
@@ -536,7 +536,7 @@ zext <from type> <op> to <to type>
 </p>
 
 <pre><code>
-trunc <from type> <op> to <to type>
+trunc &lt;from type&gt; &lt;op&gt; to &lt;to type&gt;
 </code></pre>
 
 <p>
@@ -560,8 +560,8 @@ trunc <from type> <op> to <to type>
 </p>
 
 <pre><code>
-sitofp <from type> <op> to <to type>
-uitofp <from type> <op> to <to type>
+sitofp &lt;from type&gt; &lt;op&gt; to &lt;to type&gt;
+uitofp &lt;from type&gt; &lt;op&gt; to &lt;to type&gt;
 </code></pre>
 
 <p>
@@ -582,8 +582,8 @@ signed integer to floating pointとunsigned integer to floating pointの略だ�
 </p>
 
 <pre><code>
-fptosi <from type> <op> to <to type>
-fptoui <from type> <op> to <to type>
+fptosi &lt;from type&gt; &lt;op&gt; to &lt;to type&gt;
+fptoui &lt;from type&gt; &lt;op&gt; to &lt;to type&gt;
 </code></pre>
 
 <p>
@@ -606,7 +606,7 @@ floating point to signed integerとfloating point to unsigned integerの略だ�
 </p>
 
 <pre><code>
-fpext <from type> <op> to <to type>
+fpext &lt;from type&gt; &lt;op&gt; to &lt;to type&gt;
 </code></pre>
 
 <p>
@@ -620,7 +620,7 @@ floating point extensionと思われる．これは例えば，<code>float</code
 </p>
 
 <pre><code>
-fptrunc <from type> <op> to <to type>
+fptrunc &lt;from type&gt; &lt;op&gt; to &lt;to type&gt;
 </code></pre>
 
 <p>
@@ -681,7 +681,7 @@ define i32 @main() {
 </p>
 
 <pre><code>
-br label <op>
+br label &lt;op&gt;
 </code></pre>
 
 <p>
@@ -729,7 +729,7 @@ define i32 @main() {
 </p>
 
 <pre><code>
-br i1 <cond>, label <op1>, label <op2>
+br i1 &lt;cond&gt;, label &lt;op1&gt;, label &lt;op2&gt;
 </code></pre>
 
 <p>

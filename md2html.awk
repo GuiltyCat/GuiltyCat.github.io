@@ -151,13 +151,13 @@ function head(num, var){
 		disable_code="1"
 		disable_p="1"
 	} else {
-	code_count = 0;
-	print_stack();
-	print "</code></pre>";
-	disable_mathline=""
-	disable_code = ""
-	disable_p=""
-}
+        code_count = 0;
+        print_stack();
+        print "</code></pre>";
+        disable_mathline=""
+        disable_code = ""
+        disable_p=""
+    }
 next;
 }
 
@@ -270,7 +270,13 @@ $0 == ""{
 	next;
 }
 {
-	push(inline_replace($0)"\n");
+    if ( disable_code == "1" ){
+		gsub("<","\\&lt;",$0)
+		gsub(">","\\&gt;",$0)
+        push($0"\n");
+    } else {
+        push(inline_replace($0)"\n");
+    }
 }
 END{
 	ie_pop_all();
