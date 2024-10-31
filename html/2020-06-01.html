@@ -116,12 +116,12 @@ In the default configuration file.
 </p>
 
 <pre><code>
-<IfModule !mpm_prefork_module>
+&lt;IfModule !mpm_prefork_module&gt;
 	# LoadModule cgid_module modules/mod_cgid.so
-</IfModule>
-<IfModule mpm_prefork_module>
+&lt;/IfModule&gt;
+&lt;IfModule mpm_prefork_module&gt;
 	# LoadModule cgi_module modules/mod_cgi.so
-</IfModule>
+&lt;/IfModule&gt;
 </code></pre>
 
 <p>
@@ -159,12 +159,12 @@ Therefore, in order to use CGI, you should comment out like below instead of Tut
 </p>
 
 <pre><code>
-<IfModule !mpm_prefork_module>
+&lt;IfModule !mpm_prefork_module&gt;
 	LoadModule cgid_module modules/mod_cgid.so
-</IfModule>
-<IfModule mpm_prefork_module>
+&lt;/IfModule&gt;
+&lt;IfModule mpm_prefork_module&gt;
 	# LoadModule cgi_module modules/mod_cgi.so
-</IfModule>
+&lt;/IfModule&gt;
 </code></pre>
 
 <h2 id="Security">Security</h2>

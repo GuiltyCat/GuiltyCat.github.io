@@ -125,7 +125,7 @@ You can choose openssh or dropbear.
 
 <pre><code>
 pkg upgrade
-pkg install openssh <or dropbear>
+pkg install openssh &lt;or dropbear&gt;
 </code></pre>
 
 <h2 id=" Step4. ssh-keygen on termux"> Step4. ssh-keygen on termux</h2>
@@ -136,7 +136,7 @@ Generate Public-key and Private key for public key authentication.
 </p>
 
 <pre><code>
-ssh-keygen <your option>
+ssh-keygen &lt;your option&gt;
 </code></pre>
 
 <h2 id=" Step5. Send id_rsa.pub to your server"> Step5. Send id_rsa.pub to your server</h2>
@@ -153,7 +153,7 @@ I use scp by enabling password login on ssh.
 
 
 <pre><code>
-scp -P <port> ~/.ssh/id_rsa.pub <username>@<servername>:<save location>
+scp -P &lt;port&gt; ~/.ssh/id_rsa.pub &lt;username&gt;@&lt;servername&gt;:&lt;save location&gt;
 </code></pre>
 
 <h2 id=" Step6. Write ~/.ssh/config"> Step6. Write ~/.ssh/config</h2>
@@ -164,11 +164,11 @@ In order to save typing number. Use ssh config file.
 </p>
 
 <pre><code>
-Host <name>
-  Hostname <servername>
+Host &lt;name&gt;
+  Hostname &lt;servername&gt;
   IdentityFile ~/.ssh/id_rsa.pub
-  Port <port>
-  User <username>
+  Port &lt;port&gt;
+  User &lt;username&gt;
 </code></pre>
 <br>
 <a href="../index.html">トップ(TOP)</a>

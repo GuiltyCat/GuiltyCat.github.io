@@ -168,7 +168,7 @@ bash index.bash
 </p>
 
 <pre><code>
-env QUERY_STRING="cp=/home/<user>" bash index.bash"
+env QUERY_STRING="cp=/home/&lt;user&gt;" bash index.bash"
 </code></pre>
 
 
@@ -343,7 +343,7 @@ COUNTER=0
 for i in $(seq 10); do
 	while read -r j;do
 		COUNTER=$((COUNTER+1))
-	done < <(sort "${i}.txt")
+	done &lt; &lt;(sort "${i}.txt")
 done
 echo "${COUNTER}"
 </code></pre>
@@ -358,7 +358,7 @@ function Query(){
 	QUERY="b"
 	echo "http://localhost"
 }
-echo "<a href=\"$(Query)\">Hello</a>"
+echo "&lt;a href=\"$(Query)\"&gt;Hello&lt;/a&gt;"
 echo "${QUERY}"
 </code></pre>
 
@@ -372,9 +372,9 @@ function Query(){
 	QUERY="b"
 	echo -n "http://localhost"
 }
-echo -n "<a href=\""
+echo -n "&lt;a href=\""
 Query
-echo "\">Hello</a>"
+echo "\"&gt;Hello&lt;/a&gt;"
 echo "${QUERY}"
 </code></pre>
 
@@ -435,15 +435,15 @@ AddHandler cgi-script .cgi .bash
 </p>
 
 <pre><code>
-SuexecUserGroup <user name> <user name>
-<Directory "/srv/http/cgi-bin">
+SuexecUserGroup &lt;user name&gt; &lt;user name&gt;
+&lt;Directory "/srv/http/cgi-bin"&gt;
 	AllowOverride None
 	Options None
 	AuthType Digest
-	AuthName "<authentication name>"
-	AuthUserFile "<file path created by htdigest>"
+	AuthName "&lt;authentication name&gt;"
+	AuthUserFile "&lt;file path created by htdigest&gt;"
 	Require valid-user
-</Directory>
+&lt;/Directory&gt;
 </code></pre>
 
 <p>
@@ -465,20 +465,20 @@ SuexecUserGroup <user name> <user name>
 
 
 <pre><code>
-<IfModule userdir_module>
+&lt;IfModule userdir_module&gt;
     UserDir disabled
-    UserDir enabled <user name>
+    UserDir enabled &lt;user name&gt;
     UserDir ./
-</IfModule>
+&lt;/IfModule&gt;
 ...
-<Directory "/home/*">
+&lt;Directory "/home/*"&gt;
     AllowOverride None
     Options FollowSymLinks Indexes
     AuthType Digest
-    AuthName "<authentication name"
-    AuthUserFile "<file path created by htdigest"
+    AuthName "&lt;authentication name"
+    AuthUserFile "&lt;file path created by htdigest"
     Require valid-user
-</Directory>
+&lt;/Directory&gt;
 </code></pre>
 <br>
 <a href="../index.html">トップ(TOP)</a>

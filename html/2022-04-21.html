@@ -136,7 +136,7 @@ IP="${IP// /}"
 TXT="ip.txt"
 
 if [[ $(cat "${TXT}") != "${IP}" ]]; then
-	echo "${IP}" >"${TXT}"
+	echo "${IP}" &gt;"${TXT}"
 	git add "${TXT}"
 	git commit -m "${IP}"
 	git push origin main

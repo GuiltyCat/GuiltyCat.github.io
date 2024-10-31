@@ -577,7 +577,7 @@ short intとintをアライメント跨ぎが発生するように配置した�
 </p>
 
 <pre><code>
-#include <stdint.h>
+#include &lt;stdint.h&gt;
 int main(void) {
   int8_t a = -8;
   int16_t b = -16;
@@ -632,7 +632,7 @@ define i32 @main() {
 </p>
 
 <pre><code>
-#include <stdint.h>
+#include &lt;stdint.h&gt;
 int main(void) {
   uint16_t f =UINT16_MAX; 
   return 0;
@@ -1238,7 +1238,7 @@ LLVM IR Referenceを見てみると，
 </p>
 
 <pre><code>
-add [nuw] [nsw] <ty> <op1>, <op2>
+add [nuw] [nsw] &lt;ty&gt; &lt;op1&gt;, &lt;op2&gt;
 </code></pre>
 
 <p>
@@ -1457,8 +1457,8 @@ int main(void) {
 </p>
 
 <pre><code>
-  unsigned int g = a >> b;
-  unsigned int h = a << b;
+  unsigned int g = a &gt;&gt; b;
+  unsigned int h = a &lt;&lt; b;
 </code></pre>
 
 <pre><code>
@@ -1478,8 +1478,8 @@ int main(void) {
 int main(void) {
   int a = -1;
   int b = -2;
-  int g = a >> b;
-  int h = a << b;
+  int g = a &gt;&gt; b;
+  int h = a &lt;&lt; b;
   return 0;
 }
 </code></pre>
@@ -1503,10 +1503,10 @@ int main(void) {
 int main(void) {
   int a = 1;
   int b = 2;
-  int c = a < b;
-  int d = a > b;
-  int e = a <= b;
-  int f = a >= b;
+  int c = a &lt; b;
+  int d = a &gt; b;
+  int e = a &lt;= b;
+  int f = a &gt;= b;
   return 0;
 }
 </code></pre>
@@ -1531,7 +1531,7 @@ int main(void) {
 </p>
 
 <pre><code>
-icmp <cond> <ty> <op1>, <op2>
+icmp &lt;cond&gt; &lt;ty&gt; &lt;op1&gt;, &lt;op2&gt;
 </code></pre>
 
 <p>
@@ -1644,7 +1644,7 @@ LLVM IR Referenceによると以下だ．
 </p>
 
 <pre><code>
-siteofp <ty> <value> to <ty2>
+siteofp &lt;ty&gt; &lt;value&gt; to &lt;ty2&gt;
 </code></pre>
 
 <p>
@@ -1658,7 +1658,7 @@ siteofp <ty> <value> to <ty2>
 </p>
 
 <pre><code>
-#include <stdbool.h>
+#include &lt;stdbool.h&gt;
 int main(void) {
   bool a = true;
   bool b = false;
@@ -1705,7 +1705,7 @@ int main(void) {
 </p>
 
 <pre><code>
-trunc <ty> <value> to <ty2>
+trunc &lt;ty&gt; &lt;value&gt; to &lt;ty2&gt;
 </code></pre>
 
 <p>
@@ -1713,8 +1713,8 @@ trunc <ty> <value> to <ty2>
 </p>
 
 <pre><code>
-br i1 <cond>, label <iftrue>, label <iffalse>
-br label <dest>
+br i1 &lt;cond&gt;, label &lt;iftrue&gt;, label &lt;iffalse&gt;
+br label &lt;dest&gt;
 </code></pre>
 
 <p>
@@ -1726,7 +1726,7 @@ br label <dest>
 </p>
 
 <pre><code>
-phi <ty> [ <val0>, <label0>], ...
+phi &lt;ty&gt; [ &lt;val0&gt;, &lt;label0&gt;], ...
 </code></pre>
 
 <p>
@@ -1759,11 +1759,11 @@ phi <ty> [ <val0>, <label0>], ...
 
 <pre><code>
 0:
-    if (<a>) { goto %9; } else { goto %12 };
+    if (&lt;a&gt;) { goto %9; } else { goto %12 };
 9:
     goto %12;
 12:
-    ret = if (<from %0>) { false; } if (<from %9>) { <b>; };
+    ret = if (&lt;from %0&gt;) { false; } if (&lt;from %9&gt;) { &lt;b&gt;; };
 </code></pre>
 
 <p>
@@ -1788,11 +1788,11 @@ phi <ty> [ <val0>, <label0>], ...
 
 <pre><code>
 12:
-    if (<a>) { goto %20; } else { goto %17 };
+    if (&lt;a&gt;) { goto %20; } else { goto %17 };
 17:
     goto %20;
 20:
-    ret = if (<from %12>) { true; } if (<from %17>) { <b>; };
+    ret = if (&lt;from %12&gt;) { true; } if (&lt;from %17&gt;) { &lt;b&gt;; };
 </code></pre>
 
 <p>
@@ -1828,7 +1828,7 @@ phi <ty> [ <val0>, <label0>], ...
 </p>
 
 <pre><code>
-#include <stdbool.h>
+#include &lt;stdbool.h&gt;
 int main(void) {
   bool a = true;
   bool b = false;
@@ -1870,7 +1870,7 @@ int main(void) {
 </p>
 
 <pre><code>
-#include <stdbool.h>
+#include &lt;stdbool.h&gt;
 int main(void) {
   bool a = true;
   int b = a ? 1 : 2;
@@ -2001,12 +2001,12 @@ LABEL:
 </p>
 
 <pre><code>
-#include <stdbool.h>
+#include &lt;stdbool.h&gt;
 int main(void) {
   int c = 0;
   while (true) {
     c++;
-    if (c > 10) {
+    if (c &gt; 10) {
       break;
     }
   }
@@ -2046,7 +2046,7 @@ define i32 @main() {
 
 <pre><code>
   br i1 %7, label %8, label %9
-<中略>
+&lt;中略&gt;
 9:
   br label %3
 </code></pre>
@@ -2071,7 +2071,7 @@ define i32 @main() {
 </p>
 
 <pre><code>
-#include <stdbool.h>
+#include &lt;stdbool.h&gt;
 int main(void) {
   while (true)
     ;
@@ -2098,7 +2098,7 @@ define i32 @main() {
 
 <pre><code>
 int main(void) {
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i &lt; 10; i++)
     ;
   return 0;
 }
@@ -2151,7 +2151,7 @@ int main(void) {
   int c = 0;
   do {
     c++;
-  } while (c < 10);
+  } while (c &lt; 10);
   return 0;
 }
 </code></pre>
@@ -2190,7 +2190,7 @@ define i32 @main() {
 </p>
 
 <pre><code>
-#include <stdint.h>
+#include &lt;stdint.h&gt;
 int main(void) {
   int8_t a = 10;
   int16_t b = a;
@@ -2239,7 +2239,7 @@ int main(void) {
 </p>
 
 <pre><code>
-zext <ty> <op1> to <ty2>
+zext &lt;ty&gt; &lt;op1&gt; to &lt;ty2&gt;
 </code></pre>
 
 <p>
@@ -2248,7 +2248,7 @@ zext <ty> <op1> to <ty2>
 </p>
 
 <pre><code>
-trunc <ty> <op1> to <ty2>
+trunc &lt;ty&gt; &lt;op1&gt; to &lt;ty2&gt;
 </code></pre>
 
 <h3 id=" 整数と浮動小数点数"> 整数と浮動小数点数</h3>
@@ -2259,8 +2259,8 @@ trunc <ty> <op1> to <ty2>
 </p>
 
 <pre><code>
-sitofp <ty> <op1> to <ty2>
-uitofp <ty> <op1> to <ty2>
+sitofp &lt;ty&gt; &lt;op1&gt; to &lt;ty2&gt;
+uitofp &lt;ty&gt; &lt;op1&gt; to &lt;ty2&gt;
 </code></pre>
 
 <p>
@@ -2269,8 +2269,8 @@ uitofp <ty> <op1> to <ty2>
 </p>
 
 <pre><code>
-fptosi <ty> <op1> to <ty2>
-fptoui <ty> <op1> to <ty2>
+fptosi &lt;ty&gt; &lt;op1&gt; to &lt;ty2&gt;
+fptoui &lt;ty&gt; &lt;op1&gt; to &lt;ty2&gt;
 </code></pre>
 
 <h3 id=" 浮動小数点数同士"> 浮動小数点数同士</h3>
@@ -2280,7 +2280,7 @@ fptoui <ty> <op1> to <ty2>
 </p>
 
 <pre><code>
-fpext <ty> <op1> to <ty2>
+fpext &lt;ty&gt; &lt;op1&gt; to &lt;ty2&gt;
 </code></pre>
 
 
@@ -2290,7 +2290,7 @@ fpext <ty> <op1> to <ty2>
 </p>
 
 <pre><code>
-fptrunc <ty> <op1> to <ty2>
+fptrunc &lt;ty&gt; &lt;op1&gt; to &lt;ty2&gt;
 </code></pre>
 
 <h2 id=" 関数の定義と呼び出し・宣言"> 関数の定義と呼び出し・宣言</h2>

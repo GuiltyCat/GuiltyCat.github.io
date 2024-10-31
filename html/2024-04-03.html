@@ -234,8 +234,8 @@ code {
 </p>
 
 <pre><code>
-<number>={0|1|2|3|4|5|6|7|8|9}
-<pitch>={+|-}?{<number>}+{A|B|C|D|E|F|G}{#|##|b|bb}*
+&lt;number&gt;={0|1|2|3|4|5|6|7|8|9}
+&lt;pitch&gt;={+|-}?{&lt;number&gt;}+{A|B|C|D|E|F|G}{#|##|b|bb}*
 </code></pre>
 
 
@@ -258,8 +258,8 @@ code {
 </p>
 
 <pre><code>
-<natural number>={1|2|3|4|5|6|7|8|9}
-<length>={<natural number>}+{/}?{<natural number>}*
+&lt;natural number&gt;={1|2|3|4|5|6|7|8|9}
+&lt;length&gt;={&lt;natural number&gt;}+{/}?{&lt;natural number&gt;}*
 </code></pre>
 
 <p>
@@ -267,9 +267,9 @@ code {
 </p>
 
 <pre><code>
-<single note>=<pitch><length>
-<delimiter>={,| }
-<simple melody>=<single note>{<delimiter><single note>}*
+&lt;single note&gt;=&lt;pitch&gt;&lt;length&gt;
+&lt;delimiter&gt;={,| }
+&lt;simple melody&gt;=&lt;single note&gt;{&lt;delimiter&gt;&lt;single note&gt;}*
 </code></pre>
 
 <p>
@@ -290,7 +290,7 @@ code {
 </p>
 
 <pre><code>
-<harmoney>={[}<single note>{<delimiter><single note>}*{]}
+&lt;harmoney&gt;={[}&lt;single note&gt;{&lt;delimiter&gt;&lt;single note&gt;}*{]}
 </code></pre>
 
 <p>
@@ -318,8 +318,8 @@ code {
 </p>
 
 <pre><code>
-<note>={<single note>|<harmoney>}
-<harmony melody>=<note>+
+&lt;note&gt;={&lt;single note&gt;|&lt;harmoney&gt;}
+&lt;harmony melody&gt;=&lt;note&gt;+
 </code></pre>
 
 
@@ -341,9 +341,9 @@ code {
 
 
 <pre><code>
-<label>={a|b|...|Y|Z}+
-<mark>={&}<label><delimiter><note>
-<jump>={@}<label><delimiter><note>
+&lt;label&gt;={a|b|...|Y|Z}+
+&lt;mark&gt;={&}&lt;label&gt;&lt;delimiter&gt;&lt;note&gt;
+&lt;jump&gt;={@}&lt;label&gt;&lt;delimiter&gt;&lt;note&gt;
 </code></pre>
 
 <p>
@@ -390,7 +390,7 @@ code {
 
 
 <pre><code>
-<length articulation note> = <note>{l}<length>
+&lt;length articulation note&gt; = &lt;note&gt;{l}&lt;length&gt;
 </code></pre>
 
 <p>
@@ -448,7 +448,7 @@ code {
 
 
 <pre><code>
-<sin wave> = {sin}{(}<frequency>{,}<phase>{,}<length>{)}
+&lt;sin wave&gt; = {sin}{(}&lt;frequency&gt;{,}&lt;phase&gt;{,}&lt;length&gt;{)}
 </code></pre>
 
 <p>
@@ -464,8 +464,8 @@ code {
 </p>
 
 <pre><code>
-<wave> = <sin wave> | <harmoney>+
-<harmoney>={[}<wave>{<delimiter><wave>}*{]}
+&lt;wave&gt; = &lt;sin wave&gt; | &lt;harmoney&gt;+
+&lt;harmoney&gt;={[}&lt;wave&gt;{&lt;delimiter&gt;&lt;wave&gt;}*{]}
 </code></pre>
 
 <p>
@@ -486,7 +486,7 @@ code {
 </p>
 
 <pre><code>
-<volume changed wave> = <volume wave>{*}<wave>
+&lt;volume changed wave&gt; = &lt;volume wave&gt;{*}&lt;wave&gt;
 </code></pre>
 
 <p>
@@ -494,8 +494,8 @@ code {
 </p>
 
 <pre><code>
-<constant> = <number>+
-<frequency> = <constant> | <wave>
+&lt;constant&gt; = &lt;number&gt;+
+&lt;frequency&gt; = &lt;constant&gt; | &lt;wave&gt;
 </code></pre>
 
 <p>
@@ -512,7 +512,7 @@ code {
 
 
 <pre><code>
-sound <sound_name>(freq, ...) {
+sound &lt;sound_name&gt;(freq, ...) {
     ...
 }
 </code></pre>

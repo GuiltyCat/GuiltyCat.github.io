@@ -40,7 +40,7 @@ utf-8のdiffを自分なりにいい感じに表現してくれるのだ．使�
 </p>
 
 <pre><code>
-./utf8_diff <left string> <right string>
+./utf8_diff &lt;left string&gt; &lt;right string&gt;
 </code></pre>
 
 <p>
@@ -48,7 +48,7 @@ utf-8のdiffを自分なりにいい感じに表現してくれるのだ．使�
 </p>
 
 <pre><code>
-/<left char>/<right char>/<left char hex>/<right char hex>/
+/&lt;left char&gt;/&lt;right char&gt;/&lt;left char hex&gt;/&lt;right char hex&gt;/
 </code></pre>
 
 <p>
@@ -72,8 +72,8 @@ utf-8のdiffを自分なりにいい感じに表現してくれるのだ．使�
 </p>
 
 <pre><code>
-― -> E2 80 94
-— -> E2 80 95
+― -&gt; E2 80 94
+— -&gt; E2 80 95
 </code></pre>
 
 <p>
@@ -81,7 +81,7 @@ utf-8のdiffを自分なりにいい感じに表現してくれるのだ．使�
 </p>
 
 <pre><code>
-nkf -w --url-input <<<"―"
+nkf -w --url-input &lt;&lt;&lt;"―"
 </code></pre>
 
 <p>

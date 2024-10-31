@@ -85,7 +85,7 @@ RUN pip install --no-cache jupyterhub-nativeauthenticator notebook jupyterlab
 COPY ./jupyterhub_config_append.py /root/
 
 RUN jupyterhub --generate-config -f /root/jupyterhub_config.py
-RUN cat /root/jupyterhub_config_append.py >>/root/jupyterhub_config.py
+RUN cat /root/jupyterhub_config_append.py &gt;&gt;/root/jupyterhub_config.py
 
 ENTRYPOINT ["bash", "setOwner.bash"]
 </code></pre>
@@ -118,7 +118,7 @@ import nativeauthenticator
 
 c.Spawner.default_url = "/tree/{username}"
 c.Spawner.notebook_dir = "/home"
-c.Authenticator.admin_users = {"<your admin user name>"}
+c.Authenticator.admin_users = {"&lt;your admin user name&gt;"}
 c.JupyterHub.authenticator_class = "nativeauthenticator.NativeAuthenticator"
 c.JupyterHub.template_paths = [
     f"{os.path.dirname(nativeauthenticator.__file__)}/templates/"
@@ -145,7 +145,7 @@ c.Spawner.pre_spawn_hook = pre_spawn_hook
 </p>
 
 <pre><code>
-/tree/{username}  ->  /home/{username}
+/tree/{username}  -&gt;  /home/{username}
 </code></pre>
 
 <p>
@@ -161,7 +161,7 @@ c.Spawner.pre_spawn_hook = pre_spawn_hook
 </p>
 
 <pre><code>
-c.Authenticator.admin_users = {"<your admin user name>"}
+c.Authenticator.admin_users = {"&lt;your admin user name&gt;"}
 </code></pre>
 
 <p>
@@ -181,7 +181,7 @@ else
 	chown $1:$1 -R /home/$1
 fi
 sudo -u $1 jupyter lab --generate-config
-echo "c.NotebookApp.notebook_dir=\"home/$1\"" >>/home/$1/.jupyter/jupyter_lab_config.py
+echo "c.NotebookApp.notebook_dir=\"home/$1\"" &gt;&gt;/home/$1/.jupyter/jupyter_lab_config.py
 </code></pre>
 
 <p>

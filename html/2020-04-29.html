@@ -48,7 +48,7 @@ $(PROJECT):$(OBJ)
 	gcc $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
 $(OBJ_DIR)/%.o:%.c
-	gcc $(CFLAGS) -c -o $@ $<
+	gcc $(CFLAGS) -c -o $@ $&lt;
 </code></pre>
 
 <p>
@@ -58,7 +58,7 @@ $(OBJ_DIR)/%.o:%.c
 <pre><code>
 # NOT WORKING
 $(OBJ_DIR)/%.o:%.c %.h
-	gcc $(CFLAGS) -c -o $@ $<
+	gcc $(CFLAGS) -c -o $@ $&lt;
 </code></pre>
 
 <p>
@@ -124,7 +124,7 @@ $(PROJECT):$(OBJ)
 
 -include $(DEP)
 $(OBJ_DIR)/%.o:%.c
-	$(CC) $(CFLAGS) -MMD -c -o $@ $<
+	$(CC) $(CFLAGS) -MMD -c -o $@ $&lt;
 
 .PHONY:clean
 
@@ -159,7 +159,7 @@ Target:Dependency
 
 <pre><code>
 html/%.html:md/%.md
-	pandoc -f markdown -t html -o $@ $< 
+	pandoc -f markdown -t html -o $@ $&lt; 
 </code></pre>
 
 <p>
@@ -184,7 +184,7 @@ html/%.html:md/%.md
 
 <pre><code>
 html/%.html:md/%.md style.css
-	pandoc -f markdown -t html -o $@ $< 
+	pandoc -f markdown -t html -o $@ $&lt; 
 </code></pre>
 
 <h2 id="最後に">最後に</h2>

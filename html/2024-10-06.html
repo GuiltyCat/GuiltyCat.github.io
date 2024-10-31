@@ -373,6 +373,154 @@ $ echo $?
 3
 </code></pre>
 
+<h3 id=" 数値計算"> 数値計算</h3>
+
+<p>
+では次に足し算以外の様々な演算を見ていく．先程は型を指定して計算するといったが，一部の演算では型指定だけではなく演算自体が取り得る型が制限されている場合がある．
+</p>
+
+<pre><code>
+add &lt;type&gt; &lt;op1&gt;, &lt;op2&gt;  ; 整数の足し算
+sub &lt;type&gt; &lt;op1&gt;, &lt;op2&gt;  ; 整数の引き算
+mul &lt;type&gt; &lt;op1&gt;, &lt;op2&gt;  ; 整数のかけ算
+sdiv &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 符号有整数の商
+srem &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 符号有整数の剰余
+udiv &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 符号無整数の商
+urem &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 符号無整数の剰余
+fadd &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 浮動小数点数の足し算
+fsub &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 浮動小数点数の引き算
+fmul &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 浮動小数点数のかけ算
+fdiv &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 浮動小数点数の商
+frem &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 浮動小数点数の剰余
+fneg &lt;type&gt; &lt;op&gt;         ; 浮動小数点数の符号反転
+</code></pre>
+
+<p>
+<code>frem</code>があるのは驚き．
+</p>
+
+
+<h3 id=" ビット演算"> ビット演算</h3>
+
+<p>
+ビット演算は次の通り．
+</p>
+
+<pre><code>
+and &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; ビット演算 AND
+or &lt;type&gt; &lt;op1&gt;, &lt;op2&gt;  ; ビット演算 OR
+xor &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; ビット演算 XOR
+xor &lt;type&gt; &lt;op1&gt;, -1    ; ビット演算 NOT
+shl &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 左シフト演算 &lt;&lt;
+lshr &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 論理右シフト演算 &gt;&gt;
+ashr &lt;type&gt; &lt;op1&gt;, &lt;op2&gt; ; 算術右シフト演算 &gt;&gt;
+</code></pre>
+
+<p>
+NOTは単体の演算はなくて<code>xor</code>で実装されていた．
+</p>
+
+<h3 id=" 比較演算"> 比較演算</h3>
+
+<p>
+比較演算は少し特殊で全て<code>icmp</code>か<code>fcmp</code>を使い，その後の引数<code>&lt;cond&gt;</code>でどんな比較を行うのかを明示する．
+</p>
+
+<p>
+<code>icmp</code>の場合は整数の比較になる．
+</p>
+
+<pre><code>
+icmp &lt;cond&gt; &lt;type&gt; &lt;op1&gt;, &lt;op2&gt;
+</code></pre>
+
+<p>
+<code>icmp</code>が取り得る<code>&lt;cond&gt;</code>は以下の通り．
+</p>
+
+<ul>
+<li> eq: equal
+</li>
+<li> ne: not equal
+</li>
+<li> ugt: unsigned greater than
+</li>
+<li> uge: unsigned greater or equal
+</li>
+<li> ult: unsigned less than
+</li>
+<li> ule: unsigned less or equal
+</li>
+<li> sgt: signed greater than
+</li>
+<li> sge: signed greater or equal
+</li>
+<li> slt: signed less than
+</li>
+<li> sle: signed less or equal
+</li>
+</ul>
+
+
+<p>
+<code>fcmp</code>の場合は浮動小数点数同士の比較になるが<code>&lt;cond&gt;</code>が少し違う．
+</p>
+
+<pre><code>
+fcmp &lt;cond&gt; &lt;type&gt; &lt;op1&gt;, &lt;op2&gt;
+</code></pre>
+
+<ul>
+<li> false: no comparison, always returns false
+</li>
+<li> oeq: ordered and equal
+</li>
+<li> ogt: ordered and greater than
+</li>
+<li> oge: ordered and greater than or equal
+</li>
+<li> olt: ordered and less than
+</li>
+<li> ole: ordered and less than or equal
+</li>
+<li> one: ordered and not equal
+</li>
+<li> ord: ordered (no nans)
+</li>
+<li> ueq: unordered or equal
+</li>
+<li> ugt: unordered or greater than
+</li>
+<li> uge: unordered or greater than or equal
+</li>
+<li> ult: unordered or less than
+</li>
+<li> ule: unordered or less than or equal
+</li>
+<li> une: unordered or not equal
+</li>
+<li> uno: unordered (either nans)
+</li>
+<li> true: no comparison, always returns true
+</li>
+</ul>
+
+<p>
+そして，これらの比較の結果は<code>i1</code>となるため注意が必要である．例えば次のように結果を代入した場合，<code>%0</code>は<code>i1</code>になるためアクセスする場合は<code>i1</code>として型を指定する必要がある．
+</p>
+
+<pre><code>
+%0 = icmp eq i32 0, 0
+</code></pre>
+
+<h3 id=" 論理演算"> 論理演算</h3>
+
+<p>
+次に論理演算を見てみる．これはちょっと複雑で<code>if</code>分のように条件分岐を使って実現される．
+</p>
+
+
+
 <h2 id=" 変数を使う"> 変数を使う</h2>
 
 <p>

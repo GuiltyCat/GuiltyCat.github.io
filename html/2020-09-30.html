@@ -121,9 +121,9 @@ C言語で書くとこんな感じになる．
 </p>
 
 <pre><code>
-#include <stdio.h>
-#include <stdint.h>
-#include <math.h>
+#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;math.h&gt;
 
 uint64_t gcd_inner(uint64_t m, uint64_t n) {
   if (n == 0) {
@@ -136,7 +136,7 @@ uint64_t gcd(uint64_t m, uint64_t n) {
   /*  search a such that m = a*x and n = a*y
    * m = n * q + r = a * x
    * thus  q = a* z and r = a * w            */
-  if (m < n) {
+  if (m &lt; n) {
     uint64_t tmp = n;
     n = m;
     m = tmp;
@@ -634,9 +634,9 @@ n_1 = I_0I_1 + 1, m_1 = I_1
 </p>
 
 <pre><code>
-#include <stdio.h>
-#include <stdint.h>
-#include <math.h>
+#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;math.h&gt;
 
 uint64_t gcd_inner(uint64_t m, uint64_t n) {
   if (n == 0) {
@@ -649,7 +649,7 @@ uint64_t gcd(uint64_t m, uint64_t n) {
   /*  search a such taht m = a*x and n = a*y
    * m = n * q + r = a * x
    * thus  q = a* z and r = a * w            */
-  if (m < n) {
+  if (m &lt; n) {
     uint64_t tmp = n;
     n = m;
     m = tmp;
@@ -725,8 +725,8 @@ void float2frac_10algorithm(double f, uint64_t *ret_n, uint64_t *ret_m, double e
   uint64_t n = 0;
   uint64_t m = 1;
   size_t counter = 0;
-  while (fabs((double)n / m - ans) >= error) {
-    if (counter++ > 10) {
+  while (fabs((double)n / m - ans) &gt;= error) {
+    if (counter++ &gt; 10) {
       break;
     }
     double i;
@@ -735,7 +735,7 @@ void float2frac_10algorithm(double f, uint64_t *ret_n, uint64_t *ret_m, double e
     n *= 10;
     m *= 10;
     f *= 10;
-    printf("%f -> %lu/%lu = %f\n", ans, n, m, (double)n / m);
+    printf("%f -&gt; %lu/%lu = %f\n", ans, n, m, (double)n / m);
   }
   frac_reduction(&n, &m);
   *ret_n = n;
@@ -750,7 +750,7 @@ int main(void) {
 
   puts("10algorithm.");
   float2frac_10algorithm(f, &n, &m, 0.00001);
-  printf("%f -> %lu/%lu = %f\n", f, n, m, (double)n / m);
+  printf("%f -&gt; %lu/%lu = %f\n", f, n, m, (double)n / m);
 
   return 0;
 }
@@ -758,12 +758,12 @@ int main(void) {
 </code></pre>
 
 <pre><code>
-0.023400 -> 0/10 = 0.000000
-0.023400 -> 0/100 = 0.000000
-0.023400 -> 20/1000 = 0.020000
-0.023400 -> 230/10000 = 0.023000
-0.023400 -> 2340/100000 = 0.023400
-0.023400 -> 117/5000 = 0.023400
+0.023400 -&gt; 0/10 = 0.000000
+0.023400 -&gt; 0/100 = 0.000000
+0.023400 -&gt; 20/1000 = 0.020000
+0.023400 -&gt; 230/10000 = 0.023000
+0.023400 -&gt; 2340/100000 = 0.023400
+0.023400 -&gt; 117/5000 = 0.023400
 </code></pre>
 
 
