@@ -516,9 +516,97 @@ fcmp &lt;cond&gt; &lt;type&gt; &lt;op1&gt;, &lt;op2&gt;
 <h3 id=" 論理演算"> 論理演算</h3>
 
 <p>
-次に論理演算を見てみる．これはちょっと複雑で<code>if</code>分のように条件分岐を使って実現される．
+次に論理演算を見てみる．これに合う直接の演算はないので制御構文を使って上手く表現する必要がある．
 </p>
 
+<p>
+例えば論理ANDの<code>c = a && b</code>場合は次のように実現できる．
+</p>
+
+<pre><code>
+define i32 @main() {
+  %a = trunc i32 1 to i1
+  %b = trunc i32 1 to i1
+  %c = alloca i1
+
+  br i1 %a, label %a.true, label %a.false
+
+a.true:
+  store i1 %b, ptr %c
+  br label %end
+
+a.false:
+  store i1 0, ptr %c
+  br label %end
+
+end:
+
+  ret i32 0
+}
+</code></pre>
+
+<p>
+C言語で書くとこんな感じ．
+</p>
+
+<pre><code>
+int main(void){
+  bool a = true;
+  bool b = true;
+  bool c;
+  if ( a ){
+      goto ATRUE:
+  } else {
+      goto AFALSE:
+  }
+
+ATRUE:
+  c = b;
+  goto END;
+
+AFALSE
+  c = false;
+  goto END;
+
+END:
+  return 0;
+}
+
+</code></pre>
+
+<p>
+論理ORの場合はこんな感じで書ける．
+</p>
+
+<pre><code>
+define i32 @main() {
+  %a = trunc i32 1 to i1
+  %b = trunc i32 1 to i1
+  %c = alloca i1
+
+  br i1 %a, label %a.true, label %a.false
+
+a.true:
+  store i1 1, ptr %c
+  br label %end
+
+a.false:
+  store i1 %b, ptr %c
+  br label %end
+
+end:
+
+  ret i32 0
+}
+</code></pre>
+
+<p>
+先程との違いは<code>store</code>の行だけだ．
+</p>
+
+<p>
+別に<code>br</code>を使わないとダメな訳ではなく，<code>phi</code>とか使っても実現は可能である．
+</p>
 
 
 <h2 id=" 変数を使う"> 変数を使う</h2>
@@ -980,9 +1068,6 @@ entry:
 <p>
 とりあえずはここまで．
 </p>
-
-
-<h2 id=" 関数"> 関数</h2>
 
 <h2 id=" 配列"> 配列</h2>
 
