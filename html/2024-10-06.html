@@ -1071,6 +1071,40 @@ entry:
 
 <h2 id=" 配列"> 配列</h2>
 
+<p>
+次に配列について説明する．とりあえずは固定長の配列で<code>malloc</code>のようなヒープは使わないものとする.
+この場合は通常の配列と同様に<code>alloca</code>を使う．
+</p>
+
+<p>
+例えば，<code>int a[10]</code>で初期化なしの場合であれば次の通り．
+</p>
+
+<pre><code>
+odefine i32 @main(){
+    %1 = alloca [10 x i32]
+    ret i32 0
+}
+</code></pre>
+
+<p>
+そしてこの要素にアクセスする場合は次のようになる．読み出しの場合は次の通り．<code>a[1]</code>
+
+</p>
+
+<pre><code>
+  %2 = getelementptr [10 x i32], ptr %1, i64 0, i64 1
+  %3 = load i32, ptr %1
+</code></pre>
+
+<p>
+ちなみにこの<code>getelementptr</code>というのは引数が多くてちょっと面倒臭い．<code>load</code>を使った所からも分かるように配列の要素に書き込む場合は次の通り．
+</p>
+
+<pre><code>
+  %2 = getelementptr [10 x i32], ptr %2, i64 0, i64 2
+  store i32 10, ptr %2
+</code></pre>
 
 <h2 id=" 構文"> 構文</h2>
 
