@@ -48,10 +48,12 @@ Thus, you should check by yourself.
 - 某大手電気メーカーに勤める情報系エンジニア/リサーチャー
 - C言語が好き
 - 思ったことを全て表すために長大な文章を良く書く
+- 新しいプログラミング言語とか時々熱が入って作る
 
 - Information System Engineer/Researcher.
 - I like C lang.
 - I often write very long sentences in order to express all of my thought.
+- Sometimes get excited about creating new programming language
 
 内容について
 -----------
