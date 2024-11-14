@@ -1240,8 +1240,83 @@ entry:
 </p>
 
 <p>
-ここさえ抑えておけばひとまずはOK．
+さあ，次からがさらにややこしくなる．
 </p>
+
+<p>
+次にLLVMの公式ページより次の例を見てみる．この関数の引数と戻り値自体は先程の関数と全く同じだが，一回の<code>getelementptr</code>ではなく分割したものだ．
+</p>
+
+
+<pre><code>
+define ptr @foo(ptr %s) {
+  %t1 = getelementptr %struct.ST, ptr %s, i32 1
+  %t2 = getelementptr %struct.ST, ptr %t1, i32 0, i32 2
+  %t3 = getelementptr %struct.RT, ptr %t2, i32 0, i32 1
+  %t4 = getelementptr [10 x [20 x i32]], ptr %t3, i32 0, i32 5
+  %t5 = getelementptr [20 x i32], ptr %t4, i32 0, i32 13
+  ret ptr %t5
+}
+</code></pre>
+
+<p>
+まず，最初に抑えておかないといけないことは，LLVM IRにおいて配列とポインタは明確に区別されており，別物であるということだ．
+</p>
+
+<p>
+つまり<code>getelementptr i32, ptr %1</code>と<code>getelementptr [10 x i32], ptr %1</code>における<code>%1</code>は全くの別物として扱われる．
+</p>
+
+<p>
+<code>i32, ptr %1</code>の方はあくまで<code>i32</code>へのポインタとして扱われるため，その後に続く引数は1つで，アクセスする要素のインデックスを指定するだけでよい．しかし，<code>[10 x i32], ptr %1</code>の場合，<code>[10 x i32]</code>という一つの型へのポインタとして解釈される．つまり，<code>getelementptr [10 x i32], ptr %a, i32 1</code>とした場合，<code>int a[10]; a[1]</code>のように解釈されるのではなく，<code>int* a[10]; a[1]</code>として解釈されるイメージだ．<code>a[10]</code>が一つの要素として見做されるため．<code>1</code>と指定すると，数のように解釈されるのではなく，
+</p>
+
+<pre><code>
+|0|1|2|3|4|5|6|7|8|9|
+   A
+</code></pre>
+
+<p>
+このように，次の<code>a[10]</code>の先頭として解釈される．
+</p>
+
+
+<pre><code>
+|0|1|2|3|4|5|6|7|8|9|0|1|2|3|4|5|6|7|8|9|
+                     A
+</code></pre>
+
+
+<p>
+これが分かれば，なぜ引数が1つのものと2つのものがあるのか，同じような配列へのアクセスなのに何故変化するのかの意味が分かってくる．
+</p>
+
+<p>
+<code>%t1</code>の<code>i32 1</code>は<code>%struct.ST</code>というポインタの<code>s[1]</code>へのアクセスなので1つでよい．<code>%t2</code>の<code>i32 0, i32 2</code>は<code>%struct.ST</code>という型の0番目の要素であり，その中の2番目の要素を示している．
+</p>
+
+<p>
+これはまとめて書くと次のようになる．
+</p>
+
+<pre><code>
+  %t2 = getelementptr %struct.ST, ptr %t1, i32 1, i32 2
+</code></pre>
+
+<p>
+この解釈は，<code>struct.ST</code>といポインタの1番目の要素<code>s[1]</code>の<code>struct.ST</code>の中の2番目の要素<code>Z</code>．
+</p>
+
+<p>
+つまり，<code>%t1</code>は<code>struct.ST</code>という単位で見た時の1番目の要素を示している．<code>%t1</code>を<code>struct.ST</code>という単位で見た時に，<code>0</code>番目の要素は<code>s[1]</code>自身であり，その中のさらに2番目の要素を<code>%t2</code>に入れている．
+</p>
+
+<p>
+後もうちょっとだが今日はここまで．おやすみなさい．
+</p>
+
+
+
 
 
 <h2 id=" 構文"> 構文</h2>
