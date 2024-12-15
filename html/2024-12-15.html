@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title># Arch LinuxのBraveでYouTubeを見ているとcore dumpしまくったので直した</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+</head>
+<style>
+code {
+    font-size: 1rem;
+}
+@media (max-width: 768px) {
+    code {
+        font-size: 4vw;
+    }
+}
+</style>
+<body>
+<a href="../index.html">トップ(TOP)</a>
+<h1 id=" Arch LinuxのBraveでYouTubeを見ているとcore dumpしまくったので直した"> Arch LinuxのBraveでYouTubeを見ているとcore dumpしまくったので直した</h1>
+
+<h2 id=" 結論"> 結論</h2>
+<h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
+
+
+<h2 id=" 結論"> 結論</h2>
+
+<p>
+PCをシャットダウンして，BIOSをリセットしてメモリを挿し直したら直った．
+</p>
+
+
+
+<h2 id=" 経緯"> 経緯</h2>
+
+
+<p>
+正確な日付は覚えていないが2024/12/15の1週間前ぐらいから，BraveでYouTubeの動画を見ていると突然フリーズして，エラーが発生しました画面が出たり，あるいはBrave自体がクラッシュしたりするようになった．
+</p>
+
+<p>
+最初はBraveのバグだろうと思ってForumを見てみたり，アップデートを頻繁にしたりして待っていたが特にそういった報告も載っていない．というわけで色々と順番に試していった．
+</p>
+
+<h2 id=" 原因の調査"> 原因の調査</h2>
+
+<p>
+とりあえずカーネルからエラーが出ているだろうと思って以下のコマンドでエラーをチェックした．
+</p>
+
+<pre><code>
+sudo journalctl -r
+</code></pre>
+
+<p>
+数字の所はちょっと加工したがこんな感じ．
+</p>
+
+<pre><code>
+12月 15 12:33:08 archlinux systemd-coredump[2061]: [🡕] Process 805 (i3status) of user 1000 dumped core.
+                                                    
+    Stack trace of thread 807:
+    #0  0x0000000000000000 n/a (libc.so.6 + 0x963f4)
+    #1  0x0000000000000000 raise (libc.so.6 + 0x3d120)
+    #2  0x0000000000000000 abort (libc.so.6 + 0x244c3)
+    #3  0x0000000000000000 n/a (libpulsecommon-17.0.so + 0x50fff)
+    #4  0x0000000000000000 pa_mainloop_dispatch (libpulse.so.0 + 0x26212)
+    #5  0x0000000000000000 pa_mainloop_iterate (libpulse.so.0 + 0x267d4)
+    #6  0x0000000000000000 pa_mainloop_run (libpulse.so.0 + 0x26891)
+    #7  0x0000000000000000 n/a (libpulse.so.0 + 0x37bd4)
+    #8  0x0000000000000000 n/a (libpulsecommon-17.0.so + 0x5d34f)
+    #9  0x0000000000000000 n/a (libc.so.6 + 0x9439d)
+    #10 0x0000000000000000 n/a (libc.so.6 + 0x11949c)
+    
+    Stack trace of thread 805:
+    #0  0x0000000000000000 __write (libc.so.6 + 0x10c7dd)
+    #1  0x0000000000000000 pa_write (libpulsecommon-17.0.so + 0x23e45)
+    #2  0x0000000000000000 pa_mainloop_wakeup (libpulse.so.0 + 0x1c190)
+    #3  0x0000000000000000 n/a (libpulse.so.0 + 0x1e70c)
+    #4  0x0000000000000000 n/a (libpulsecommon-17.0.so + 0x513d4)
+    #5  0x0000000000000000 pa_socket_client_new_sockaddr (libpulsecommon-17.0.so + 0x5164d)
+    #6  0x0000000000000000 pa_socket_client_new_unix (libpulsecommon-17.0.so + 0x518e5)
+    #7  0x0000000000000000 pa_socket_client_new_string (libpulsecommon-17.0.so + 0x52a90)
+    #8  0x0000000000000000 n/a (libpulse.so.0 + 0x14109)
+    #9  0x0000000000000000 pa_context_connect (libpulse.so.0 + 0x14aab)
+    #10 0x0000000000000000 n/a (n/a + 0x0)
+    #11 0x0000000000000000 n/a (n/a + 0x0)
+    #12 0x0000000000000000 n/a (n/a + 0x0)
+    #13 0x0000000000000000 n/a (libc.so.6 + 0x25e08)
+    #14 0x0000000000000000 __libc_start_main (libc.so.6 + 0x25ecc)
+    #15 0x0000000000000000 n/a (n/a + 0x0)
+    ELF object binary architecture: AMD x86-64
+</code></pre>
+
+<p>
+これを見るにlibc.so.6もしくはBraveが悪そうだなと当たりをつけた．
+</p>
+
+<h2 id=" Braveとglibcのダウングレード"> Braveとglibcのダウングレード</h2>
+
+<p>
+最新のパッケージがダメなのだろうと思って，Braveとglibcをダウングレードしてみた．ダウングレード自体は上手くいったのだがこれでも問題が解決しなかった．
+</p>
+
+<h2 id=" Memtestをしてみる"> Memtestをしてみる</h2>
+
+<p>
+もしかしてメインメモリがおかしくなったんじゃなかろうかと，Memmtestを掛けてみたが結果はPASS．
+</p>
+
+<h2 id=" PCの何かが壊れたか？"> PCの何かが壊れたか？</h2>
+
+<p>
+たまに存在しないオペランドを実行していますとかいうエラーも出てきていたので，もしかしてCPUが壊れたりビットが書き変わったりしているんじゃなかろうかとPC自体の故障も疑った．
+</p>
+
+<h2 id=" 古い報告も調べてみる"> 古い報告も調べてみる</h2>
+
+<p>
+Googleで以下のようなキーワードで調べてみると次のIssueがひっかかった
+
+</p>
+
+<pre><code>
+brave core dump libc.so.6
+</code></pre>
+
+<p>
+<a href="https://github.com/brave/brave-browser/issues/15192">https://github.com/brave/brave-browser/issues/15192</a>
+
+</p>
+
+<p>
+おおよそ似たような症状だったので下に下に読み進めていくと一番最後にメモリを挿し直して，BIOSをリセットしたら直ったと書いてあった．
+</p>
+
+<h2 id=" 原因の予想"> 原因の予想</h2>
+
+<p>
+ずっと再起動しかせず，電源を落としていなかった．
+</p>
+
+<p>
+BIOSのリセットもそうだが完全に電気を遮断する必要があるので，マザーボードやCPU，メモリの電荷が全て解放されて本当のリセット状態になったのが良かったのかもと想像している．
+</p>
+<br>
+<a href="../index.html">トップ(TOP)</a>
+</body>
+</html>
