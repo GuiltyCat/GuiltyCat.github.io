@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title># systemd-timerで秒単位のタイマーを作る時に嵌った所</title>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+</head>
+<style>
+code {
+    font-size: 1rem;
+}
+@media (max-width: 768px) {
+    code {
+        font-size: 4vw;
+    }
+}
+</style>
+<body>
+<a href="../index.html">トップ(TOP)</a>
+<h1 id=" systemd-timerで秒単位のタイマーを作る時に嵌った所"> systemd-timerで秒単位のタイマーを作る時に嵌った所</h1>
+
+<p>
+どうも秒レベルのタイマーは標準のままでは上手く動かないらしい。
+
+</p>
+<h2 id="目次 (Table of Contents)">目次 (Table of Contents)</h2>
+
+
+<p>
+どうも秒レベルのタイマーは標準のままでは上手く動かないらしい。
+1分ぐらいの結構あらい粒度で動作しているようで、なかなかきれいに10秒おきにならなかった。
+
+</p>
+
+<p>
+設定する上で重要になるのが、.timerの所でAccuracySecを設定する所だ。
+
+</p>
+
+<p>
+実際のファイルはこんな感じになった。
+
+</p>
+
+<p>
+<code>.config/systemd/user/wallpaper.service</code>
+
+</p>
+
+<pre><code>
+[Unit]
+Description=Random Wallpaper
+
+[Service]
+ExecStart=/bin/sh /home/miyamoto/github/script/wallpaper.bash
+Type=oneshot
+</code></pre>
+
+<p>
+<code>.config/systemd/user/wallpaper.timer</code>
+
+</p>
+
+<pre><code>
+[Unit]
+Description=Random Wallpaper
+Requires=wallpaper.service
+
+[Timer]
+AccuracySec=1
+OnBootSec=1sec
+OnUnitActiveSec=10seconds
+Unit=wallpaper.service
+
+[Install]
+WantedBy=timers.target
+</code></pre>
+<br>
+<a href="../index.html">トップ(TOP)</a>
+</body>
+</html>
